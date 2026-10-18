@@ -16,4 +16,9 @@ li a {
 		background-color: #555555;
 		color: white;
 	}
+
+	&.active {
+		background-color: #ea0bea;
+		color: rgb(0, 0, 0);
+	}
 }
