@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
-import { Practice } from './pages/practice/practice'
-import { Leaderboard } from './pages/leaderboard/leaderboard';
-import { Profile } from './pages/profile/profile';
+import { Practice } from './features/player/pages/practice/practice'
+import { Leaderboard } from './features/player/pages/leaderboard/leaderboard';
+import { Profile } from './features/player/pages/profile/profile';
 
 export const routes: Routes = [
 	{
