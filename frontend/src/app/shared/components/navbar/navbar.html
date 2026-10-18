@@ -1,5 +1,25 @@
-<ul>
-  <li><a routerLink="/practice" routerLinkActive="active">Practice</a></li>
-  <li><a routerLink="/leaderboard" routerLinkActive="active">Leaderboard</a></li>
-  <li><a routerLink="/profile" routerLinkActive="active">Profile</a></li>
-</ul>
+<div class="container">
+  <h1>Tetris</h1>
+  <div class="routers">
+    <ul>
+      <li>
+        <a routerLink="/practice" routerLinkActive="active">
+          <lucide-icon [img]="GamepadIcon" [size]="18"></lucide-icon>
+          <span>Practice</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/leaderboard" routerLinkActive="active">
+          <lucide-icon [img]="TrophyIcon" [size]="18"></lucide-icon>
+          <span>Leaderboard</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/profile" routerLinkActive="active">
+          <lucide-icon [img]="UserIcon" [size]="18"></lucide-icon>
+          <span>Profile</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>

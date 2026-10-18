@@ -7,9 +7,13 @@ import { RouterOutlet } from '@angular/router';
   selector: 'app-main-layout',
   imports: [Navbar, RouterOutlet],
   template: ` 
-    <app-navbar></app-navbar>
-    <router-outlet></router-outlet>
+    <div class="container">
+      <app-navbar></app-navbar>
+      <div class="page-content">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
   `,
-  styles: ``,
+  styleUrl: './main-layout.scss'
 })
 export class MainLayout {}
