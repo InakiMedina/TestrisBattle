@@ -17,8 +17,10 @@
 	align-items: center;
 	box-sizing: border-box;
 	padding: clamp(1rem, 3vw, 2.5rem);
+
+	.page-content {
+		margin: clamp(3rem, 3vw, 7.5rem);
+		width: 100%;
+	}
 }
 
-.page-content {
-	margin: clamp(3rem, 3vw, 7.5rem);
-}

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { LucideAngularModule, Trophy, Gamepad2, User } from 'lucide-angular';
+import { RankGameButton } from './components/rank-game-button/rank-game-button';
 
 @Component({
   selector: 'app-navbar',
@@ -8,6 +9,7 @@ import { LucideAngularModule, Trophy, Gamepad2, User } from 'lucide-angular';
     RouterLink, 
     RouterLinkActive,
     LucideAngularModule,
+    RankGameButton
   ],
   templateUrl: './navbar.html',
   styleUrl: './navbar.scss'
