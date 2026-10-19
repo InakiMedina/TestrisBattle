@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { Practice } from './features/player/pages/practice/practice'
-import { Leaderboard } from './features/player/pages/leaderboard/leaderboard';
+import { History } from './features/player/pages/history/history';
 import { Profile } from './features/player/pages/profile/profile';
 import { MainLayout } from './shared/layouts/main-layout/main-layout';
 
@@ -19,8 +19,8 @@ export const routes: Routes = [
 				component: Practice
 			}, 
 			{
-				path: 'leaderboard',
-				component: Leaderboard
+				path: 'history',
+				component: History
 			}, 
 			{
 				path: 'profile',
