@@ -1,0 +1,83 @@
+#login-section {
+    padding: 240px 20px;
+    background-image: url('/images/city_image.jpg');
+    display: flex;
+    justify-content: center;
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.login-form-div {
+    width: 50%;
+    background-color: #ea0bea;
+    border: 1px solid #f1f1f1;
+    border-radius: 12px;
+}
+
+.form-header {
+    margin: 20px 0px;
+    padding: 10px 0px;
+    align-items: center;
+    border-bottom: 1px solid #f1f1f1;
+    text-align: center;
+}
+
+.form-header h2 {
+    width: 100%;
+    margin: 0;
+    font-size: 36px;
+}
+
+.login-form {
+    margin: 10px 0px;
+    padding: 0px 20px;
+    display: flex;
+    border-bottom: 1px solid #f1f1f1;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form-email-field, .form-password-field {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form-email-field, .form-password-field label{
+    font-size: 24px;
+}
+
+.error{
+    font-size: 16px;
+}
+
+.forgot-password-link, .signin-link {
+    margin: 15px 0px;
+    text-align: right;
+}
+
+.forgot-password-link, .signin-link a {
+    font-weight: bold;
+    color: black;
+}
+
+.login-button {
+    margin: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+button {
+    width: 150px;
+    height: 60px;
+    border-radius: 12px;
+	background-color: rgb(170, 4, 131);
+	color: white;
+    font-size: 18px;
+}
+
+button:hover {
+	background-color: white;
+	color: #ea0bea;
+    font-weight: bold;
+    cursor: pointer;
+}
