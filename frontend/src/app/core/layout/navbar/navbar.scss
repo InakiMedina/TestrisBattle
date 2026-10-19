@@ -45,14 +45,4 @@
 
 	}
 
-	button {
-		width: clamp(10rem, 9vw, 15rem);
-		height: clamp(5rem, 4.5vw, 7.5rem);
-		border-radius: 10px;
-		background-color: rgb(170, 4, 131);
-		color: white;
-		font-size: clamp(1rem, 1.5vw, 2rem);
-		margin: clamp(3rem, 3vw, 7.5rem);
-	}
-
 }
