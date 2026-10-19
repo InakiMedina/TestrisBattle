@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { Login } from './features/player/pages/login/login';
+import { Signin } from './features/player/pages/signin/signin';
 import { Practice } from './features/player/pages/practice/practice'
 import { Leaderboard } from './features/player/pages/leaderboard/leaderboard';
 import { Profile } from './features/player/pages/profile/profile';
@@ -9,6 +10,10 @@ export const routes: Routes = [
 	{
 		path: '',
 		component: Login
+  	},
+	{
+		path: 'signin',
+		component: Signin
   	},
 	{
 		path: 'home',
