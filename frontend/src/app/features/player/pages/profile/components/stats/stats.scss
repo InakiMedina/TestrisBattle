@@ -1,0 +1,217 @@
+
+.stats-container {
+  width: 100%;
+  height: 360px;
+  min-height: 0;
+  margin-top: 0;
+  padding: 14px 16px;
+  box-sizing: border-box;
+  overflow: hidden;
+  color: #ffffff;
+  background: rgba(53, 51, 79, 0.96);
+  border: 2px solid #ffffff;
+  border-radius: 10px;
+  backdrop-filter: blur(8px);
+}
+
+/* Título principal */
+.titulo-historial {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+}
+
+/* Sección del podio */
+.podio-seccion {
+  margin-top: 12px;
+}
+
+.podio-seccion h3 {
+  margin: 0;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+/* Distribución de las tres copas */
+.podio {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: end;
+  gap: 8px;
+  width: 100%;
+  max-width: 290px;
+  height: 150px;
+  margin: 4px auto 0;
+  box-sizing: border-box;
+}
+
+.podio-jugador {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 3px;
+  width: 100%;
+  min-width: 0;
+  height: 112px;
+  padding-bottom: 3px;
+  box-sizing: border-box;
+  text-align: center;
+  color: #e8ad00;
+}
+
+.podio-jugador.top-uno {
+  height: 150px;
+}
+
+/* Copas */
+.copa {
+  display: block;
+  width: 42px;
+  height: 46px;
+  object-fit: contain;
+  flex-shrink: 0;
+  filter: brightness(0) saturate(100%)
+    invert(65%) sepia(98%) saturate(1200%)
+    hue-rotate(2deg) brightness(105%);
+}
+
+.top-uno .copa {
+  width: 68px;
+  height: 78px;
+}
+
+/* Posiciones y puntuaciones */
+.puesto {
+  color: #a47a00;
+  font-size: 12px;
+  line-height: 1.1;
+}
+
+.top-uno .puesto {
+  color: #e8ad00;
+  font-size: 14px;
+}
+
+.puntos {
+  color: #a47a00;
+  font-size: 9px;
+  letter-spacing: 1px;
+  overflow-wrap: anywhere;
+}
+
+.top-uno .puntos {
+  color: #e8ad00;
+  font-size: 12px;
+}
+
+/* Separador horizontal */
+.separador {
+  width: 85%;
+  height: 2px;
+  margin: 8px auto 10px;
+  background: #ffffff;
+}
+
+/* Estadísticas inferiores */
+.estadisticas {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  column-gap: 12%;
+  row-gap: 14px;
+  padding: 0 8%;
+  box-sizing: border-box;
+}
+
+.estadistica {
+  min-width: 0;
+}
+
+.etiqueta {
+  display: block;
+  margin-bottom: 3px;
+  color: #e2e0ec;
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.etiqueta-derecha {
+  text-align: right;
+}
+
+/* Barras de valores */
+.valor {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 18px;
+  padding: 0 6px;
+  box-sizing: border-box;
+  border-radius: 12px;
+  background: #191820;
+  font-family: monospace;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.valor-elo {
+  color: #b361e9;
+}
+
+.valor-high {
+  color: #d52acb;
+}
+
+.valor-lineas {
+  color: #0ebcf1;
+}
+
+.valor-poderes {
+  color: #52e6a5;
+}
+
+/* Adaptación para pantallas pequeñas */
+@media (max-width: 600px) {
+  .stats-container {
+    height: auto;
+    min-height: 382px;
+    padding: 14px 12px;
+  }
+
+  .titulo-historial {
+    font-size: 18px;
+  }
+
+  .podio {
+    max-width: 270px;
+    gap: 4px;
+  }
+
+  .copa {
+    width: 36px;
+    height: 42px;
+  }
+
+  .top-uno .copa {
+    width: 58px;
+    height: 68px;
+  }
+
+  .estadisticas {
+    padding: 0 2%;
+    column-gap: 12px;
+    row-gap: 16px;
+  }
+
+  .etiqueta {
+    font-size: 9px;
+    white-space: normal;
+  }
+
+  .valor {
+    font-size: 11px;
+  }
+}

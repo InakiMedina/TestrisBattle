@@ -1,0 +1,91 @@
+
+<section class="perfil-panel">
+
+  <div class="avatar-container">
+    <div class="avatar">
+      @if (imagenPerfil) {
+        <img [src]="imagenPerfil" alt="Foto de perfil">
+      } @else {
+        <svg viewBox="0 0 100 100" aria-hidden="true">
+          <circle cx="50" cy="34" r="20" />
+          <path d="M13 94c0-23 16-37 37-37s37 14 37 37" />
+        </svg>
+      }
+    </div>
+
+    <input
+      #selectorImagen
+      type="file"
+      accept="image/*"
+      hidden
+      (change)="seleccionarImagen($event)"
+    >
+
+    <button
+      class="edit-image"
+      type="button"
+      aria-label="Cambiar foto de perfil"
+      title="Cambiar foto"
+      (click)="selectorImagen.click()"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 20h9" />
+        <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4Z" />
+      </svg>
+    </button>
+
+    <div class="nombre-real">
+      @if (editandoNombreReal) {
+        <input
+          class="nombre-real-input"
+          type="text"
+          aria-label="Nombre real"
+          [(ngModel)]="nombreReal"
+          maxlength="40"
+          (keydown.enter)="guardarNombreReal()"
+        >
+      } @else {
+        <span>{{ nombreReal }}</span>
+      }
+
+      <button
+        class="edit-real"
+        type="button"
+        aria-label="Editar nombre real"
+        title="Editar nombre real"
+        (click)="editandoNombreReal ? guardarNombreReal() : editandoNombreReal = true"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 20h9" />
+          <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4Z" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="datos-perfil">
+
+    <div class="campo">
+      <label>Nombre de jugador:</label>
+      <div class="campo-valor nombre-jugador">
+        {{ nombreJugador }}
+      </div>
+    </div>
+
+    <div class="campo">
+      <label>Correo:</label>
+      <div class="campo-valor correo-valor">
+        {{ correo }}
+      </div>
+    </div>
+
+    <div class="campo">
+      <label>Elo:</label>
+      <div class="campo-valor elo-valor">
+        {{ elo }}
+      </div>
+    </div>
+
+  </div>
+
+</section>

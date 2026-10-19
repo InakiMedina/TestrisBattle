@@ -1,0 +1,26 @@
+
+<section class="ranking-container">
+  <h2>Top 5 de elo mundial:</h2>
+
+  <div class="ranking-podio">
+    @for (posicion of [4, 2, 1, 3, 5]; track posicion) {
+      @for (jugador of jugadores; track jugador.nombre) {
+        @if (jugador.posicion === posicion) {
+          <article
+            class="podio-jugador"
+            [class.puesto-uno]="posicion === 1"
+          >
+            <img
+                class="copa"
+                [src]="obtenerCopa(posicion)"
+                [alt]="'Copa del top ' + posicion"
+            />
+
+            <span class="puesto">top {{ posicion }}</span>
+            <span class="nombre-jugador">{{ jugador.nombre }}</span>
+            <span class="puntaje-jugador">{{ jugador.puntaje }} pts</span>          </article>
+        }
+      }
+    }
+  </div>
+</section>

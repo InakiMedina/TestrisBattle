@@ -1,0 +1,250 @@
+
+:host {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+
+.perfil-panel {
+  display: grid;
+  grid-template-columns: 145px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  //margin-top: 30px;
+
+  width: 100%;
+  min-height: 200px;
+  padding: 20px 16px;
+
+  box-sizing: border-box;
+  background: #35334f;
+  border: 2px solid #ffffff;
+  border-radius: 11px;
+  color: #ffffff;
+}
+
+/* Foto y nombre real */
+
+.avatar-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+}
+
+.avatar {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  overflow: hidden;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #171727;
+  border: 2px solid #ffffff;
+  border-radius: 9px;
+}
+
+.avatar img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar svg {
+  width: 70%;
+  fill: none;
+  stroke: #b6b3cc;
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+/* Lápiz para cambiar la foto */
+
+.edit-image {
+  position: absolute;
+  top: 5px;
+  right: 7px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 21px;
+  height: 21px;
+  padding: 0;
+
+  color: #ffffff;
+  background: #35334f;
+  border: 1px solid #ffffff;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.edit-image svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Nombre real debajo de la foto */
+
+.nombre-real {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5px;
+
+  width: 100%;
+  min-width: 0;
+  margin-top: 10px;
+
+  color: #ffffff;
+  font-size: 12px;
+}
+
+.nombre-real span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.nombre-real-input {
+  width: 100%;
+  min-width: 0;
+  padding: 4px;
+
+  color: #ffffff;
+  background: #1e1e21;
+  border: 1px solid #c8d72d;
+  border-radius: 4px;
+
+  font-family: inherit;
+  font-size: 12px;
+  outline: none;
+}
+
+/* Lápiz para editar el nombre real */
+
+.edit-real {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  width: 20px;
+  height: 23px;
+  padding: 0;
+
+  color: #ffffff;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.edit-real svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Efectos de los lápices */
+
+.edit-real:hover,
+.edit-image:hover {
+  color: #24d5d8;
+}
+
+/* Información a la derecha */
+
+.datos-perfil {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.campo label {
+  color: #e0deec;
+  font-size: 9px;
+}
+
+/* Campos informativos */
+
+.campo-valor,
+.campo-input {
+  width: 100%;
+  min-width: 0;
+  height: 23px;
+  padding: 3px 8px;
+
+  box-sizing: border-box;
+  border: none;
+  border-radius: 6px;
+  background: #1e1e21;
+
+  font-family: inherit;
+  font-size: 11px;
+}
+
+.campo-valor {
+  display: flex;
+  align-items: center;
+
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.nombre-jugador {
+  color: #c8d72d;
+}
+
+.correo-valor {
+  color: #f0a31a;
+}
+
+.elo-valor {
+  color: #31d55c;
+}
+
+/* Distribución adaptable a pantallas pequeñas */
+
+@media (max-width: 480px) {
+  .perfil-panel {
+    grid-template-columns: 105px minmax(0, 1fr);
+    gap: 10px;
+    padding: 14px 10px;
+  }
+
+  .avatar {
+    width: 95px;
+    height: 95px;
+  }
+
+  .nombre-real {
+    font-size: 11px;
+  }
+
+  .nombre-real-input {
+    font-size: 11px;
+  }
+}

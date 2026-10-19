@@ -1,0 +1,51 @@
+
+<section class="stats-container">
+  <h2 class="titulo-historial">Tus stats:</h2>
+
+  <div class="podio-seccion">
+    <h3>Top individual:</h3>
+
+    <div class="podio">
+      @for (posicion of [2, 1, 3]; track posicion) {
+        @if (obtenerPartidasPorPosicion()[posicion - 1]; as partida) {
+          <article class="podio-jugador" [class.top-uno]="posicion === 1">
+            <img
+              class="copa"
+              src="/copa/copa.png"
+              [alt]="'Copa del top ' + posicion"
+            />
+
+            <span class="puesto">top {{ posicion }}</span>
+            <span class="puntos">
+              {{ partida.puntos.toLocaleString('en-US').replace(',', ' ') }}
+            </span>
+          </article>
+        }
+      }
+    </div>
+  </div>
+
+  <div class="separador"></div>
+
+  <div class="estadisticas">
+    <article class="estadistica">
+      <span class="etiqueta">Tu Elo es:</span>
+      <div class="valor valor-elo">Plata</div>
+    </article>
+
+    <article class="estadistica">
+      <span class="etiqueta etiqueta-derecha">High:</span>
+      <div class="valor valor-high">{{ eloActual }}</div>
+    </article>
+
+    <article class="estadistica">
+      <span class="etiqueta">Total de lineas destruidas:</span>
+      <div class="valor valor-lineas">{{ lineas }}</div>
+    </article>
+
+    <article class="estadistica">
+      <span class="etiqueta etiqueta-derecha">Poderes usados:</span>
+      <div class="valor valor-poderes">{{ poderes }}</div>
+    </article>
+  </div>
+</section>
