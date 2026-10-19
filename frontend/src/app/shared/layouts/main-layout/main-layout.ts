@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Navbar } from '../../../core/layout/navbar/navbar'
 import { RouterOutlet } from '@angular/router';
+import { BackgroundHandler } from '../../../services/background-handler';
 
 
 @Component({
@@ -9,5 +10,12 @@ import { RouterOutlet } from '@angular/router';
   templateUrl: './main-layout.html',
   styleUrl: './main-layout.scss'
 })
-export class MainLayout {
+export class MainLayout implements OnInit{
+  private backgroundHandler = inject(BackgroundHandler);
+  
+  ngOnInit():void{
+    const defaultBackground = '/backgrounds/city_image.jpg';
+    this.backgroundHandler.changeBackground(defaultBackground);
+  }
+
 }
