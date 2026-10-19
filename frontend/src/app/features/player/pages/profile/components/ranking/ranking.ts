@@ -34,7 +34,7 @@ export class Ranking {
   }
 
   obtenerCopa(posicion: number): string {
-    return '/copa/copa.png';
+    return '/elements/copa.png';
   }
   
 }
