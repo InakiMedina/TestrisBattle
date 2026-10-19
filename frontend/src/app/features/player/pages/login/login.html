@@ -29,7 +29,7 @@
         </form>
 
         <div class="login-button">
-            <button [disabled]="form.invalid">Iniciar Sesión</button>
+            <button (click)="onLogin()" [disabled]="form.invalid">Iniciar Sesión</button>
         </div>
 
     </div>

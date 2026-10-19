@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { User } from '../../../../shared/interfaces/user';
 import { FormGroup, FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 
@@ -10,6 +11,7 @@ import { FormGroup, FormBuilder, FormsModule, ReactiveFormsModule, Validators } 
 })
 
 export class Login {
+  private router = inject(Router);
 
   form: FormGroup;
 
@@ -33,6 +35,10 @@ export class Login {
 
   validateLogIn(){
     console.log('Login')
+  }
+
+  onLogin(){
+    this.router.navigate(['/home']);
   }
 
 }
