@@ -1,0 +1,11 @@
+<div class="match-row">
+	<span class="opponent">vs {{ opponent() }}</span>
+	@if (result() === Result.WON) {
+		<span class="won">Won</span>
+	} @else {
+		<span class="lost">Lost</span>
+	}
+	<span class="score">My score: {{ score() }}</span>
+	<span class="date-time">{{ dateTime() }}</span>
+	<span class="duration">Duration: {{ duration() }}</span>
+</div>
