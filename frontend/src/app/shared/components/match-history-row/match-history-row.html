@@ -1,11 +1,14 @@
-<div class="match-row">
-	<span class="opponent">vs {{ opponent() }}</span>
+<div class="match-row"
+	[class.is-win]="result() === Result.WON"
+    [class.is-lost]="result() === Result.LOST">
+
+	<span class="opponent">{{ opponent() }}</span>
 	@if (result() === Result.WON) {
-		<span class="won">Won</span>
+		<span class="won">VICTORIA</span>
 	} @else {
-		<span class="lost">Lost</span>
+		<span class="lost">DERROTA</span>
 	}
-	<span class="score">My score: {{ score() }}</span>
+	<span class="score">Mi score: {{ score() }}</span>
 	<span class="date-time">{{ dateTime() }}</span>
-	<span class="duration">Duration: {{ duration() }}</span>
+	<span class="duration">Duración: {{ duration() }}</span>
 </div>
