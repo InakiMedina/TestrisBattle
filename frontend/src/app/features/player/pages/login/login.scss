@@ -50,12 +50,12 @@
     font-size: 16px;
 }
 
-.forgot-password-link {
+.forgot-password-link, .signin-link {
     margin: 15px 0px;
     text-align: right;
 }
 
-.forgot-password-link a {
+.forgot-password-link, .signin-link a {
     font-weight: bold;
     color: black;
 }
