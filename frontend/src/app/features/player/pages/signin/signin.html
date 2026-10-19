@@ -1,0 +1,58 @@
+<section id="signin-section">
+    <div class="signin-form-div">
+        <div class="form-header">
+            <h2>Incia Sesión</h2>
+        </div>
+    
+        <form class="signin-form" [formGroup]="form" (submit)="validateSignIn()">
+
+            <div class="form-name-field">
+                <label for="name">Nombre:</label>
+                <input type="text" name="name" formControlName="name">
+                @if (form.controls['name'].errors){
+                    <span class="error">{{form.controls['name'].errors['required'] ? 'Este campo es requerido' : 'El nombre debe tener una longitud mínimo de 2 caracteres'}}</span>
+                }
+            </div>
+            <div class="form-email-field">
+                <label for="email">Correo electrónico:</label>
+                <input type="text" name="email" formControlName="email">
+                @if (form.controls['email'].errors){
+                    <span class="error">{{form.controls['email'].errors['required'] ? 'Este campo es requerido' : 'Correo inválido'}}</span>
+                }
+            </div>
+            <div class="form-password-field">
+                <label for="password">Contraseña:</label>
+                <input type="password" name="password" formControlName="password">
+                @if (form.controls['password'].errors){
+                    <span class="error">{{form.controls['password'].errors['required'] ? 'Este campo es requerido' : 'La contraseña debe tener al menos 8 caracteres'}}</span>
+                }
+            </div>
+            <div class="form-password-confirm-field">
+                <label for="password">Confirmar Contraseña:</label>
+                <input type="password" name="confirm" formControlName="confirm">
+                @if (form.controls['confirm'].errors){
+                    <span class="error">{{form.controls['confirm'].errors['required'] ? 'Este campo es requerido' : 'La contraseña debe tener al menos 8 caracteres'}}</span>
+                }
+            </div>
+
+            <div class="terms-and-conditions">
+                <label>
+                    <input type="checkbox" name="accept" formControlName="accept">Aceptar terminos y condiciones
+                    @if (form.controls['accept'].errors){
+                        <span class="error">Es necesario aceptar los términos y condiciones</span>
+                    }
+                </label>
+            </div>
+
+            <div class="login-link">
+                <a routerLink="/">¿Ya tienes una cuenta? Inicia sesión</a>
+            </div>
+
+        </form>
+
+        <div class="signin-button">
+            <button (click)="onSignin()" [disabled]="form.invalid">Registrarse</button>
+        </div>
+
+    </div>
+</section>

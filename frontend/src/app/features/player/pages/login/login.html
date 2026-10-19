@@ -1,0 +1,36 @@
+<section id="login-section">
+    <div class="login-form-div">
+        <div class="form-header">
+            <h2>Incia Sesión</h2>
+        </div>
+    
+        <form class="login-form" [formGroup]="form" (submit)="validateLogIn()">
+
+            <div class="form-email-field">
+                <label for="email">Email:</label>
+                <input type="text" name="email" formControlName="email">
+                @if (form.controls['email'].errors){
+                    <span class="error">{{form.controls['email'].errors['required'] ? 'Este campo es requerido' : 'Correo inválido'}}</span>
+                }
+            </div>
+            <div class="form-password-field">
+                <label for="password">Password:</label>
+                <input type="password" name="password" formControlName="password">
+                @if (form.controls['password'].errors){
+                    <span class="error">{{form.controls['password'].errors['required'] ? 'Este campo es requerido' : 'La contraseña debe tener al menos 8 caracteres'}}</span>
+                }
+            </div>
+
+            <div class="forgot-password-link">
+                <a href="">¿Olvidaste tu contraseña? Da click aquí</a>
+            </div>
+
+            
+        </form>
+
+        <div class="login-button">
+            <button (click)="onLogin()" [disabled]="form.invalid">Iniciar Sesión</button>
+        </div>
+
+    </div>
+</section>

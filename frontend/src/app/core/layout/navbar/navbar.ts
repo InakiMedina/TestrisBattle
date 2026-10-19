@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { LucideAngularModule, Trophy, Gamepad2, User } from 'lucide-angular';
+import { LucideAngularModule, Calendar, Gamepad2, User } from 'lucide-angular';
 import { RankGameButton } from './components/rank-game-button/rank-game-button';
 
 @Component({
@@ -16,7 +16,7 @@ import { RankGameButton } from './components/rank-game-button/rank-game-button';
 })
 export class Navbar {
 
-  readonly TrophyIcon = Trophy;
+  readonly CalendarIcon = Calendar;
   readonly GamepadIcon = Gamepad2;
   readonly UserIcon = User;
 
