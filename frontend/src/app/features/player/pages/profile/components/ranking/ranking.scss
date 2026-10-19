@@ -1,0 +1,123 @@
+
+.ranking-container {
+  width: 100%;
+  height: 200px;
+  padding: 12px 10px;
+  margin-top: -30px;
+  color: #ffffff;
+  background: rgba(53, 51, 79, 0.92);
+  border: 2px solid #ffffff;
+  border-radius: 12px;
+  box-sizing: border-box;
+  backdrop-filter: blur(8px);
+}
+
+.ranking-container h2 {
+  margin: 0 0 0;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+
+.ranking-podio {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  align-items: start;
+  gap: 4px;
+  height: 165px;
+  padding-top: 0;
+  box-sizing: border-box;
+}
+
+.podio-jugador {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: flex-start;
+  flex-direction: column;
+  gap: 3px;
+  height: 100%;
+  text-align: center;
+  overflow: hidden;
+  padding-top: 10px;
+}
+
+
+.copa {
+  display: block;
+  width: 38px;
+  height: 45px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+
+.puesto-uno .copa {
+  width: 65px;
+  height: 78px;
+}
+
+
+.podio-jugador:nth-child(2) .copa,
+.podio-jugador:nth-child(4) .copa {
+  width: 50px;
+  height: 60px;
+}
+
+.puesto {
+  color: #e8ad00;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.nombre-jugador {
+  width: 100%;
+  color: #e8ad00;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.puntaje-jugador {
+  width: 100%;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 500px) {
+  .ranking-container {
+    height: 210px;
+    padding: 10px 6px;
+  }
+
+  .ranking-container h2 {
+    font-size: 12px;
+  }
+
+  .ranking-podio {
+    gap: 2px;
+    height: 165px;
+  }
+
+  .copa {
+    width: 30px;
+    height: 38px;
+  }
+
+  .puesto-uno .copa {
+    width: 48px;
+    height: 62px;
+  }
+
+  .puesto {
+    font-size: 12px;
+  }
+
+  .nombre-jugador,
+  .puntaje-jugador {
+    font-size: 9px;
+  }
+}

@@ -2,8 +2,9 @@ import { Routes } from '@angular/router';
 import { Login } from './features/player/pages/login/login';
 import { Signin } from './features/player/pages/signin/signin';
 import { Practice } from './features/player/pages/practice/practice'
-import { History } from './features/player/pages/history/history';
-import { Profile } from './features/player/pages/profile/profile';
+import { Leaderboard } from './features/player/pages/leaderboard/leaderboard';
+import { PerfilPage } from './features/player/pages/profile/perfil-page';
+import { History } from './features/player/pages/history';
 import { MainLayout } from './shared/layouts/main-layout/main-layout';
 
 export const routes: Routes = [
@@ -29,7 +30,7 @@ export const routes: Routes = [
 			}, 
 			{
 				path: 'profile',
-				component: Profile
+				component: PerfilPage
 			}
 		]
 	},

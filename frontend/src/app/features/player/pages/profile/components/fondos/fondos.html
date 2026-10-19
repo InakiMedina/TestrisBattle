@@ -1,0 +1,23 @@
+
+<section class="fondos-container">
+  <h2>Fondos</h2>
+
+  <div class="fondos-grid">
+    @for (fondo of fondos; track fondo.ruta) {
+      <button
+        type="button"
+        class="fondo-card"
+        [class.seleccionado]="fondoSeleccionado === fondo.ruta"
+        [attr.aria-label]="'Seleccionar ' + fondo.nombre"
+        [attr.aria-pressed]="fondoSeleccionado === fondo.ruta"
+        (click)="seleccionarFondo(fondo.ruta)"
+      >
+        <img
+          [src]="fondo.ruta"
+          [alt]="fondo.nombre"
+        />
+
+      </button>
+    }
+  </div>
+</section>
