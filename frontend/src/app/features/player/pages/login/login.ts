@@ -38,7 +38,7 @@ export class Login {
   }
 
   onLogin(){
-    this.router.navigate(['/home']);
+    this.router.navigate(['/practice']);
   }
 
 }

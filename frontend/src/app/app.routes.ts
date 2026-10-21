@@ -9,14 +9,11 @@ import { MainLayout } from './shared/layouts/main-layout/main-layout';
 export const routes: Routes = [
 	{
 		path: '',
-		component: Login
-  	},
+		redirectTo: 'login',
+		pathMatch: 'full'
+	},
 	{
-		path: 'signin',
-		component: Signin
-  	},
-	{
-		path: 'home',
+		path: '',
 		component: MainLayout,
 		children: [
 			{
@@ -33,6 +30,14 @@ export const routes: Routes = [
 			}
 		]
 	},
+	{
+		path: 'login',
+		component: Login
+  	},
+	{
+		path: 'signin',
+		component: Signin
+  	},
 	{
 		path: '**',
 		redirectTo: 'not-found'
