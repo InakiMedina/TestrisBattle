@@ -40,7 +40,7 @@ export class Signin {
   }
 
   onSignin(){
-    this.router.navigate(['/home']);
+    this.router.navigate(['/practice']);
   }
 
   matchPasswords() {
