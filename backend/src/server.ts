@@ -2,6 +2,12 @@ import app from './app';
 import config from './config/config';
 import swaggerUI from 'swagger-ui-express';
 import swaggerJsDoc from 'swagger-jsdoc';
+import mongoose from 'mongoose';
+
+
+mongoose.connect(config.mongoDBURL)
+    .then(() => console.log("Connection Successful"))
+    .catch((err) => console.error("Connection Error:", err));
 
 // Swagger setup
 const swaggerOptions = {
@@ -14,7 +20,7 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: 'http://localhost:3000',
+        url: `http://localhost:${config.port}`,
       },
     ],
   },
