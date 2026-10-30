@@ -1,4 +1,61 @@
-<h1>Practicar</h1> 
-<div class="game-screen">
-	<img src="./elements/tetris-game.png">
+<div class="container">
+	<div class="data-container">
+		<div class="game-next-pieces">
+			<h4>Next pieces</h4>
+			<img src="./elements/next-pieces.png">
+		</div>
+		<div class="game-stats">
+			<h4>Score 7134</h4>
+			
+			<ul>
+				<li>level 6</li>
+				<li>lines 100</li>
+				<li>high 9999</li>
+				<li>points till next power: 353</li>
+			</ul>
+		</div>
+	</div>
+	<div class="game-screen">
+		<img src="./elements/tetris-game.png">
+	</div>
+	<div class="game-powers">
+		<ul>
+			<li>
+				<span>Push
+					<lucide-icon [img]="WaypointsIcon" [size]="48"></lucide-icon>
+				</span>
+				permitir alterar la posición de las piecas del oponente
+			</li>
+			<li>
+				<span>Shuffle
+					<lucide-icon [img]="ShuffleIcon" [size]="48"></lucide-icon>
+				</span>
+				modifica aleatoriamente la pila de pieces que recibe el oponente
+			</li>
+			<li>
+				<span>Block
+					<lucide-icon [img]="BanIcon" [size]="48"></lucide-icon>
+				</span>
+				genera un obstaculo que dificulta el juego del oponente
+			</li>
+			<li>
+				<span>Gravity -
+					<lucide-icon [img]="WavesArrowDownIcon" [size]="48"></lucide-icon>
+				</span>
+				disminuye temporalmente la velocidad con la que caen las piecas
+			</li>
+			<li>
+				<span>Gravity +
+					<lucide-icon [img]="WavesArrowUpIcon" [size]="48"></lucide-icon>
+				</span>
+				aumenta temporalmente la velocidad con la que caen las piecas
+			</li>
+			<li>
+				<span>Chaos
+					<lucide-icon [img]="ExpandIcon" [size]="48"></lucide-icon>
+				</span>
+				provoca una alteración especial en el tablero del oponente
+			</li>
+		</ul>
+	</div>
 </div>
