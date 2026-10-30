@@ -1,4 +1,4 @@
-export interface PlayerGameData {
+export interface IPlayerGameData {
 	elo: number,
 	eloGained: number,
 	league: string,
@@ -7,15 +7,15 @@ export interface PlayerGameData {
 	powers_used: number
 }
 
-export interface GameRecord {
+export interface IGameRecord {
 	winner: false,
 	duration: number,
 	data: Date,
-	playerAData: PlayerGameData,
-	playerBData: PlayerGameData
+	playerAData: IPlayerGameData,
+	playerBData: IPlayerGameData
 }
 
-export interface history {
+export interface IHistory {
 	playerId: string
-	games: GameRecord[]
+	games: IHistory[]
 }

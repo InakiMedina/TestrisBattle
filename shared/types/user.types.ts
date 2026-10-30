@@ -1,4 +1,4 @@
-export interface UserStats {
+export interface IUserStats {
 	games_played: number,
 	highest_score_rank: number,
 	highest_score_solo: number,
@@ -6,7 +6,7 @@ export interface UserStats {
 	powers_used: number
 }
 
-export interface User {
+export interface IUser {
 	id?: string,
 	username: string,
 	email: string,
@@ -15,5 +15,5 @@ export interface User {
 	elo: number,
 	background: string,
 	league: string,
-	stats: UserStats,
+	stats: IUserStats,
 }
