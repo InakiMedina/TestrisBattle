@@ -1,6 +1,7 @@
 import type { Options } from 'swagger-jsdoc';
 import authSwagger from './authSwagger.json';
 import rootSwagger from './rootSwagger.json';
+import testAuthSwagger from './testAuthSwagger.json';
 
 export function createSwaggerOptions(port: number): Options {
   return {
@@ -19,8 +20,18 @@ export function createSwaggerOptions(port: number): Options {
       paths: {
         ...rootSwagger.paths,
         ...authSwagger.paths,
+        ...testAuthSwagger.paths,
       },
-      components: authSwagger.components,
+      components: {
+        ...authSwagger.components,
+        securitySchemes: {
+          cookieAuth: {
+            type: 'apiKey',
+            in: 'cookie',
+            name: 'token',
+          },
+        },
+      },
     },
     apis: [],
   };

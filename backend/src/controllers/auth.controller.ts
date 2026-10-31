@@ -16,7 +16,7 @@ export async function login(req: Request, res: Response) {
 		})
 	}
 
-	const token = jwt.sign(user, config.mySecret, {expiresIn: "3h" })
+	const token = jwt.sign({ email: user.email }, config.mySecret, {expiresIn: "3h" })
 
 	res.cookie("token", token, {
 		httpOnly: true
