@@ -1,0 +1,21 @@
+{
+  "paths": {
+    "/": {
+      "get": {
+        "summary": "Check that the server is running",
+        "responses": {
+          "200": {
+            "description": "Returns the server welcome page.",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
