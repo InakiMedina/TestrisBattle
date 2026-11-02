@@ -1,0 +1,50 @@
+{
+  "paths": {
+  "/api/testAuth": {
+    "get": {
+      "summary": "Test auth token",
+      "description": "Returns the authenticated user's email when the token cookie is valid.",
+      "security": [
+        {
+          "cookieAuth": []
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "The token is valid.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "user": {
+                    "type": "object",
+                    "properties": {
+                      "email": {
+                        "type": "string",
+                        "format": "email"
+                      }
+                    },
+                    "required": ["email"]
+                  }
+                },
+                "required": ["user"]
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "The token is missing, invalid, or expired.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ErrorResponse"
+              }
+            }
+          }
+          }
+        }
+      }
+    }
+  }
+}
