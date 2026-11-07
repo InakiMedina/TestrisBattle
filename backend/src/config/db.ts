@@ -1,8 +1,9 @@
 import mongoose from 'mongoose';
+import config from '../config/config';
 
 export async function connectDB(): Promise<void> {
-  const uri = process.env.MONGODB_URL;
-  if (!uri) throw new Error('MONGODB_URL no está definida en el .env');
-  await mongoose.connect(uri);
-  console.log('MongoDB conectado');
+  mongoose.connect(config.mongoDBURL)
+    .then(() => console.log('Mongo connection Successful'))
+    .catch((err) => console.error('Mongo connection Error:', err));
+  
 }
