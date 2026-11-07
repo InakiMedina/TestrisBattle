@@ -9,8 +9,6 @@ const apiRouter = Router();
 
 apiRouter.use('/auth', authRouter);
 
-apiRouter.post('/users', validateCreateUser, createUser);
-
 apiRouter.use(cookieJwtAuth);
 
 apiRouter.get('/testAuth', (req, res) => {
