@@ -7,9 +7,9 @@ const userSchema = new Schema<IUser>(
     email: { type: String, required: true, trim: true, lowercase: true, unique: true },
     hashPass: { type: String, required: true, select: false },
     role: { type: String, enum: ['admin', 'usuario'], required: true, default: 'usuario' },
-    profilePicture: { type: String, required: true, default: '' },
+    profilePicture: { type: String, required: false, default: '' },
     elo: { type: Number, required: true, default: 1000, min: 0 },
-    background: { type: String, required: true, default: '' },
+    background: { type: String, required: false, default: '' },
     league: { type: String, required: true, default: 'Unranked' },
     stats: {
       games_played: { type: Number, default: 0, min: 0 },

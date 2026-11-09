@@ -3,8 +3,9 @@ import jwt from 'jsonwebtoken';
 import type { StringValue } from 'ms';
 import type { IAuthUser } from '@shared/types/auth.types';
 import config from '../config/config';
+import { User } from '../models/user.model';
 import { HttpError } from '../types/httpError';
-import { findByEmail, toPublicUser } from './user.store';
+import { toPublicUser } from './user.mapper';
 import * as userService from './user.services';
 
 export interface AuthResult {
@@ -21,7 +22,8 @@ function signToken(user: IAuthUser): string {
 }
 
 export async function login(email: string, password: string): Promise<AuthResult> {
-  const stored = findByEmail(email);
+  // hashPass tiene select:false, por eso se pide explícitamente
+  const stored = await User.findOne({ email: email.trim().toLowerCase() }).select('+hashPass');
   const valid = stored ? await bcrypt.compare(password, stored.hashPass) : false;
   if (!stored || !valid) throw new HttpError(401, 'Credenciales inválidas');
 
