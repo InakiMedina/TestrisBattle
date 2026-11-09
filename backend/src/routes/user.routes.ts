@@ -1,19 +1,19 @@
 import { Router } from 'express';
 import * as controller from '../controllers/user.controller';
+import { requireRole, requireSelf, requireSelfOrAdmin } from '../middlewares/authorize';
 import {
   validateChangePassword,
-  validateCreateUser,
-  validateObjectId,
   validateUpdateUser,
+  // validateObjectId, // Descomentar al conectar MongoDB (los ids pasan a ser ObjectId)
 } from '../middlewares/userValidation';
 
 const router = Router();
 
-router.post('/', validateCreateUser, controller.createUser);
-router.get('/', controller.getUsers);
-router.get('/:id', validateObjectId, controller.getUserById);
-router.patch('/:id', validateObjectId, validateUpdateUser, controller.updateUser);
-router.patch('/:id/password', validateObjectId, validateChangePassword, controller.changePassword);
-router.delete('/:id', validateObjectId, controller.deleteUser);
+// Al conectar MongoDB, agregar validateObjectId después de requireSelf/requireSelfOrAdmin/requireRole en las rutas que llevan :id
+router.get('/', requireRole('admin'), controller.getUsers);
+router.get('/:id', requireSelfOrAdmin, controller.getUserById);
+router.patch('/:id', requireSelfOrAdmin, validateUpdateUser, controller.updateUser);
+router.patch('/:id/password', requireSelf, validateChangePassword, controller.changePassword);
+router.delete('/:id', requireRole('admin'), controller.deleteUser);
 
 export default router;
