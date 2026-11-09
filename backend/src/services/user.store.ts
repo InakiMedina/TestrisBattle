@@ -1,16 +1,29 @@
 import { randomUUID } from 'node:crypto';
 import bcrypt from 'bcryptjs';
-import type { IAuthUser, Role } from '@shared/types/auth.types';
+import type { IAuthUser } from '@shared/types/auth.types';
 import config from '../config/config';
 
 export const SALT_ROUNDS = 10;
 
-export interface StoredUser {
-  id: string;
-  username: string;
-  email: string;
+export interface StoredUser extends IAuthUser {
   hashPass: string;
-  role: Role;
+}
+
+// Mismos valores por defecto que el modelo de Mongoose (user.model.ts)
+export function defaultProfile() {
+  return {
+    profilePicture: '',
+    background: '',
+    elo: 1000,
+    league: 'Unranked',
+    stats: {
+      games_played: 0,
+      highest_score_rank: 0,
+      highest_score_solo: 0,
+      lines_destroyed: 0,
+      powers_used: 0,
+    },
+  };
 }
 
 // Almacén temporal en memoria, se reemplazará por MongoDB.
@@ -21,6 +34,7 @@ export const users: StoredUser[] = [
     email: 'admin@tetris.test',
     hashPass: bcrypt.hashSync(config.seedAdminPassword, SALT_ROUNDS),
     role: 'admin',
+    ...defaultProfile(),
   },
   {
     id: randomUUID(),
@@ -28,6 +42,7 @@ export const users: StoredUser[] = [
     email: 'jugador@tetris.test',
     hashPass: bcrypt.hashSync(config.seedUserPassword, SALT_ROUNDS),
     role: 'usuario',
+    ...defaultProfile(),
   },
 ];
 
@@ -41,5 +56,6 @@ export function findByEmail(email: string): StoredUser | undefined {
 }
 
 export function toPublicUser(user: StoredUser): IAuthUser {
-  return { id: user.id, username: user.username, email: user.email, role: user.role };
+  const { hashPass: _omit, ...publicUser } = user;
+  return publicUser;
 }
