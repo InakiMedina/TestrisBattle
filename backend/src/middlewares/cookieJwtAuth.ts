@@ -23,7 +23,7 @@ export default (req: Request, res: Response, next: NextFunction) => {
 		return res.status(401).json({ error: 'Invalid authentication token' });
 	}
 
-	const user: AuthenticatedUser = { email: decoded.email };
+	const user: AuthenticatedUser = { email: decoded.email, username: decoded.username };
 	req.user = user;
 	next();
 };
