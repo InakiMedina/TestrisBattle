@@ -3,9 +3,13 @@ import config from './config/config';
 import mongoose from 'mongoose';
 import { setupSwagger } from './swagger';
 
-mongoose.connect(config.mongoDBURL)
-  .then(() => console.log('Connection Successful'))
-  .catch((err) => console.error('Connection Error:', err));
+// Mientras no haya Atlas, la API usa el almacén en memoria.
+if (config.mongoDBURL) {
+  mongoose
+    .connect(config.mongoDBURL)
+    .then(() => console.log('Connection Successful'))
+    .catch((err) => console.error('Connection Error:', err));
+}
 
 setupSwagger(app, config.port);
 
