@@ -1,48 +1,149 @@
-.container {
-	background-color: rgba(0,0,0,0.4);
-	display: flex;
-	flex-direction: column;
-	align-items: center;
 
-	h1 {
-		margin: clamp(1rem, 3vw, 2.5rem);
-		color: white;
-	}
+:host {
+  display: block;
+  width: 185px;
+  height: 100vh;
+  flex: 0 0 185px;
+}
 
-	.routers {
-		margin: clamp(1rem, 3vw, 2.5rem);
-		ul {
-			list-style-type: none;
-			margin: 0;
-			padding: 0;
-			width: 200px;
-			background-color: #f1f1f1;
-			
-			li a {
-				display: block;
-				color: black;
-				padding: 8px 16px;
-				text-decoration: none;
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
 
-				lucide-icon, svg {
-					display: inline-flex;
-					align-items: center;
-					justify-content: center;
-					margin-right: 0.5rem;
-				}
-			
-				&:hover {
-					background-color: #555555;
-					color: white;
-				}
+/* Título */
+.brand {
+  display: block;
+  width: 100%;
+  margin-top: 30px;
+  padding: 20px 0 0;
+  box-sizing: border-box;
 
-				&.active {
-					background-color: #ea0bea;
-					color: rgb(0, 0, 0);
-				}
-			}
-		}
+  color: #ffffff;
+  text-decoration: none;
+  text-align: center;
 
-	}
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 40px;
+  font-weight: 550;
+  letter-spacing: 5px;
+  line-height: 1.15;
+}
 
+/* Navegación */
+.navigation {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: space-evenly;
+  gap: 12px;
+
+  width: 100%;
+  min-height: 0;
+  margin-top: 5px;
+  margin-bottom: 20px;
+  padding: 24px 0;
+
+  box-sizing: border-box;
+  background: rgba(0, 0, 0, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0 10px 10px 0;
+  backdrop-filter: blur(8px);
+}
+
+/* Botones */
+.nav-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  width: 100%;
+  min-height: 84px;
+  padding: 0 8px;
+  box-sizing: border-box;
+  flex-shrink: 0;
+
+  color: rgba(255, 255, 255, 0.72);
+  text-decoration: none;
+  font-size: 18px;
+  font-weight: 400;
+
+  border-radius: 0 10px 10px 0;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+/* Iconos PNG */
+.nav-item img {
+  display: block;
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+/* Texto */
+.nav-item span {
+  text-align: center;
+}
+
+/* Hover */
+.nav-item:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: #ffffff;
+}
+
+/* Página activa */
+.nav-item.active {
+  color: #24d5d8;
+  background: rgba(36, 213, 216, 0.1);
+}
+
+
+
+/* Por defecto se muestra el icono normal */
+.nav-item .icon-active {
+  display: none;
+}
+
+/* Cuando está seleccionado */
+.nav-item.active .icon-default {
+  display: none;
+}
+
+.nav-item.active .icon-active {
+  display: block;
+}
+
+
+/* Pantallas pequeñas */
+@media (max-width: 600px) {
+  :host {
+    width: 150px;
+    flex-basis: 150px;
+  }
+
+  .brand {
+    font-size: 32px;
+  }
+
+  .navigation {
+    padding: 16px 0;
+  }
+
+  .nav-item {
+    gap: 8px;
+    padding: 0 4px;
+    font-size: 15px;
+  }
+
+  .nav-item img {
+    width: 22px;
+    height: 22px;
+  }
 }
