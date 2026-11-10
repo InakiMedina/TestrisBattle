@@ -44,7 +44,7 @@ The title can be made role-dependent in several ways:
 **Chosen and implemented:** use `AuthService` with template interpolation from
 a component value. Keep the brand's existing styling unchanged.
 
-## Implementation status
+## Completed
 
 - [x] Use `AuthService` role state in the existing navbar component. The
   component derives the brand title and binds it with template interpolation:
@@ -53,20 +53,25 @@ a component value. Keep the brand's existing styling unchanged.
 - [x] Keep the navbar component, pages, routes, and styling unchanged.
 - [x] Add navbar coverage for admin and player labels; the default null role
   remains **Tetris**.
-- [ ] Manually verify the label after logout and session expiry.
+- [x] The admin title change was manually confirmed to work.
 
-## Future flexibility (context only; not part of this plan)
+## Navigation links from data
 
-The navbar's visual style is expected to remain shared, but its pages/links
-could differ substantially between player and admin. A future design could
-represent links as data (for example, arrays of navigation items with labels,
-routes, and icons) and select the appropriate set using the role. That would
-allow page lists to change without tying the whole navbar structure to a
-title-only conditional. This is only an architectural consideration; it is not part of this plan and
-does not call for implementing role-specific pages or navigation now.
+- [x] Define a typed navigation-item shape and store the four items in an array
+  in `navbar.ts`.
+- [x] Render the items with Angular `@for`, tracking each item by route.
+- [x] Preserve the existing order, labels, routes, icon assets, CSS classes,
+  active-link directive, and empty image alt text.
+- [x] Add a test verifying the rendered link order, labels, routes, and icons.
+- [ ] Manually verify active-link styling in the running app.
+
+This refactor is identical for admins and players. Do not add role checks,
+role-specific arrays, conditionals, links, or pages. The existing title
+interpolation based on `AuthService` role is the only role-dependent navbar
+behavior and remains unchanged.
 
 ## Not included
 
 - Creating separate player and admin navbar components.
 - Splitting the navbar into modules or separate implementations.
-- Changing the navbar pages or links.
+- Making the navigation links or pages role-dependent.
