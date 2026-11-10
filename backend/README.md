@@ -38,3 +38,12 @@ Swagger UI is available at `http://localhost:8000/docs`.
 
 - `npm run build` compiles the TypeScript.
 - `npm start` starts the compiled server.
+
+## Usuarios de prueba
+
+A continuación, se muestran las credenciales de acceso para probar la aplicación:
+
+| Rol | Correo | Contraseña |
+|:---:|---|---|
+| Administrador | admin@tetris.test  | ADMIN1234 |
+| Usuario | jugador@tetris.test | USER1234 |
