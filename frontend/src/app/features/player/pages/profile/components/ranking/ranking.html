@@ -1,26 +1,94 @@
 
 <section class="ranking-container">
-  <h2>Top 5 de elo mundial:</h2>
 
-  <div class="ranking-podio">
-    @for (posicion of [4, 2, 1, 3, 5]; track posicion) {
-      @for (jugador of jugadores; track jugador.nombre) {
-        @if (jugador.posicion === posicion) {
-          <article
-            class="podio-jugador"
-            [class.puesto-uno]="posicion === 1"
-          >
+  <!-- Pestañas -->
+  <nav class="ranking-tabs">
+    <button
+      type="button"
+      [class.activo]="vistaActiva === 'poderes'"
+      (click)="cambiarVista('poderes')"
+    >
+      Top mis Poderes más usados
+    </button>
+
+    <button
+      type="button"
+      [class.activo]="vistaActiva === 'puntos'"
+      (click)="cambiarVista('puntos')"
+    >
+      Top 3 mejores partidas
+    </button>
+  </nav>
+
+  <!-- TOP 3 DE PODERES -->
+  @if (vistaActiva === 'poderes') {
+
+    <div class="ranking-content">
+
+      <div class="ranking-podio poderes-podio">
+
+        @for (poder of poderesMasUsados; track poder.name) {
+          <article class="ranking-item">
+
             <img
-                class="copa"
-                [src]="obtenerCopa(posicion)"
-                [alt]="'Copa del top ' + posicion"
+              [src]="poder.image"
+              [alt]="poder.name"
+              class="poder-imagen"
             />
 
-            <span class="puesto">top {{ posicion }}</span>
-            <span class="nombre-jugador">{{ jugador.nombre }}</span>
-            <span class="puntaje-jugador">{{ jugador.puntaje }} pts</span>          </article>
+            <span class="puesto">
+              top {{ poder.posicion }}
+            </span>
+
+            <span class="usos">
+              {{ poder.usos }} usos
+            </span>
+
+          </article>
         }
-      }
-    }
-  </div>
+
+      </div>
+    </div>
+
+  }
+
+  <!-- TOP 3 DE PARTIDAS -->
+  @if (vistaActiva === 'puntos') {
+
+    <div class="ranking-content">
+
+      <div class="ranking-podio puntos-podio">
+
+        @for (partida of mejoresPartidas; track partida.posicion) {
+          <article class="ranking-item">
+
+            <img
+              [src]="obtenerCopa()"
+              [alt]="'Copa del top ' + partida.posicion"
+              class="copa"
+              [class.primer-lugar]="partida.posicion === 1"
+            />
+
+            <span class="puesto">
+              top {{ partida.posicion }}
+            </span>
+
+            <span class="nombre">
+              <span class="rival">rival: </span>
+              {{ partida.rival }}
+            </span>
+            
+            <span class="puntaje">
+              <span class="score">score: </span>
+              {{ partida.puntaje.toLocaleString('en-US') }} 
+            </span>
+
+          </article>
+        }
+
+      </div>
+    </div>
+
+  }
+
 </section>

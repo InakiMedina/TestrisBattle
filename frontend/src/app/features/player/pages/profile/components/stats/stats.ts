@@ -1,49 +1,89 @@
 
 import { Component } from '@angular/core';
+import { Match } from '../../../../../../shared/interfaces/match-interface';
+import { UpperCasePipe } from '@angular/common';
 
-interface Partida {
-  rival: string;
-  resultado: 'Victoria' | 'Derrota';
-  puntos: number;
-  fecha: string;
-}
 
 @Component({
   selector: 'app-stats',
   standalone: true,
-  imports: [],
+  imports: [UpperCasePipe],
   templateUrl: './stats.html',
   styleUrl: './stats.scss',
 })
 export class Stats {
-  eloActual = 2450;
-  lineas = 30000;
-  poderes = 30;
 
-  mejoresPartidas: Partida[] = [
+  partidas: Match[] = [
     {
-      rival: 'PixelStorm',
+      nombreEnemigo: 'T-Spin_Wizard',
       resultado: 'Victoria',
-      puntos: 3200,
-      fecha: '15/10/2026',
+      score: 58400,
+      fecha: '2026-10-18',
+      duracion: '06:21'
     },
     {
-      rival: 'TetrisKing',
-      resultado: 'Victoria',
-      puntos: 2950,
-      fecha: '12/10/2026',
-    },
-    {
-      rival: 'GalaxyPro',
+      nombreEnemigo: 'MatrixGlitcher',
       resultado: 'Derrota',
-      puntos: 2780,
-      fecha: '10/10/2026',
+      score: 19200,
+      fecha: '2026-10-17',
+      duracion: '02:44'
     },
+    {
+      nombreEnemigo: 'BlockDropper99',
+      resultado: 'Victoria',
+      score: 74300,
+      fecha: '2026-10-17',
+      duracion: '08:12'
+    },
+    {
+      nombreEnemigo: 'line_clear_god',
+      resultado: 'Derrota',
+      score: 24100,
+      fecha: '2026-10-16',
+      duracion: '03:10'
+    },
+    {
+      nombreEnemigo: 'TacoDeAsada',
+      resultado: 'Victoria',
+      score: 51200,
+      fecha: '2026-10-16',
+      duracion: '05:50'
+    },
+    {
+      nombreEnemigo: 'T-Spin_Wizard',
+      resultado: 'Victoria',
+      score: 58400,
+      fecha: '2026-10-18',
+      duracion: '06:21'
+    },
+    {
+      nombreEnemigo: 'MatrixGlitcher',
+      resultado: 'Derrota',
+      score: 19200,
+      fecha: '2026-10-17',
+      duracion: '02:44'
+    },
+    {
+      nombreEnemigo: 'BlockDropper99',
+      resultado: 'Victoria',
+      score: 74300,
+      fecha: '2026-10-17',
+      duracion: '08:12'
+    },
+    {
+      nombreEnemigo: 'line_clear_god',
+      resultado: 'Derrota',
+      score: 24100,
+      fecha: '2026-10-16',
+      duracion: '03:10'
+    },
+    {
+      nombreEnemigo: 'TacoDeAsada',
+      resultado: 'Victoria',
+      score: 51200,
+      fecha: '2026-10-16',
+      duracion: '05:50'
+    }
   ];
 
-  obtenerPartidasPorPosicion(): Partida[] {
-    return [...this.mejoresPartidas]
-      .sort((a, b) => b.puntos - a.puntos)
-      .slice(0, 3);
-  }
 }
