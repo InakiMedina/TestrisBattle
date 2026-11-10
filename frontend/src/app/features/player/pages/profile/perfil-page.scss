@@ -1,8 +1,12 @@
 
 .perfil-page {
   width: 100%;
-  min-height: 100vh;
-  //padding: 93px 32px 32px;
+  min-height: 100%;
+  height: auto;
+
+  padding-top: calc(107px - clamp(16px, 3vw, 40px));
+  padding-bottom: 32px;
+
   box-sizing: border-box;
 }
 
@@ -20,7 +24,6 @@
   min-width: 0;
 }
 
-
 .columna-izquierda app-perfil,
 .columna-izquierda app-fondos,
 .columna-derecha app-stats,
@@ -30,26 +33,34 @@
   min-width: 0;
 }
 
+.columna-derecha {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding-top: 0;
+  box-sizing: border-box;
+}
+
+/* TABLETS */
+
 @media (max-width: 900px) {
   .perfil-layout {
     grid-template-columns: minmax(0, 1fr);
   }
-}
 
-@media (max-width: 600px) {
+  .columna-derecha {
+    padding-top: 0;
+  }
+
   .perfil-page {
-    padding: 32px 16px;
+    padding-bottom: 24px;
   }
 }
 
-.columna-derecha {
-  padding-top: 31px;
-}
+/* MOVILES */
 
-.columna-derecha {
-  width: 100%;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
+@media (max-width: 600px) {
+  .perfil-page {
+    padding: 95px 12px 24px;
+  }
 }

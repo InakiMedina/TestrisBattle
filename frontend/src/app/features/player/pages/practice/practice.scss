@@ -9,15 +9,15 @@
 
 .practice-container {
   display: grid;
-  grid-template-columns: 125px minmax(280px, 1fr) 450px;
+  grid-template-columns: 125px minmax(280px, 1fr) minmax(500px, 1.15fr);
   align-items: center;
   gap: 28px;
 
   width: 100%;
-  min-height: calc(100vh - 80px);
+  min-height: calc(100vh - 60px);
   padding: 20px 28px;
-  box-sizing: border-box;
 
+  box-sizing: border-box;
   color: #ffffff;
   font-family: Arial, Helvetica, sans-serif;
 }
@@ -254,9 +254,9 @@
   justify-content: center;
   gap: 30px;
 
-  width: 500px;
-  min-width: 500px;
-  max-width: 500px;
+  width: 100%;
+  min-width: 0;
+  max-width: none;
 
   height: auto;
 }
@@ -432,8 +432,8 @@
 }
 
 .power-card img {
-  width: 42px;
-  height: 42px;
+  width: 65px;
+  height: 65px;
   object-fit: contain;
 }
 
@@ -445,45 +445,20 @@
   white-space: nowrap;
 }
 
-/* Colores de los poderes */
-
-.left-power:nth-child(1) .power-card span {
-  color: #00e34b;
-}
-
-.left-power:nth-child(2) .power-card span {
-  color: #ffad18;
-}
-
-.left-power:nth-child(3) .power-card span {
-  color: #ff3333;
-}
-
-.right-power:nth-child(1) .power-card span {
-  color: #e2f44d;
-}
-
-.right-power:nth-child(2) .power-card span {
-  color: #24d5d8;
-}
-
-.right-power:nth-child(3) .power-card span {
-  color: #ec21b9;
-}
 
 /* RESPONSIVE: TABLETS Y LAPTOPS */
 
 @media (max-width: 1250px) {
   .practice-container {
-    grid-template-columns: 110px minmax(220px, 1fr) 380px;
+    grid-template-columns: 110px minmax(220px, 1fr) minmax(380px, 1.15fr);
     gap: 18px;
     padding: 16px;
   }
 
   .right-column {
-    width: 380px;
-    min-width: 380px;
-    max-width: 380px;
+    width: 100%;
+    min-width: 0;
+    max-width: none;
   }
 
   .game-board {
