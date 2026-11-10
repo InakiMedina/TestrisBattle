@@ -1,123 +1,239 @@
-
 .ranking-container {
+  display: flex;
+  flex-direction: column;
   width: 100%;
   height: 200px;
-  padding: 12px 10px;
-  margin-top: -30px;
-  color: #ffffff;
-  background: rgba(53, 51, 79, 0.92);
-  border: 2px solid #ffffff;
+  padding: 12px 14px;
+  color: #fff;
+  background: rgba(53, 51, 79, 0.94);
+  border: 2px solid #fff;
   border-radius: 12px;
   box-sizing: border-box;
   backdrop-filter: blur(8px);
+  overflow: hidden;
 }
 
-.ranking-container h2 {
-  margin: 0 0 0;
-  text-align: center;
-  font-size: 16px;
-  font-weight: 400;
+// Pestañas
+.ranking-tabs {
+  display: flex;
+  justify-content: right;
+  gap: 12px;
+  margin-bottom: 10px;
+
+  button {
+    padding: 6px 20px;
+    color: #d9d6e7aa;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    border-color: rgba(255, 255, 255, 0.155);
+
+    &:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.08);
+
+    }
+
+    &.activo {
+      color: #fff;
+      background: #292638;
+      border-color: #D79B00;
+    }
+  }
 }
 
+// Contenido de cada pestaña
+.ranking-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
 
+  
+}
+
+// Distribución de los tres elementos
 .ranking-podio {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  align-items: start;
-  gap: 4px;
-  height: 165px;
-  padding-top: 0;
-  box-sizing: border-box;
-}
-
-.podio-jugador {
-  display: flex;
-  min-width: 0;
+  grid-template-columns: repeat(3, 1fr);
   align-items: center;
-  justify-content: flex-start;
+  justify-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+// Elementos individuales
+.ranking-item {
+  display: flex;
   flex-direction: column;
-  gap: 3px;
-  height: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 100%;
+  min-width: 0;
   text-align: center;
-  overflow: hidden;
-  padding-top: 10px;
+
+  .puesto {
+    color: #D79B00;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .nombre-jugador {
+    max-width: 100%;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+  }
+
+  .rival {
+    font-size: 10px;
+    color: rgb(239, 159, 234);
+  }
+
+  .score {
+    font-size: 10px;
+    color: rgb(239, 159, 234);
+  }
 }
 
-
-.copa {
-  display: block;
-  width: 38px;
-  height: 45px;
-  object-fit: contain;
-  flex-shrink: 0;
-}
-
-
-.puesto-uno .copa {
+// Imagen de los poderes
+.poder-imagen {
   width: 65px;
-  height: 78px;
+  height: 65px;
+  object-fit: contain;
 }
 
+// Copas del Top puntos
+.copa {
+  width: 35px;
+  height: 35px;
+  object-fit: contain;
 
-.podio-jugador:nth-child(2) .copa,
-.podio-jugador:nth-child(4) .copa {
-  width: 50px;
-  height: 60px;
+  &.primer-lugar {
+    width: 55px;
+    height: 55px;
+  }
 }
 
-.puesto {
-  color: #e8ad00;
-  font-size: 16px;
+// Información de puntuación
+.puntaje-jugador,
+.puntaje {
+  color: #d9d6e7;
+  font-size: 10px;
   font-weight: 500;
 }
 
-.nombre-jugador {
-  width: 100%;
-  color: #e8ad00;
-  font-size: 12px;
-  overflow-wrap: anywhere;
+.fecha {
+  color: #aaa6c0;
+  font-size: 9px;
 }
 
-.puntaje-jugador {
-  width: 100%;
-  color: #ffffff;
-  font-size: 11px;
-  font-weight: 600;
-  text-align: center;
-  overflow-wrap: anywhere;
+// Centrar el Top 1 en ambas pestañas
+.ranking-item {
+  &:has(.puesto) {
+    // Estilos generales
+  }
 }
 
-@media (max-width: 500px) {
+// El primer elemento (Top 1) va al centro
+.ranking-podio .ranking-item:nth-child(1) {
+  order: 2;
+}
+
+// El segundo elemento (Top 2) va a la izquierda
+.ranking-podio .ranking-item:nth-child(2) {
+  order: 1;
+}
+
+// El tercer elemento (Top 3) va a la derecha
+.ranking-podio .ranking-item:nth-child(3) {
+  order: 3;
+}
+
+// Adaptación para pantallas medianas
+@media (max-width: 1100px) {
   .ranking-container {
     height: 210px;
-    padding: 10px 6px;
-  }
-
-  .ranking-container h2 {
-    font-size: 12px;
+    padding: 10px;
   }
 
   .ranking-podio {
-    gap: 2px;
-    height: 165px;
+    gap: 5px;
+  }
+
+  .ranking-item {
+    .nombre-jugador {
+      font-size: 9px;
+    }
+  }
+
+  .poder-imagen {
+    width: 35px;
+    height: 35px;
+  }
+}
+
+// Adaptación para móviles
+@media (max-width: 600px) {
+  .ranking-container {
+    height: 200px;
+    padding: 8px;
+  }
+
+  .ranking-tabs {
+    gap: 5px;
+
+    button {
+      padding: 5px 12px;
+      font-size: 10px;
+    }
+  }
+
+  .ranking-content h3 {
+    font-size: 11px;
+  }
+
+  .ranking-item {
+    gap: 3px;
+
+    .puesto {
+      font-size: 8px;
+    }
+
+    .nombre-jugador {
+      font-size: 8px;
+    }
+  }
+
+  .poder-imagen {
+    width: 30px;
+    height: 30px;
   }
 
   .copa {
-    width: 30px;
-    height: 38px;
+    width: 28px;
+    height: 28px;
+
+    &.primer-lugar {
+      width: 34px;
+      height: 34px;
+    }
   }
 
-  .puesto-uno .copa {
-    width: 48px;
-    height: 62px;
-  }
-
-  .puesto {
-    font-size: 12px;
-  }
-
-  .nombre-jugador,
+  .puntaje,
   .puntaje-jugador {
-    font-size: 9px;
+    font-size: 8px;
+  }
+
+  .fecha {
+    font-size: 7px;
   }
 }

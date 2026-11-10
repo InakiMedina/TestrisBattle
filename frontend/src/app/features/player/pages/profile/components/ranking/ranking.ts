@@ -1,13 +1,12 @@
 
 import { Component } from '@angular/core';
 
-interface JugadorRanking {
-  posicion: number;
-  nombre: string;
-  puntaje: number;
-  rango: string;
-  imagenCopa?: string;
-}
+import {
+  PoderRanking,
+  MejorPartida,
+  VistaRanking
+} from '../../../../../../shared/interfaces/ranking-interface';
+
 
 @Component({
   selector: 'app-ranking',
@@ -17,24 +16,62 @@ interface JugadorRanking {
   styleUrl: './ranking.scss',
 })
 export class Ranking {
-  jugadores: JugadorRanking[] = [
-    { posicion: 1, nombre: 'NovaX', puntaje: 2450, rango: 'Diamante' },
-    { posicion: 2, nombre: 'PixelStorm', puntaje: 2310, rango: 'Diamante' },
-    { posicion: 3, nombre: 'TetrisKing', puntaje: 2180, rango: 'Platino' },
-    { posicion: 4, nombre: 'GalaxyPro', puntaje: 2050, rango: 'Platino' },
-    { posicion: 5, nombre: 'BlockMaster', puntaje: 1920, rango: 'Oro' },
+
+  vistaActiva: VistaRanking = 'puntos';
+
+  mejoresPartidas: MejorPartida[] = [
+    {
+      posicion: 1,
+      rival: 'BlockDropper99',
+      puntaje: 74300,
+      fecha: '2026-10-17'
+    },
+    {
+      posicion: 2,
+      rival: 'T-Spin_Wizard',
+      puntaje: 58400,
+      fecha: '2026-10-18'
+    },
+    {
+      posicion: 3,
+      rival: 'TacoDeAsada',
+      puntaje: 51200,
+      fecha: '2026-10-16'
+    }
   ];
 
-  ngOnInit(): void {
-    this.jugadores.sort((a, b) => b.puntaje - a.puntaje);
+  poderesMasUsados: PoderRanking[] = [
+    {
+      id: 'chaos',
+      name: 'Chaos',
+      description: 'Altera las condiciones de juego del oponente.',
+      image: '/power/chaos.png',
+      posicion: 1,
+      usos: 45
+    },
+    {
+      id: 'shuffle',
+      name: 'Shuffle',
+      description: 'Mezcla las piezas del oponente.',
+      image: '/power/shuffle.png',
+      posicion: 2,
+      usos: 32
+    },
+    {
+      id: 'gravity-plus',
+      name: 'Gravity +',
+      description: 'Aumenta la velocidad de caída.',
+      image: '/power/gravity+.png',
+      posicion: 3,
+      usos: 28
+    }
+  ];
 
-    this.jugadores.forEach((jugador, indice) => {
-      jugador.posicion = indice + 1;
-    });
+  cambiarVista(vista: VistaRanking): void {
+    this.vistaActiva = vista;
   }
 
-  obtenerCopa(posicion: number): string {
+  obtenerCopa(): string {
     return '/elements/copa.png';
   }
-  
 }
