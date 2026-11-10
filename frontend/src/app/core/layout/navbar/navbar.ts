@@ -23,7 +23,7 @@ interface NavbarItem {
 export class Navbar {
   private readonly auth = inject(AuthService);
 
-  readonly navigationItems: NavbarItem[] = [
+  private readonly playerNavigationItems: NavbarItem[] = [
     {
       label: '1 vs 1',
       route: '/versus',
@@ -49,6 +49,31 @@ export class Navbar {
       activeIcon: '/navbar/history-active.png',
     },
   ];
+
+  private readonly adminNavigationItems: NavbarItem[] = [
+    {
+      label: 'Users',
+      route: '/admin/users',
+      defaultIcon: '/navbar/profile.png',
+      activeIcon: '/navbar/profile-active.png',
+    },
+    {
+      label: 'Game',
+      route: '/admin/game',
+      defaultIcon: '/navbar/1vs1.png',
+      activeIcon: '/navbar/1vs1-active.png',
+    },
+    {
+      label: 'Stats',
+      route: '/admin/stats',
+      defaultIcon: '/navbar/history.png',
+      activeIcon: '/navbar/history-active.png',
+    },
+  ];
+
+  readonly navigationItems = computed(() =>
+    this.auth.role() === 'admin' ? this.adminNavigationItems : this.playerNavigationItems,
+  );
 
   isMenuOpen = false;
   readonly brandTitle = computed(() => this.auth.role() === 'admin' ? 'Admin Tetris' : 'Tetris');

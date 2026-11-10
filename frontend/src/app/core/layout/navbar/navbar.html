@@ -7,7 +7,7 @@
 
 
         <nav class="navigation">
-        @for (item of navigationItems; track item.route) {
+        @for (item of navigationItems(); track item.route) {
             <a
                 class="nav-item"
                 [routerLink]="item.route"

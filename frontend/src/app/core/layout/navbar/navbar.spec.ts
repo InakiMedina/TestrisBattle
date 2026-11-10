@@ -39,7 +39,7 @@ describe('Navbar', () => {
     expect(fixture.nativeElement.querySelector('.brand').getAttribute('aria-label')).toBe('Tetris');
   });
 
-  it('renders the navigation links from the item data in the existing order', () => {
+  it('keeps the player navigation links unchanged', () => {
     const links = Array.from(fixture.nativeElement.querySelectorAll('.nav-item')) as HTMLAnchorElement[];
 
     expect(links.map((link) => link.textContent.trim())).toEqual([
@@ -62,6 +62,29 @@ describe('Navbar', () => {
       ['/navbar/1vs1.png', '/navbar/1vs1-active.png'],
       ['/navbar/single.png', '/navbar/single-active.png'],
       ['/navbar/profile.png', '/navbar/profile-active.png'],
+      ['/navbar/history.png', '/navbar/history-active.png'],
+    ]);
+  });
+
+  it('renders admin navigation links for the admin role', () => {
+    role.set('admin');
+    fixture.detectChanges();
+
+    const links = Array.from(fixture.nativeElement.querySelectorAll('.nav-item')) as HTMLAnchorElement[];
+
+    expect(links.map((link) => link.textContent.trim())).toEqual(['Users', 'Game', 'Stats']);
+    expect(links.map((link) => link.getAttribute('href'))).toEqual([
+      '/admin/users',
+      '/admin/game',
+      '/admin/stats',
+    ]);
+    expect(
+      links.map((link) =>
+        Array.from(link.querySelectorAll('img')).map((image) => image.getAttribute('src')),
+      ),
+    ).toEqual([
+      ['/navbar/profile.png', '/navbar/profile-active.png'],
+      ['/navbar/1vs1.png', '/navbar/1vs1-active.png'],
       ['/navbar/history.png', '/navbar/history-active.png'],
     ]);
   });
