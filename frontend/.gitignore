@@ -42,3 +42,6 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+
+# AI md files
+/src/app/core/layout/adminNavbar.md

@@ -1,53 +1,23 @@
 
 <aside class="sidebar">
   
-    <a class="brand" routerLink="/versus" aria-label="Tetris">
-    Tetris
+    <a class="brand" [routerLink]="homeRoute()" [attr.aria-label]="brandTitle()">
+    {{ brandTitle() }}
     </a>
 
 
         <nav class="navigation">
-        <a
-            class="nav-item"
-            routerLink="/versus"
-            routerLinkActive="active"
-        >
-            
-            <img class="icon-default" src="/navbar/1vs1.png" alt="" />
-            <img class="icon-active" src="/navbar/1vs1-active.png" alt="" />
-            <span>1 vs 1</span>
-        </a>
-
-        <a
-            class="nav-item"
-            routerLink="/practice"
-            routerLinkActive="active"
-        >
-            <img class="icon-default" src="/navbar/single.png" alt="" />
-            <img class="icon-active" src="/navbar/single-active.png" alt="" />
-            <span>Practicar</span>
-        </a>
-
-        <a
-            class="nav-item"
-            routerLink="/profile"
-            routerLinkActive="active"
-        >
-            
-            <img class="icon-default" src="/navbar/profile.png" alt="" />
-            <img class="icon-active" src="/navbar/profile-active.png" alt="" />
-            <span>Perfil</span>
-        </a>
-        <a
-            class="nav-item"
-            routerLink="/history"
-            routerLinkActive="active"
-        >
-            
-            <img class="icon-default" src="/navbar/history.png" alt="" />
-            <img class="icon-active" src="/navbar/history-active.png" alt="" />
-            <span>Historial</span>
-        </a>
+        @for (item of navigationItems(); track item.route) {
+            <a
+                class="nav-item"
+                [routerLink]="item.route"
+                routerLinkActive="active"
+            >
+                <img class="icon-default" [src]="item.defaultIcon" alt="" />
+                <img class="icon-active" [src]="item.activeIcon" alt="" />
+                <span>{{ item.label }}</span>
+            </a>
+        }
         </nav>
 
 

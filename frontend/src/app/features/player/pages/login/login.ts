@@ -56,6 +56,8 @@ export class Login {
   // Vuelve a la ruta que se pidió originalmente (la pone el guardia en ?returnUrl=).
   // Solo se aceptan rutas internas para evitar redirecciones a sitios externos.
   private returnUrl(): string {
+    if (this.auth.role() === 'admin') return '/admin/users';
+
     const target = this.route.snapshot.queryParamMap.get('returnUrl');
     if (target && target.startsWith('/') && !target.startsWith('//')) {
       return target;

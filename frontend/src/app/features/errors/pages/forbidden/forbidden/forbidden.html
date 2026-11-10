@@ -4,10 +4,6 @@
         <h1>Acceso denegado</h1>
         <p class="error-text">No tienes permiso para ver esta página.</p>
 
-        @if (auth.isAuthenticated()) {
-            <a class="error-link" routerLink="/practice">Volver al juego</a>
-        } @else {
-            <a class="error-link" routerLink="/login">Ir a iniciar sesión</a>
-        }
+        <a class="error-link" [routerLink]="homeRoute()">Volver</a>
     </div>
 </section>

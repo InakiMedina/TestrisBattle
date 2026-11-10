@@ -10,7 +10,7 @@ import { NotFound } from './features/errors/pages/not-found/not-found/not-found'
 import { MainLayout } from './shared/layouts/main-layout/main-layout';
 import { authGuard } from './core/auth/auth.guard';
 import { guestGuard } from './core/auth/guest.guard';
-// import { roleGuard } from './core/auth/role.guard'; // se importa al agregar rutas por rol
+import { roleGuard } from './core/auth/role.guard';
 
 export const routes: Routes = [
 	{
@@ -26,24 +26,58 @@ export const routes: Routes = [
 		children: [
 			{
 				path: 'practice',
-				component: Practice
+				component: Practice,
+				canActivate: [roleGuard],
+				data: { roles: ['usuario'] },
 			},
 			{
 				path: 'history',
-				component: History
+				component: History,
+				canActivate: [roleGuard],
+				data: { roles: ['usuario'] },
 			},
 			{
 				path: 'profile',
-				component: PerfilPage
-			}
-			// Ruta restringida por rol (la agrega quien implemente la vista de admin):
-			// {
-			// 	path: '',
-			// 	component: AdminUsers,
-			// 	canActivate: [roleGuard],
-			// 	data: { roles: ['admin'] }
-			// }
+				component: PerfilPage,
+				canActivate: [roleGuard],
+				data: { roles: ['usuario'] },
+			},
+			{
+				path: 'versus',
+				component: NotFound,
+				canActivate: [roleGuard],
+				data: { roles: ['usuario'] },
+			},
 		]
+	},
+	{
+		path: 'admin',
+		canActivateChild: [authGuard],
+		children: [
+			{
+				path: '',
+				pathMatch: 'full',
+				redirectTo: 'users',
+			},
+			{
+				path: 'users',
+				component: NotFound,
+				canActivate: [roleGuard],
+				data: { roles: ['admin'] },
+			},
+			{
+				path: 'game',
+				component: NotFound,
+				canActivate: [roleGuard],
+				data: { roles: ['admin'] },
+			},
+			{
+				path: 'stats',
+				component: NotFound,
+				canActivate: [roleGuard],
+				data: { roles: ['admin'] },
+			},
+		],
 	},
 	{
 		path: 'login',
@@ -62,6 +96,8 @@ export const routes: Routes = [
 	{
 		// Se muestra sin cambiar la URL
 		path: '**',
-		component: NotFound
+		component: NotFound,
+		canActivate: [roleGuard],
+		data: { roles: ['usuario'] },
 	}
 ];

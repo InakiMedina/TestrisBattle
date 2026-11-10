@@ -4,10 +4,6 @@
         <h1>Página no encontrada</h1>
         <p class="error-text">La página que buscas no existe o fue movida.</p>
 
-        @if (auth.isAuthenticated()) {
-            <a class="error-link" routerLink="/practice">Volver al juego</a>
-        } @else {
-            <a class="error-link" routerLink="/login">Ir a iniciar sesión</a>
-        }
+        <a class="error-link" [routerLink]="homeRoute()">Volver</a>
     </div>
 </section>
