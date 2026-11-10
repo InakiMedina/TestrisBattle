@@ -2,20 +2,6 @@ import type { NextFunction, Request, Response } from 'express';
 import * as userService from '../services/user.services';
 import type { UpdateUserInput } from '../services/user.services';
 
-export async function createUser(req: Request, res: Response, next: NextFunction) {
-  try {
-    const { username, email, password } = req.body;
-    const user = await userService.createUser({
-      username: username.trim(),
-      email: email.trim(),
-      password,
-    });
-    res.status(201).json(user);
-  } catch (error) {
-    next(error);
-  }
-}
-
 export async function getUsers(req: Request, res: Response, next: NextFunction) {
   try {
     const page = Number(req.query.page) || 1;
@@ -62,7 +48,7 @@ export async function changePassword(req: Request, res: Response, next: NextFunc
 
 export async function deleteUser(req: Request, res: Response, next: NextFunction) {
   try {
-    await userService.deleteUser(String(req.params.id));
+    await userService.deleteUser(String(req.params.id), req.user!.id);
     res.status(204).send();
   } catch (error) {
     next(error);

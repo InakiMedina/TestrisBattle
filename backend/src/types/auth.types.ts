@@ -1,7 +1,6 @@
-export interface AuthenticatedUser {
-  username: string;
-  email: string;
-}
+import type { IAuthUser } from '@shared/types/auth.types';
+
+export type AuthenticatedUser = IAuthUser;
 
 declare global {
   namespace Express {

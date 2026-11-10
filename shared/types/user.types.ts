@@ -1,3 +1,5 @@
+import type { Role } from './auth.types';
+
 export interface IUserStats {
 	games_played: number;
 	highest_score_rank: number;
@@ -11,6 +13,7 @@ export interface IUser {
 	username: string;
 	email: string;
 	hashPass: string;
+	role: Role;
 	profilePicture: string;
 	elo: number;
 	background: string;
