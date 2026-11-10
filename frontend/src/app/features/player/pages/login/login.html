@@ -1,39 +1,44 @@
 <section id="login-section">
     <div class="login-form-div">
         <div class="form-header">
-            <h2>Incia Sesión</h2>
+            <h2>Inicia Sesión</h2>
         </div>
-    
-        <form class="login-form" [formGroup]="form" (submit)="validateLogIn()">
+
+        <form class="login-form" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
 
             <div class="form-email-field">
                 <label for="email">Email:</label>
-                <input type="text" name="email" formControlName="email">
-                @if (form.controls['email'].errors){
-                    <span class="error">{{form.controls['email'].errors['required'] ? 'Este campo es requerido' : 'Correo inválido'}}</span>
+                <input id="email" type="email" name="email" formControlName="email" autocomplete="email">
+                @if (showError('email')) {
+                    <span class="error">{{ form.controls.email.hasError('required') ? 'Este campo es requerido' : 'Correo inválido' }}</span>
                 }
             </div>
             <div class="form-password-field">
                 <label for="password">Password:</label>
-                <input type="password" name="password" formControlName="password">
-                @if (form.controls['password'].errors){
-                    <span class="error">{{form.controls['password'].errors['required'] ? 'Este campo es requerido' : 'La contraseña debe tener al menos 8 caracteres'}}</span>
+                <input id="password" type="password" name="password" formControlName="password" autocomplete="current-password">
+                @if (showError('password')) {
+                    <span class="error">{{ form.controls.password.hasError('required') ? 'Este campo es requerido' : 'La contraseña debe tener al menos 8 caracteres' }}</span>
                 }
             </div>
+
+            @if (errorMessage(); as message) {
+                <p class="error" role="alert">{{ message }}</p>
+            }
 
             <div class="forgot-password-link">
                 <a href="">¿Olvidaste tu contraseña? Da click aquí</a>
             </div>
-            
+
             <div class="signin-link">
                 <a routerLink="/signin">¿Aún no tienes una cuenta? Registrate</a>
             </div>
-            
+
+            <div class="login-button">
+                <button type="submit" [disabled]="form.invalid || loading()">
+                    {{ loading() ? 'Iniciando sesión...' : 'Iniciar Sesión' }}
+                </button>
+            </div>
+
         </form>
-
-        <div class="login-button">
-            <button (click)="onLogin()" [disabled]="form.invalid">Iniciar Sesión</button>
-        </div>
-
     </div>
 </section>

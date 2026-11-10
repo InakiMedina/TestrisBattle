@@ -1,0 +1,10 @@
+@if (notifications.current(); as notification) {
+  <div
+    class="banner"
+    [class.banner--error]="notification.type === 'error'"
+    [class.banner--info]="notification.type === 'info'"
+    [attr.role]="notification.type === 'error' ? 'alert' : 'status'">
+    <span class="banner__message">{{ notification.message }}</span>
+    <button type="button" class="banner__close" aria-label="Cerrar aviso" (click)="notifications.dismiss()">×</button>
+  </div>
+}
