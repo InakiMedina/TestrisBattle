@@ -77,6 +77,10 @@ export class Navbar {
 
   isMenuOpen = false;
   readonly brandTitle = computed(() => this.auth.role() === 'admin' ? 'Admin Tetris' : 'Tetris');
+  readonly homeRoute = computed(() => {
+    const role = this.auth.role();
+    return role === 'admin' ? '/admin/users' : role === 'usuario' ? '/practice' : '/login';
+  });
 
   toggleMenu(): void {
     this.isMenuOpen = !this.isMenuOpen;

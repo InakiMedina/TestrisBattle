@@ -10,4 +10,9 @@ import { AuthService } from '../../../../../core/auth/auth.service';
 })
 export class Forbidden {
   protected readonly auth = inject(AuthService);
+
+  protected homeRoute(): string {
+    if (!this.auth.isAuthenticated()) return '/login';
+    return this.auth.role() === 'admin' ? '/admin/users' : '/practice';
+  }
 }

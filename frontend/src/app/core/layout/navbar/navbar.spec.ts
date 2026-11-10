@@ -32,11 +32,17 @@ describe('Navbar', () => {
     fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('.brand').textContent.trim()).toBe('Admin Tetris');
     expect(fixture.nativeElement.querySelector('.brand').getAttribute('aria-label')).toBe('Admin Tetris');
+    expect(fixture.nativeElement.querySelector('.brand').getAttribute('href')).toBe('/admin/users');
 
     role.set('usuario');
     fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('.brand').textContent.trim()).toBe('Tetris');
     expect(fixture.nativeElement.querySelector('.brand').getAttribute('aria-label')).toBe('Tetris');
+    expect(fixture.nativeElement.querySelector('.brand').getAttribute('href')).toBe('/practice');
+
+    role.set(null);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.brand').getAttribute('href')).toBe('/login');
   });
 
   it('keeps the player navigation links unchanged', () => {

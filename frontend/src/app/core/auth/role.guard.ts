@@ -15,7 +15,9 @@ export const roleGuard: CanActivateFn = (route, state) => {
   }
 
   const configured: unknown = route.data['roles'];
-  const allowedRoles: Role[] = Array.isArray(configured) ? (configured as Role[]) : [];
+  const allowedRoles: Role[] = Array.isArray(configured)
+    ? configured.filter((role): role is Role => role === 'admin' || role === 'usuario')
+    : [];
 
   // Si la ruta no declara roles, se niega el acceso
   return auth.hasRole(allowedRoles) ? true : router.createUrlTree(['/access-denied']);
