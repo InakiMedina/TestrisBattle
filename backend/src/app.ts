@@ -1,19 +1,18 @@
 import express from 'express';
-import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import config from './config/config';
 import { errorHandler } from './middlewares/errorHandler';
 import apiRouter from './routes/apiRouter';
 
 const app = express();
 
+app.use(cors({ origin: config.corsOrigin }));
 app.use(express.json());
-//encoded headers
-app.use(express.urlencoded({extended: true}))
-//for cookies on headers
-app.use(cookieParser());
+app.use(express.urlencoded({ extended: true }));
 
-app.get('/', (req, res) => res.send("<h1>Hello Wolrds</h1>"))
+app.get('/', (_req, res) => res.send('<h1>Hello Worlds</h1>'));
 
-app.use('/api', apiRouter)
+app.use('/api', apiRouter);
 
 app.use(errorHandler);
 

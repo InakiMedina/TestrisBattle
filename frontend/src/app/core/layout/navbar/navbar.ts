@@ -1,24 +1,18 @@
 import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { LucideAngularModule, Calendar, Gamepad2, User } from 'lucide-angular';
-import { RankGameButton } from './components/rank-game-button/rank-game-button';
 
 @Component({
   selector: 'app-navbar',
   imports: [
     RouterLink, 
     RouterLinkActive,
-    LucideAngularModule,
-    RankGameButton
+    LucideAngularModule
   ],
   templateUrl: './navbar.html',
   styleUrl: './navbar.scss'
 })
 export class Navbar {
-
-  readonly CalendarIcon = Calendar;
-  readonly GamepadIcon = Gamepad2;
-  readonly UserIcon = User;
 
   isMenuOpen = false;
 

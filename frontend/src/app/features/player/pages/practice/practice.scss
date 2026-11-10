@@ -1,87 +1,614 @@
+
 :host {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	height: 80%;
-	width: 100%;
+  display: block;
+  width: 100%;
+  min-width: 0;
 }
 
-.container {
-	height: 100%;
-	width: 100%;
-	margin: 0 clamp(1rem, 1.5vw, 2rem);
-	display: flex;
-	flex-direction: row;
-	justify-content: center;
-	align-items: center;
+/* DISTRIBUCIÓN PRINCIPAL */
 
-	> * {
-		margin: clamp(0.5rem, 0.5vw, 1rem);
-	}
+.practice-container {
+  display: grid;
+  grid-template-columns: 125px minmax(280px, 1fr) 450px;
+  align-items: center;
+  gap: 28px;
 
-	*[class^="game-"] {
-		height: 100%;
-		background-color: #4b018b;
-		color: #ffffff;
-		border: solid 0.25rem white;
-		box-sizing: border-box;
-		border-radius: 1.2rem;
-	}
+  width: 100%;
+  min-height: calc(100vh - 80px);
+  padding: 20px 28px;
+  box-sizing: border-box;
 
-	.data-container {
-		height: 100%;
-		flex: 0 0 clamp(10rem, 10vw, 17rem);
-		display: flex;
-		flex-direction: column;
+  color: #ffffff;
+  font-family: Arial, Helvetica, sans-serif;
+}
 
-		.game-next-pieces {
-			flex: 0 0 clamp(20rem, 20vw, 28rem);
-			display: flex;
-			flex-direction: column;
-			align-items: center;
+/* COLUMNA IZQUIERDA */
 
-			img {
-				transform: rotate(90deg);
-				margin-top: 100px;
-				height: clamp(3rem, 4vw, 7rem)
-			}
-		}
-	
-		.game-stats {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			flex: 1 1 clamp(20rem, 20vw, 28rem);
-			margin-top: clamp(1rem, 1.5vw, 2rem);
-		}
-	}
+.left-column {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 
-	.game-screen {
-		background-color: rgba(0, 0, 0, .65);
-		flex: 0 0 clamp(20rem, 20vw, 28rem);
-		border: solid 1rem white;
+  width: 100%;
+  min-width: 0;
+}
 
-		img {
-			height: 100%;
-			width: 100%;
-			object-fit: cover;
-		}
-	}
+/* Paneles generales */
 
-	.game-powers {
-		flex: 0 0 clamp(15rem, 25vw, 35rem);
+.score-panel,
+.next-panel,
+.movements-panel,
+.powers-panel {
+  background: rgba(53, 51, 79, 0.96);
+  border: 3px solid #ffffff;
+  border-radius: 10px;
+  box-sizing: border-box;
+  backdrop-filter: blur(8px);
+}
 
+/* Estadísticas */
 
-		ul li {
-			list-style-type: none;
-			margin: clamp(1rem, 1.5vw, 2rem) 0;
-			padding: 0;
+.score-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
 
-			span {
-				font-size: 3rem;
-			}
+  width: 100%;
+  padding: 10px 8px;
+}
 
-		}
-	}
+.score-panel h3,
+.next-panel h3 {
+  margin: 0 0 8px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 400;
+}
 
+.score-value,
+.next-power-value {
+  width: 100%;
+  padding: 4px;
+  box-sizing: border-box;
+  border-radius: 7px;
+  background: #191820;
+  color: #ff4545;
+  text-align: center;
+  font-family: monospace;
+  font-size: 13px;
+}
+
+.score-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 4px;
+  font-size: 9px;
+}
+
+.score-stat span {
+  color: #ffffff;
+}
+
+.score-stat strong {
+  display: block;
+  width: 100%;
+  padding: 3px;
+  box-sizing: border-box;
+  border-radius: 6px;
+  background: #191820;
+  color: #e8ad00;
+  text-align: center;
+  font-family: monospace;
+  font-weight: 400;
+}
+
+.next-power-label {
+  margin-top: 7px;
+  font-size: 8px;
+  line-height: 1.2;
+}
+
+.next-power-value {
+  color: #52e6a5;
+  font-size: 11px;
+}
+
+/* Dado y poder aleatorio */
+
+.dice {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 50px;
+  height: 50px;
+  margin: 10px auto;
+
+ 
+  border-radius: 9px;
+}
+
+.dice img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 4px;
+  box-sizing: border-box;
+  object-fit: contain;
+}
+
+.random-power {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  width: 64px;
+  min-height: 76px;
+  margin: 0 auto;
+  padding: 5px;
+
+  border-radius: 9px;
+  background: #191820;
+  box-sizing: border-box;
+}
+
+.random-power img {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+}
+
+.random-power span {
+  color: #ffffff;
+  font-size: 10px;
+  text-align: center;
+}
+
+/* Botón de lanzar dado */
+
+.dice-button {
+  display: block;
+  margin: 5px auto;
+  margin-top: -1px;
+  margin-bottom: 20px;
+  padding: 8px 5px;
+
+  color: #ffffff;
+  background: #191820;
+  border: 1px solid #24d5d8;
+  border-radius: 6px;
+
+  font-size: 10px;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.dice-button:hover {
+  background: #24d5d8;
+  color: #191820;
+}
+
+/* Próximas piezas */
+
+.next-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  width: 100%;
+  min-height: 190px;
+  padding: 10px 8px;
+}
+
+.next-panel img {
+  width: 100%;
+  max-height: 145px;
+  object-fit: contain;
+}
+
+/* TABLERO CENTRAL */
+
+.board-column {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  min-width: 0;
+
+  transform: translateX(-80px);
+}
+
+.game-board {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 66.67%;
+  height: min(68vh, 610px);
+  min-height: 610px;
+
+  padding: 5px;
+  box-sizing: border-box;
+
+  overflow: hidden;
+  background: rgba(10, 9, 25, 0.75);
+  border: 7px solid #ffffff;
+  border-radius: 20px;
+}
+
+.game-board img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* COLUMNA DERECHA */
+
+.right-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 30px;
+
+  width: 500px;
+  min-width: 500px;
+  max-width: 500px;
+
+  height: auto;
+}
+
+/* MOVIMIENTOS */
+
+.movements-panel {
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+  min-height: 190px;
+  padding: 12px;
+}
+
+.movements-panel h2,
+.powers-panel h2 {
+  margin: 0 0 12px;
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+}
+
+.movements-content {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-height: 0;
+  gap: 10px;
+}
+
+/* Teclado */
+
+.keyboard-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 68%;
+  height: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.keyboard-image img {
+  display: block;
+  width: 100%;
+  max-height: 145px;
+  object-fit: contain;
+}
+
+/* Instrucciones */
+
+.movement-list {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: space-evenly;
+
+  min-width: 0;
+  height: 100%;
+  gap: 4px;
+}
+
+.movement-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+
+  color: #d9d6e7;
+  font-size: 8px;
+  text-align: right;
+}
+
+.movement-key {
+  color: #ffffff;
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.movement-item span:last-child {
+  width: 100%;
+  padding: 3px 5px;
+  box-sizing: border-box;
+  border-radius: 8px;
+  background: #191820;
+  color: #e8ad00;
+  text-align: right;
+  font-size: 8px;
+}
+
+/* HABILIDADES ESPECIALES */
+
+.powers-panel {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+
+  width: 100%;
+  min-height: 330px;
+  padding: 12px 14px;
+}
+
+.powers-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  flex: 1;
+  min-height: 0;
+}
+
+.powers-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  gap: 8px;
+
+  min-width: 0;
+  padding: 0 8px;
+}
+
+.powers-column + .powers-column {
+  border-left: 2px solid rgba(255, 255, 255, 0.8);
+}
+
+/* Cada poder */
+
+.power-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+
+.left-power {
+  justify-content: flex-start;
+}
+
+.right-power {
+  justify-content: flex-end;
+}
+
+.power-item p {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+
+  color: #d9d6e7;
+  font-size: 8px;
+  line-height: 1.3;
+}
+
+.right-power p {
+  text-align: right;
+}
+
+/* Tarjetas de poderes */
+
+.power-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  width: 68px;
+  min-width: 68px;
+  height: 72px;
+  padding: 5px;
+  box-sizing: border-box;
+
+  border-radius: 9px;
+  background: #191820;
+}
+
+.power-card img {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+}
+
+.power-card span {
+  margin-top: 2px;
+  color: #ffffff;
+  font-size: 12px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Colores de los poderes */
+
+.left-power:nth-child(1) .power-card span {
+  color: #00e34b;
+}
+
+.left-power:nth-child(2) .power-card span {
+  color: #ffad18;
+}
+
+.left-power:nth-child(3) .power-card span {
+  color: #ff3333;
+}
+
+.right-power:nth-child(1) .power-card span {
+  color: #e2f44d;
+}
+
+.right-power:nth-child(2) .power-card span {
+  color: #24d5d8;
+}
+
+.right-power:nth-child(3) .power-card span {
+  color: #ec21b9;
+}
+
+/* RESPONSIVE: TABLETS Y LAPTOPS */
+
+@media (max-width: 1250px) {
+  .practice-container {
+    grid-template-columns: 110px minmax(220px, 1fr) 380px;
+    gap: 18px;
+    padding: 16px;
+  }
+
+  .right-column {
+    width: 380px;
+    min-width: 380px;
+    max-width: 380px;
+  }
+
+  .game-board {
+    width: 75%;
+  }
+
+  .keyboard-image {
+    width: 65%;
+  }
+
+  .power-card {
+    width: 58px;
+    min-width: 58px;
+    height: 65px;
+  }
+
+  .power-card img {
+    width: 36px;
+    height: 36px;
+  }
+
+  .power-card span {
+    font-size: 10px;
+  }
+
+  .power-item p {
+    font-size: 7px;
+  }
+
+  .board-column {
+	transform: translateX(-30px);
+  }
+}
+
+/* RESPONSIVE: TABLETS */
+
+@media (max-width: 950px) {
+  .practice-container {
+    grid-template-columns: 100px minmax(0, 1fr);
+    align-items: start;
+    gap: 18px;
+  }
+
+  .left-column {
+    grid-column: 1;
+    grid-row: 1;
+    margin-top: 65px;
+  }
+
+  .board-column {
+    grid-column: 2;
+    grid-row: 1;
+    margin-top: 65px;
+    transform: translateX(0px);
+  }
+
+  .right-column {
+    grid-column: 1 / -1;
+    grid-row: 2;
+
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    height: auto;
+  }
+
+  .game-board {
+    width: 80%;
+    height: 600px;
+    min-height: 600px;
+  }
+
+  .movements-panel {
+    min-height: 190px;
+  }
+
+  .powers-panel {
+    min-height: 350px;
+  }
+}
+
+/* RESPONSIVE: MÓVILES */
+
+@media (max-width: 500px) {
+  .practice-container {
+    grid-template-columns: 1fr;
+    gap: 18px;
+    padding: 12px;
+  }
+
+  .left-column,
+  .board-column,
+  .right-column {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .left-column {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .game-board {
+    width: 100%;
+    height: 65vh;
+    min-height: 300px;
+  }
+
+  .right-column {
+    gap: 20px;
+  }
+
+  .movements-panel {
+    min-height: 190px;
+  }
+
+  .powers-panel {
+    min-height: 350px;
+  }
+
+  .keyboard-image {
+    width: 60%;
+  }
+
+  .power-item p {
+    font-size: 8px;
+  }
 }

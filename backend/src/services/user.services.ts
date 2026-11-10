@@ -1,8 +1,10 @@
 import bcrypt from 'bcryptjs';
+import type { IAuthUser } from '@shared/types/auth.types';
 import { User } from '../models/user.model';
 import { HttpError } from '../types/httpError';
+import { toPublicUser } from './user.mapper';
 
-const SALT_ROUNDS = 10;
+export const SALT_ROUNDS = 10;
 
 export interface CreateUserInput {
   username: string;
@@ -35,17 +37,16 @@ function rethrowMongoError(error: unknown): never {
   throw error;
 }
 
-export async function createUser(input: CreateUserInput) {
+export async function createUser(input: CreateUserInput): Promise<IAuthUser> {
   const hashPass = await bcrypt.hash(input.password, SALT_ROUNDS);
   try {
     const created = await User.create({
       username: input.username,
       email: input.email,
       hashPass,
+      role: 'usuario', // el rol nunca viene del cliente
     });
-    // select:false solo aplica a consultas, no al documento recién creado
-    const { hashPass: _omit, ...safeUser } = created.toObject();
-    return safeUser;
+    return toPublicUser(created);
   } catch (error) {
     rethrowMongoError(error);
   }
@@ -61,16 +62,16 @@ export async function getUsers(page = 1, limit = 20) {
       .limit(safeLimit),
     User.countDocuments(),
   ]);
-  return { users, total, page: safePage, limit: safeLimit };
+  return { users: users.map(toPublicUser), total, page: safePage, limit: safeLimit };
 }
 
-export async function getUserById(id: string) {
+export async function getUserById(id: string): Promise<IAuthUser> {
   const user = await User.findById(id);
   if (!user) throw new HttpError(404, 'Usuario no encontrado');
-  return user;
+  return toPublicUser(user);
 }
 
-export async function updateUser(id: string, data: UpdateUserInput) {
+export async function updateUser(id: string, data: UpdateUserInput): Promise<IAuthUser> {
   try {
     const user = await User.findByIdAndUpdate(
       id,
@@ -78,7 +79,7 @@ export async function updateUser(id: string, data: UpdateUserInput) {
       { new: true, runValidators: true },
     );
     if (!user) throw new HttpError(404, 'Usuario no encontrado');
-    return user;
+    return toPublicUser(user);
   } catch (error) {
     if (error instanceof HttpError) throw error;
     rethrowMongoError(error);
@@ -89,6 +90,7 @@ export async function changePassword(id: string, currentPassword: string, newPas
   const user = await User.findById(id).select('+hashPass');
   if (!user) throw new HttpError(404, 'Usuario no encontrado');
 
+  // 400 y no 401: un 401 haría que el front cierre la sesión.
   const matches = await bcrypt.compare(currentPassword, user.hashPass);
   if (!matches) throw new HttpError(400, 'La contraseña actual es incorrecta');
 
@@ -96,7 +98,10 @@ export async function changePassword(id: string, currentPassword: string, newPas
   await user.save();
 }
 
-export async function deleteUser(id: string) {
+export async function deleteUser(id: string, requesterId: string): Promise<void> {
+  if (id === requesterId) {
+    throw new HttpError(400, 'No puedes eliminar tu propia cuenta');
+  }
   const user = await User.findByIdAndDelete(id);
   if (!user) throw new HttpError(404, 'Usuario no encontrado');
 }
