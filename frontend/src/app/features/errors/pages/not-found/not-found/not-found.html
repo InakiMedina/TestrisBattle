@@ -1,0 +1,13 @@
+<section class="error-page">
+    <div class="error-card">
+        <p class="error-code">404</p>
+        <h1>Página no encontrada</h1>
+        <p class="error-text">La página que buscas no existe o fue movida.</p>
+
+        @if (auth.isAuthenticated()) {
+            <a class="error-link" routerLink="/practice">Volver al juego</a>
+        } @else {
+            <a class="error-link" routerLink="/login">Ir a iniciar sesión</a>
+        }
+    </div>
+</section>
