@@ -1,61 +1,187 @@
-<div class="container">
-	<div class="data-container">
-		<div class="game-next-pieces">
-			<h4>Next pieces</h4>
-			<img src="./elements/next-pieces.png">
-		</div>
-		<div class="game-stats">
-			<h4>Score 7134</h4>
-			
-			<ul>
-				<li>level 6</li>
-				<li>lines 100</li>
-				<li>high 9999</li>
-				<li>points till next power: 353</li>
-			</ul>
-		</div>
-	</div>
-	<div class="game-screen">
-		<img src="./elements/tetris-game.png">
-	</div>
-	<div class="game-powers">
-		<ul>
-			<li>
-				<span>Push
-					<lucide-icon [img]="WaypointsIcon" [size]="48"></lucide-icon>
-				</span>
-				permitir alterar la posición de las piecas del oponente
-			</li>
-			<li>
-				<span>Shuffle
-					<lucide-icon [img]="ShuffleIcon" [size]="48"></lucide-icon>
-				</span>
-				modifica aleatoriamente la pila de pieces que recibe el oponente
-			</li>
-			<li>
-				<span>Block
-					<lucide-icon [img]="BanIcon" [size]="48"></lucide-icon>
-				</span>
-				genera un obstaculo que dificulta el juego del oponente
-			</li>
-			<li>
-				<span>Gravity -
-					<lucide-icon [img]="WavesArrowDownIcon" [size]="48"></lucide-icon>
-				</span>
-				disminuye temporalmente la velocidad con la que caen las piecas
-			</li>
-			<li>
-				<span>Gravity +
-					<lucide-icon [img]="WavesArrowUpIcon" [size]="48"></lucide-icon>
-				</span>
-				aumenta temporalmente la velocidad con la que caen las piecas
-			</li>
-			<li>
-				<span>Chaos
-					<lucide-icon [img]="ExpandIcon" [size]="48"></lucide-icon>
-				</span>
-				provoca una alteración especial en el tablero del oponente
-			</li>
-		</ul>
-	</div>
-</div>
+
+<main class="practice-container">
+
+  <!-- Columna izquierda: estadísticas y próximas piezas -->
+  <section class="left-column">
+
+    <div class="score-panel">
+      <h3>Score</h3>
+
+      <div class="score-value">{{ score }}</div>
+
+      <div class="score-stat">
+        <span>Level:</span>
+        <strong>{{ nivel }}</strong>
+      </div>
+
+      <div class="score-stat">
+        <span>Lines:</span>
+        <strong>{{ lineas }}</strong>
+      </div>
+
+      <div class="score-stat">
+        <span>High:</span>
+        <strong>{{ record }}</strong>
+      </div>
+
+      <div class="next-power-label">
+        Points for next power:
+      </div>
+
+      <div class="next-power-value">
+        {{ puntosSiguientePoder }}
+      </div>
+
+      <div class="dice">
+        <img [src]="imagenDado" alt="Resultado del dado" />
+      </div>
+	  <button class="dice-button" type="button" (click)="lanzarDado()">
+		Lanzar dado
+	  </button>
+
+	  <div class="random-power">
+		<img
+			[src]="poderSeleccionado?.image ?? '/power/none.png'"
+			[alt]="poderSeleccionado?.name ?? 'Sin poder seleccionado'"
+		/>
+	  </div>
+    </div>
+
+    <!-- Próximas piezas -->
+    <div class="next-panel">
+      <h3>Next</h3>
+
+      <img
+        src="/elements/next-pieces.png"
+        alt="Próximas piezas"
+      />
+    </div>
+
+  </section>
+
+
+  <!-- Columna central: tablero -->
+  <section class="board-column">
+
+    <div class="game-board">
+      <img
+        src="/elements/tetris-game.png"
+        alt="Tablero de Tetris"
+      />
+    </div>
+
+  </section>
+
+
+  <!-- Columna derecha -->
+  <section class="right-column">
+
+    <!-- Movimientos -->
+    <div class="movements-panel">
+
+      <h2>Movimientos:</h2>
+
+      <div class="movements-content">
+
+        <div class="keyboard-image">
+          <img
+            src="/elements/teclas.png"
+            alt="Teclado con controles del juego"
+          />
+        </div>
+
+        <div class="movement-list">
+
+          <div class="movement-item">
+            <span class="movement-key">A:</span>
+            <span>Movimiento hacia la izquierda</span>
+          </div>
+
+          <div class="movement-item">
+            <span class="movement-key">W:</span>
+            <span>Caída instantánea</span>
+          </div>
+
+          <div class="movement-item">
+            <span class="movement-key">B:</span>
+            <span>Movimiento hacia abajo</span>
+          </div>
+
+          <div class="movement-item">
+            <span class="movement-key">D:</span>
+            <span>Movimiento hacia la derecha</span>
+          </div>
+
+          <div class="movement-item">
+            <span class="movement-key">Space:</span>
+            <span>Barra espaciadora: cambia la forma de la pieza</span>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+
+    <!-- Habilidades especiales -->
+    <div class="powers-panel">
+
+      <h2>Habilidades especiales:</h2>
+
+      <div class="powers-content">
+
+        <!-- Primera columna -->
+        <div class="powers-column">
+
+          @for (poder of poderesIzquierda; track poder.id) {
+
+            <article class="power-item left-power">
+
+              <div class="power-card">
+                <img
+                  [src]="poder.image"
+                  [alt]="poder.name"
+                />
+
+                <span>{{ poder.name }}</span>
+              </div>
+
+              <p>{{ poder.description }}</p>
+
+            </article>
+
+          }
+
+        </div>
+
+
+        <!-- Segunda columna -->
+        <div class="powers-column">
+
+          @for (poder of poderesDerecha; track poder.id) {
+
+            <article class="power-item right-power">
+
+              <p>{{ poder.description }}</p>
+
+              <div class="power-card">
+                <img
+                  [src]="poder.image"
+                  [alt]="poder.name"
+                />
+
+                <span>{{ poder.name }}</span>
+              </div>
+
+            </article>
+
+          }
+
+        </div>
+
+      </div>
+    </div>
+
+  </section>
+
+</main>
