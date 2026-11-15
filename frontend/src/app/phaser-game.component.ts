@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import Phaser from "phaser";
-import StartGame from "../game/main.ts";
-import { EventBus } from "../game/EventBus.ts";
+import StartGame from "../game/main";
+import { EventBus } from "../game/EventBus";
 
 @Component({
     selector: 'phaser-game',

@@ -1,12 +1,12 @@
 import { GameObjects, Scene } from 'phaser';
-
 import { EventBus } from '../EventBus';
 
 export class MainMenu extends Scene
 {
     background: GameObjects.Image;
     logo: GameObjects.Image;
-    title: GameObjects.Text;
+    // title: GameObjects.Text;
+    playButton: GameObjects.Shape;
     logoTween: Phaser.Tweens.Tween | null;
 
     constructor ()
@@ -16,15 +16,19 @@ export class MainMenu extends Scene
 
     create ()
     {
-        this.background = this.add.image(512, 384, 'background');
+        this.background = this.add.image(500, 646, 'background');
 
-        this.logo = this.add.image(512, 300, 'logo').setDepth(100);
+        this.logo = this.add.image(150, 125, 'logo').setDepth(100).setDisplaySize(200, 150);
 
-        this.title = this.add.text(512, 460, 'Main Menu', {
-            fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',
-            stroke: '#000000', strokeThickness: 8,
-            align: 'center'
-        }).setOrigin(0.5).setDepth(100);
+        // this.title = this.add.text(100, 100, 'Main Menu', {
+        //     fontFamily: 'Arial Black', fontSize: 20, color: '#ffffff',
+        //     stroke: '#000000', strokeThickness: 5,
+        //     align: 'center'
+        // }).setOrigin(0.5).setDepth(100);
+
+        const r = 80;
+        const a = Math.sqrt(3)*r/2
+        this.playButton = this.add.triangle(150, 400, -r/2, a, -r/2, -a, r, 0, 0xffffff).setOrigin(0);
 
         EventBus.emit('current-scene-ready', this);
     }
