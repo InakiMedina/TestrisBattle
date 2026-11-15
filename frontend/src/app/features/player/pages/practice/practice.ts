@@ -1,11 +1,12 @@
 
 import { Component, OnInit } from '@angular/core';
 import { Power } from '../../../../shared/interfaces/power-interface';
+import { TetrisPhaser } from '../../../../core/game/tetris-phaser/tetris-phaser';
 
 @Component({
   selector: 'app-practice',
   standalone: true,
-  imports: [],
+  imports: [TetrisPhaser],
   templateUrl: './practice.html',
   styleUrl: './practice.scss',
 })
