@@ -1,0 +1,196 @@
+
+<main class="versus-container">
+
+  <!-- Panel del jugador 1 -->
+  <section class="player-side player-one" aria-label="Estadísticas del jugador 1">
+
+    <div class="score-panel">
+      <h3>Score</h3>
+      <div class="score-value">{{ scoreJugador1 }}</div>
+
+      <div class="score-stat">
+        <span>Level:</span>
+        <strong>{{ nivelJugador1 }}</strong>
+      </div>
+
+      <div class="score-stat">
+        <span>Lines:</span>
+        <strong>{{ lineasJugador1 }}</strong>
+      </div>
+
+      <div class="score-stat">
+        <span>High:</span>
+        <strong>{{ recordJugador1 }}</strong>
+      </div>
+
+      <div class="next-power-label">Points for next power:</div>
+      <div class="next-power-value">
+        {{ puntosSiguientePoder(scoreJugador1) }}
+      </div>
+
+      <!-- Dado jugador 1 -->
+      <div class="dice">
+        <img
+          [src]="imagenDado(1)"
+          [class.rolling]="animandoDadoJugador1"
+          alt="Resultado del dado del jugador 1"
+        />
+      </div>
+
+      <button
+        class="dice-button"
+        type="button"
+        (click)="lanzarDado(1)"
+        [disabled]="animandoDadoJugador1"
+      >
+        {{ animandoDadoJugador1 ? 'Lanzando...' : 'Lanzar dado' }}
+      </button>
+
+      <!-- Poder seleccionado -->
+      <div class="random-power">
+        <img
+          [src]="poderJugador1?.image ?? '/power/none.png'"
+          [alt]="poderJugador1?.name ?? 'Sin poder seleccionado'"
+        />
+      </div>
+    </div>
+
+    <!-- Próximas piezas jugador 1 -->
+    <div class="next-panel">
+      <h3>Next</h3>
+      <img
+        src="/elements/next-pieces.png"
+        alt="Próximas piezas del jugador 1"
+      />
+    </div>
+
+  </section>
+
+  <!-- Tablero jugador 1 -->
+  <section class="board-column" aria-label="Tablero del jugador 1">
+
+    <div class="game-board">
+
+      @if (ambosListos) {
+        <img
+          class="tetris-board-image"
+          src="/elements/tetris-game.png"
+          alt="Tablero de Tetris del jugador 1"
+        />
+      } @else if (jugador1Listo) {
+        <div class="waiting-state">
+          <span class="waiting-loader"></span>
+          <p>Waiting for player...</p>
+        </div>
+      } @else {
+        <button
+          class="ready-button"
+          type="button"
+          (click)="prepararJugador(1)"
+        >
+          <span class="play-icon">▶</span>
+          <span>Play</span>
+        </button>
+      }
+
+    </div>
+
+  </section>
+
+  <!-- Tablero jugador 2 -->
+  <section class="board-column" aria-label="Tablero del jugador 2">
+
+    <div class="game-board">
+
+      @if (ambosListos) {
+        <img
+          class="tetris-board-image"
+          src="/elements/tetris-game.png"
+          alt="Tablero de Tetris del jugador 2"
+        />
+      } @else if (jugador2Listo) {
+        <div class="waiting-state">
+          <span class="waiting-loader"></span>
+          <p>Waiting for player...</p>
+        </div>
+      } @else {
+        <button
+          class="ready-button"
+          type="button"
+          (click)="prepararJugador(2)"
+        >
+          <span class="play-icon">▶</span>
+          <span>Play</span>
+        </button>
+      }
+
+    </div>
+
+  </section>
+
+  <!-- Panel del jugador 2 -->
+  <section class="player-side player-two" aria-label="Estadísticas del jugador 2">
+
+    <div class="score-panel">
+      <h3>Score</h3>
+      <div class="score-value">{{ scoreJugador2 }}</div>
+
+      <div class="score-stat">
+        <span>Level:</span>
+        <strong>{{ nivelJugador2 }}</strong>
+      </div>
+
+      <div class="score-stat">
+        <span>Lines:</span>
+        <strong>{{ lineasJugador2 }}</strong>
+      </div>
+
+      <div class="score-stat">
+        <span>High:</span>
+        <strong>{{ recordJugador2 }}</strong>
+      </div>
+
+      <div class="next-power-label">Points for next power:</div>
+      <div class="next-power-value">
+        {{ puntosSiguientePoder(scoreJugador2) }}
+      </div>
+
+      <!-- Dado jugador 2 -->
+      <div class="dice">
+        <img
+          [src]="imagenDado(2)"
+          [class.rolling]="animandoDadoJugador2"
+          alt="Resultado del dado del jugador 2"
+        />
+      </div>
+
+      <button
+        class="dice-button"
+        type="button"
+        (click)="lanzarDado(2)"
+        [disabled]="animandoDadoJugador2"
+      >
+        {{ animandoDadoJugador2 ? 'Lanzando...' : 'Lanzar dado' }}
+      </button>
+
+      <!-- Poder seleccionado -->
+      <div class="random-power">
+        <img
+          [src]="poderJugador2?.image ?? '/power/none.png'"
+          [alt]="poderJugador2?.name ?? 'Sin poder seleccionado'"
+        />
+      </div>
+    </div>
+
+    <!-- Próximas piezas jugador 2 -->
+    <div class="next-panel">
+      <h3>Next</h3>
+      <img
+        src="/elements/next-pieces.png"
+        alt="Próximas piezas del jugador 2"
+      />
+    </div>
+
+  </section>
+
+</main>
