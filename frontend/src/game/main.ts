@@ -4,13 +4,15 @@ import { Game as MainGame } from './scenes/Game';
 import { MainMenu } from './scenes/MainMenu';
 import { AUTO, Game, Scale } from 'phaser';
 import { Preloader } from './scenes/Preloader';
+import { SQUARE_SIZE } from './constants';
+
 
 // Find out more information about the Game Config at:
 // https://docs.phaser.io/api-documentation/typedef/types-core#gameconfig
 const config: Phaser.Types.Core.GameConfig = {
     type: AUTO,
-    width: 300,
-    height: 720,
+    width: SQUARE_SIZE * 10,
+    height: SQUARE_SIZE * 24,
     parent: 'game-container',
     backgroundColor: '#028af8',
     scale: {

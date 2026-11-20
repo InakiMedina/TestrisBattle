@@ -1,12 +1,13 @@
 import { GameObjects, Scene } from 'phaser';
 import { EventBus } from '../EventBus';
+import { CustomeButton } from '../components/CustomButton';
 
 export class MainMenu extends Scene
 {
     background: GameObjects.Image;
     logo: GameObjects.Image;
     // title: GameObjects.Text;
-    playButton: GameObjects.Shape;
+    playButton: GameObjects.Container;
     logoTween: Phaser.Tweens.Tween | null;
 
     constructor ()
@@ -16,19 +17,18 @@ export class MainMenu extends Scene
 
     create ()
     {
-        this.background = this.add.image(500, 646, 'background');
+        const surfaceBackground = getComputedStyle(document.documentElement)
+            .getPropertyValue('--app-surface-background')
+            .trim();
+        this.cameras.main.setBackgroundColor(surfaceBackground);
 
-        this.logo = this.add.image(150, 125, 'logo').setDepth(100).setDisplaySize(200, 150);
+        // this.background = this.add.image(500, 646, 'background');
 
-        // this.title = this.add.text(100, 100, 'Main Menu', {
-        //     fontFamily: 'Arial Black', fontSize: 20, color: '#ffffff',
-        //     stroke: '#000000', strokeThickness: 5,
-        //     align: 'center'
-        // }).setOrigin(0.5).setDepth(100);
+        this.logo = this.add.image(175, 125, 'logo').setDepth(100).setDisplaySize(200, 150);
 
-        const r = 80;
-        const a = Math.sqrt(3)*r/2
-        this.playButton = this.add.triangle(150, 400, -r/2, a, -r/2, -a, r, 0, 0xffffff).setOrigin(0);
+        this.playButton = new CustomeButton(this, 175, 300, 200, 100, "Play", () => {
+            this.scene.start("Game")
+        })
 
         EventBus.emit('current-scene-ready', this);
     }

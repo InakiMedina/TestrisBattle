@@ -8,7 +8,7 @@
   padding: 14px 12px;
 
   color: #ffffff;
-  background: rgba(53, 51, 79, 0.94);
+  background: var(--app-surface-background-muted);
   border: 2px solid #ffffff;
   border-radius: 12px;
   box-sizing: border-box;
@@ -81,8 +81,8 @@
   min-height: 34px;
   padding: 5px 6px;
 
-  background: #191820;
-  border: 1px solid #24d5d8;
+  background: var(--app-deep-background);
+  border: 1px solid var(--app-accent-color);
   border-radius: 5px;
   box-sizing: border-box;
 

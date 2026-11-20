@@ -77,12 +77,12 @@ export class Practice implements OnInit {
     this.poderSeleccionado = null;
 
     
-    const game = this.phaserRef().game;
-    const scene = this.phaserRef().scene;
+    // const game = this.phaserRef().game;
+    // const scene = this.phaserRef().scene;
 
-    EventBus.on('current-scene-ready', (scene: Phaser.Scene) => {
-        // Handle the ready scene
-    });
+    // EventBus.on('current-scene-ready', (scene: Phaser.Scene) => {
+    //     // Handle the ready scene
+    // });
   }
 
   lanzarDado(): void {

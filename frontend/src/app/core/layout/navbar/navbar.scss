@@ -100,7 +100,7 @@
 
 /* Página activa */
 .nav-item.active {
-  color: #24d5d8;
+  color: var(--app-accent-color);
   background: rgba(36, 213, 216, 0.1);
 }
 

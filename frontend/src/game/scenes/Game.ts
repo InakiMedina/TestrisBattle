@@ -1,10 +1,10 @@
 import { EventBus } from '../EventBus';
 import { Scene } from 'phaser';
+import { SQUARE_SIZE } from '../constants';
 
 export class Game extends Scene
 {
-    camera: Phaser.Cameras.Scene2D.Camera;
-    background: Phaser.GameObjects.Image;
+    pieces: Phaser.GameObjects.Image[] = [];
     gameText: Phaser.GameObjects.Text;
 
     constructor ()
@@ -14,17 +14,10 @@ export class Game extends Scene
 
     create ()
     {
-        this.camera = this.cameras.main;
-        this.camera.setBackgroundColor(0x00ff00);
 
-        this.background = this.add.image(512, 384, 'background');
-        this.background.setAlpha(0.5);
-
-        this.gameText = this.add.text(512, 384, 'Make something fun!\nand share it with us:\nsupport@phaser.io', {
-            fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',
-            stroke: '#000000', strokeThickness: 8,
-            align: 'center'
-        }).setOrigin(0.5).setDepth(100);
+        this.pieces[0] = this.add.image(SQUARE_SIZE*2, SQUARE_SIZE*5, 'pieces', 'l-shape').setScale(0.5).setAngle(90).setOrigin(0, 1);
+        this.pieces[1] = this.add.image(SQUARE_SIZE*4, SQUARE_SIZE*5, 'pieces', 'l-shape').setScale(0.5).setAngle(180).setOrigin(1);
+        this.pieces[2] = this.add.image(SQUARE_SIZE*2, SQUARE_SIZE*7, 'pieces', 'j-shape').setScale(0.5).setAngle(270).setOrigin(1, 0);
 
         EventBus.emit('current-scene-ready', this);
     }

@@ -23,7 +23,7 @@
   font-size: 4rem;
   font-weight: 600;
   letter-spacing: 4px;
-  color: #24d5d8;
+  color: var(--app-accent-color);
 }
 
 h1 {
@@ -41,7 +41,7 @@ h1 {
   padding: 0.6rem 1.4rem;
   color: #ffffff;
   text-decoration: none;
-  border: 1px solid #24d5d8;
+  border: 1px solid var(--app-accent-color);
   border-radius: 6px;
   transition: background 0.2s ease;
 
