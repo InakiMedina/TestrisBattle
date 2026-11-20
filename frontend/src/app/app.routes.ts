@@ -3,6 +3,7 @@ import { Routes } from '@angular/router';
 import { Login } from './features/player/pages/login/login';
 import { Signin } from './features/player/pages/signin/signin';
 import { Practice } from './features/player/pages/practice/practice'
+import { Versus } from './features/player/pages/versus/versus'
 import { PerfilPage } from './features/player/pages/profile/perfil-page';
 import { History } from './features/player/pages/history/history';
 import { Forbidden } from './features/errors/pages/forbidden/forbidden/forbidden';
@@ -44,7 +45,7 @@ export const routes: Routes = [
 			},
 			{
 				path: 'versus',
-				component: NotFound,
+				component: Versus,
 				canActivate: [roleGuard],
 				data: { roles: ['usuario'] },
 			},

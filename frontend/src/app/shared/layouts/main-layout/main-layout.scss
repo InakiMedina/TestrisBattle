@@ -32,3 +32,18 @@
     }
   }
 }
+
+
+/* Versus ocupa el alto visible disponible; evita sumar 100vh + padding del layout. */
+.container:has(app-versus) {
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+
+  .page_content {
+    height: 100dvh;
+    min-height: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+}
