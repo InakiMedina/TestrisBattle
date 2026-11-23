@@ -9,7 +9,8 @@
   background: rgba(20, 18, 43, 0.88);
   border: 2px solid #ffffff;
   border-radius: 14px;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .fondos-container h2 {
@@ -25,7 +26,8 @@
   min-height: 0;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  grid-template-rows: repeat(3, minmax(0, 1fr));
+  grid-auto-rows: minmax(72px, 1fr);
+  grid-template-rows: repeat(3, minmax(72px, 1fr));
   gap: 12px;
 }
 
@@ -70,4 +72,117 @@
   .fondos-grid {
     gap: 8px;
   }
+}
+
+.acciones-fondo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  margin: 0 0 12px;
+}
+
+.seleccionar-fondo-personalizado,
+.guardar-fondo,
+.cancelar-fondo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 10px;
+  color: #ffffff;
+  background: #292640;
+  border: 1px solid #c8d72d;
+  border-radius: 6px;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.seleccionar-fondo-personalizado input {
+  display: none;
+}
+
+.cancelar-fondo {
+  border-color: #aaa7c2;
+}
+
+.guardar-fondo:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.mensaje-fondo {
+  flex-shrink: 0;
+  margin: 0 0 10px;
+  color: #c8d72d;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.fondo-personalizado-label {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  padding: 3px 6px;
+  color: #ffffff;
+  background: rgba(15, 14, 28, 0.82);
+  border-radius: 4px;
+  font-size: 10px;
+}
+
+.fondo-card-wrapper {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+}
+
+.fondo-card-wrapper .fondo-card {
+  height: 100%;
+}
+
+.eliminar-fondo {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  z-index: 2;
+
+  width: 23px;
+  height: 23px;
+
+  color: white;
+  background: rgba(15, 14, 28, 0.88);
+
+  border: 1px solid white;
+  border-radius: 50%;
+
+  cursor: pointer;
+}
+
+.progreso-container {
+  width: 100%;
+  margin: 15px 0;
+}
+
+.progreso-barra {
+  width: 100%;
+  height: 8px;
+  overflow: hidden;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.progreso-barra-valor {
+  height: 100%;
+  width: 0;
+  border-radius: 10px;
+  background: #8b5cf6;
+  transition: width 0.4s ease;
+}
+
+.fondos-grid::after {
+  content: "";
+  display: block;
+  height: 20px;
+  grid-column: 1 / -1;
 }
