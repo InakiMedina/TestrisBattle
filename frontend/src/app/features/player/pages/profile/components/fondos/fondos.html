@@ -2,7 +2,74 @@
 <section class="fondos-container">
   <h2>Fondos</h2>
 
+  <div class="acciones-fondo">
+    <label class="seleccionar-fondo-personalizado">
+      <input
+        type="file"
+        accept="image/png,image/jpeg,image/webp,image/gif,image/avif,image/bmp"
+        (change)="seleccionarImagen($event)"
+      >
+      Elegir imagen
+    </label>
+    @if (subiendoImagen) {
+      <div class="progreso-container">
+        <div class="progreso-barra">
+          <div
+            class="progreso-barra-valor"
+            [style.width.%]="progresoSubida"
+          ></div>
+        </div>
+      </div>
+    }
+  </div>
+
+  @if (mensajeImagen) {
+    <p class="mensaje-fondo" role="status">
+      {{ mensajeImagen }}
+    </p>
+  }
+
   <div class="fondos-grid">
+
+    <!-- Fondos personalizados -->
+    @for (fondo of fondosPersonalizados; track fondo.id) {
+      <div class="fondo-card-wrapper">
+
+        <button
+          type="button"
+          class="fondo-card"
+          [class.seleccionado]="
+            fondoSeleccionado === 'custom:' + fondo.id
+          "
+          [attr.aria-pressed]="
+            fondoSeleccionado === 'custom:' + fondo.id
+          "
+          (click)="seleccionarFondo('custom:' + fondo.id)"
+        >
+          <img
+            [src]="fondo.url"
+            alt="Fondo personalizado"
+          >
+
+          <span class="fondo-personalizado-label">
+            Personalizado
+          </span>
+        </button>
+
+        <button
+          type="button"
+          class="eliminar-fondo"
+          title="Eliminar fondo"
+          aria-label="Eliminar fondo personalizado"
+          (click)="eliminarFondoPersonalizado(fondo.id)"
+        >
+          ×
+        </button>
+
+      </div>
+    }
+
+    <!-- Fondos predeterminados -->
     @for (fondo of fondos; track fondo.ruta) {
       <button
         type="button"
@@ -15,9 +82,9 @@
         <img
           [src]="fondo.ruta"
           [alt]="fondo.nombre"
-        />
-
+        >
       </button>
     }
+
   </div>
 </section>

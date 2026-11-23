@@ -4,7 +4,7 @@
   <div class="avatar-container">
     <div class="avatar">
       @if (imagenPerfil) {
-        <img [src]="imagenPerfil" alt="Foto de perfil">
+        <img [src]="imagenPerfil || '/profile/default-avatar.jpg'" alt="Foto de perfil">
       } @else {
         <svg viewBox="0 0 100 100" aria-hidden="true">
           <circle cx="50" cy="34" r="20" />

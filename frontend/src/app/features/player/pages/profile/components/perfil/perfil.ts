@@ -1,5 +1,4 @@
-
-import { Component } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -9,7 +8,7 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './perfil.html',
   styleUrl: './perfil.scss',
 })
-export class Perfil {
+export class Perfil implements OnInit {
   nombreReal = 'Lilia Padilla';
   nombreJugador = 'LiliaLag';
   correo = 'lilia@email.com';
@@ -18,6 +17,13 @@ export class Perfil {
   editandoNombreReal = false;
 
   imagenPerfil: string | null = null;
+
+  constructor(private cdr: ChangeDetectorRef) {}
+
+  ngOnInit(): void {
+    // Recuperar la imagen guardada al entrar al perfil
+    this.imagenPerfil = localStorage.getItem('profile-image');
+  }
 
   guardarNombreReal(): void {
     this.nombreReal = this.nombreReal.trim();
@@ -42,10 +48,29 @@ export class Perfil {
       return;
     }
 
-    if (this.imagenPerfil) {
-      URL.revokeObjectURL(this.imagenPerfil);
+    if (archivo.size > 2 * 1024 * 1024) {
+      input.value = '';
+      alert('La imagen debe pesar menos de 2 MB.');
+      return;
     }
 
-    this.imagenPerfil = URL.createObjectURL(archivo);
+    const lector = new FileReader();
+
+    lector.onload = () => {
+      const imagen = lector.result as string;
+
+      try {
+        localStorage.setItem('profile-image', imagen);
+
+        this.imagenPerfil = imagen;
+
+        // Forzar actualización de la vista
+        this.cdr.detectChanges();
+      } catch {
+        alert('No se pudo guardar la imagen. Intenta con una más pequeña.');
+      }
+    };
+
+    lector.readAsDataURL(archivo);
   }
 }
