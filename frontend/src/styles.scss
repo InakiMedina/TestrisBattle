@@ -1,5 +1,13 @@
 /* You can add global styles to this file, and also import other style files */
 
+:root {
+  --app-surface-background: rgba(53, 51, 79, 0.96);
+  --app-surface-background-muted: rgba(53, 51, 79, 0.94);
+  --app-surface-background-solid: #35334f;
+  --app-deep-background: #191820;
+  --app-accent-color: #24d5d8;
+}
+
 html,
 body {
   width: 100%;

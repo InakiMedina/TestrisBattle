@@ -1,0 +1,22 @@
+{
+	"frames": {
+		"l-shape": {
+			"frame": {
+				"x": 0,
+				"y": 68,
+				"w": 272,
+				"h": 68
+			},
+			"trimmed": false
+		},
+		"j-shape": {
+			"frame": {
+				"x": 340,
+				"y": 0,
+				"w": 204,
+				"h": 136
+			},
+			"trimmed": false
+		}
+	}
+}

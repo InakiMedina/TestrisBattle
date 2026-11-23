@@ -17,7 +17,7 @@
   padding: 20px 16px;
 
   box-sizing: border-box;
-  background: #35334f;
+  background: var(--app-surface-background-solid);
   border: 2px solid #ffffff;
   border-radius: 11px;
   color: #ffffff;
@@ -79,7 +79,7 @@
   padding: 0;
 
   color: #ffffff;
-  background: #35334f;
+  background: var(--app-surface-background-solid);
   border: 1px solid #ffffff;
   border-radius: 3px;
   cursor: pointer;
@@ -163,7 +163,7 @@
 
 .edit-real:hover,
 .edit-image:hover {
-  color: #24d5d8;
+  color: var(--app-accent-color);
 }
 
 /* Información a la derecha */

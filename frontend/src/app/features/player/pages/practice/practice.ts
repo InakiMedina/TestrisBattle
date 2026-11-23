@@ -1,15 +1,19 @@
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, viewChild } from '@angular/core';
 import { Power } from '../../../../shared/interfaces/power-interface';
+import { PhaserGame } from '../../../../../app/phaser-game.component';
+import { EventBus } from '../../../../../game/EventBus';
 
 @Component({
   selector: 'app-practice',
   standalone: true,
-  imports: [],
+  imports: [ PhaserGame ],
   templateUrl: './practice.html',
   styleUrl: './practice.scss',
 })
 export class Practice implements OnInit {
+
+  phaserRef = viewChild.required(PhaserGame);
 
   score = 100;
   nivel = 0;
@@ -71,6 +75,14 @@ export class Practice implements OnInit {
     // Al iniciar no se selecciona ningún poder.
     this.caraDado = 0;
     this.poderSeleccionado = null;
+
+    
+    // const game = this.phaserRef().game;
+    // const scene = this.phaserRef().scene;
+
+    // EventBus.on('current-scene-ready', (scene: Phaser.Scene) => {
+    //     // Handle the ready scene
+    // });
   }
 
   lanzarDado(): void {
