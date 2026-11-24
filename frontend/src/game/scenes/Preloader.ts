@@ -1,4 +1,5 @@
 import { Scene } from 'phaser';
+import { REGISTRY } from '../constants';
 
 export class Preloader extends Scene
 {
@@ -44,6 +45,11 @@ export class Preloader extends Scene
         //  For example, you can define global animations here, so we can use them in other scenes.
 
         //  Move to the MainMenu. You could also swap this for a Scene Transition, such as a camera fade.
+        //  En 1 vs 1 no hay menú: la partida la inicia Angular cuando ambos jugadores están listos.
+        if (this.registry.get(REGISTRY.mode) === 'versus') {
+            this.scene.start('Game');
+            return;
+        }
         this.scene.start('MainMenu');
     }
 }

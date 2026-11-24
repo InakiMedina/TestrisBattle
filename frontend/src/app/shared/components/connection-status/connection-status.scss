@@ -1,0 +1,66 @@
+:host {
+  position: fixed;
+  top: 10px;
+  right: 14px;
+  z-index: 900;
+}
+
+.connection {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  color: #fff;
+  background: rgba(25, 24, 32, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 999px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+}
+
+.connection__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.connection--connected .connection__dot {
+  background: #52e6a5;
+  box-shadow: 0 0 6px #52e6a5;
+}
+
+.connection--connecting .connection__dot,
+.connection--reconnecting .connection__dot {
+  background: #e8ad00;
+  animation: pulse 1s ease-in-out infinite;
+}
+
+.connection--disconnected {
+  border-color: #ff4545;
+}
+
+.connection--disconnected .connection__dot {
+  background: #ff4545;
+}
+
+.connection__retry {
+  padding: 2px 8px;
+  color: #fff;
+  background: transparent;
+  border: 1px solid #24d5d8;
+  border-radius: 5px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.connection__retry:hover {
+  color: #191820;
+  background: #24d5d8;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.3;
+  }
+}

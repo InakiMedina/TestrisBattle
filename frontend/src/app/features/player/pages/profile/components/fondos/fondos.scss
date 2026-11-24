@@ -186,3 +186,79 @@
   height: 20px;
   grid-column: 1 / -1;
 }
+/* Zona de arrastrar y soltar */
+.zona-subida {
+  flex-shrink: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px 10px;
+  margin: 0 0 12px;
+  padding: 12px;
+  border: 2px dashed #aaa7c2;
+  border-radius: 10px;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.zona-subida.arrastrando {
+  border-color: #c8d72d;
+  background: rgba(200, 215, 45, 0.12);
+}
+
+.zona-subida-texto,
+.zona-subida-ayuda {
+  margin: 0;
+  color: #d7d5e8;
+  font-size: 12px;
+}
+
+.zona-subida-ayuda {
+  flex-basis: 100%;
+  text-align: center;
+  font-size: 10px;
+}
+
+.vista-previa {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  align-items: center;
+}
+
+.vista-previa img {
+  width: 96px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.vista-previa-info {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  gap: 6px;
+  color: #d7d5e8;
+  font-size: 11px;
+}
+
+.vista-previa-info .acciones-fondo {
+  margin: 0;
+}
+
+.vista-previa-nombre {
+  color: #fff;
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.progreso-texto {
+  font-size: 11px;
+}
+
+.mensaje-fondo.mensaje-error {
+  color: #ff6b6b;
+}

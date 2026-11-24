@@ -82,6 +82,11 @@ export class Navbar {
     return role === 'admin' ? '/admin/users' : role === 'usuario' ? '/practice' : '/login';
   });
 
+  // Al cerrar sesión, RealtimeService también cierra la conexión en tiempo real.
+  logout(): void {
+    this.auth.logout();
+  }
+
   toggleMenu(): void {
     this.isMenuOpen = !this.isMenuOpen;
   }

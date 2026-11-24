@@ -1,194 +1,272 @@
-
 <main class="versus-container">
 
-  <!-- Panel del jugador 1 -->
-  <section class="player-side player-one" aria-label="Estadísticas del jugador 1">
+  <!-- Panel del jugador local -->
+  <section class="player-side player-one" aria-label="Tus estadísticas">
 
     <div class="score-panel">
       <h3>Score</h3>
-      <div class="score-value">{{ scoreJugador1 }}</div>
+      <div class="score-value">{{ myStats().score }}</div>
 
       <div class="score-stat">
         <span>Level:</span>
-        <strong>{{ nivelJugador1 }}</strong>
+        <strong>{{ myStats().level }}</strong>
       </div>
 
       <div class="score-stat">
         <span>Lines:</span>
-        <strong>{{ lineasJugador1 }}</strong>
+        <strong>{{ myStats().lines }}</strong>
       </div>
 
       <div class="score-stat">
         <span>High:</span>
-        <strong>{{ recordJugador1 }}</strong>
+        <strong>{{ myHigh() }}</strong>
       </div>
 
       <div class="next-power-label">Points for next power:</div>
       <div class="next-power-value">
-        {{ puntosSiguientePoder(scoreJugador1) }}
+        {{ puntosSiguientePoder(myStats().score) }}
       </div>
 
-      <!-- Dado jugador 1 -->
+      <!-- Dado -->
       <div class="dice">
         <img
-          [src]="imagenDado(1)"
-          [class.rolling]="animandoDadoJugador1"
-          alt="Resultado del dado del jugador 1"
+          [src]="imagenDado()"
+          [class.rolling]="animandoDado()"
+          alt="Resultado de tu dado"
         />
       </div>
 
       <button
         class="dice-button"
         type="button"
-        (click)="lanzarDado(1)"
-        [disabled]="animandoDadoJugador1"
+        (click)="lanzarDado()"
+        [disabled]="animandoDado()"
       >
-        {{ animandoDadoJugador1 ? 'Lanzando...' : 'Lanzar dado' }}
+        {{ animandoDado() ? 'Lanzando...' : 'Lanzar dado' }}
       </button>
 
       <!-- Poder seleccionado -->
       <div class="random-power">
         <img
-          [src]="poderJugador1?.image ?? '/power/none.png'"
-          [alt]="poderJugador1?.name ?? 'Sin poder seleccionado'"
+          [src]="poder()?.image ?? '/power/none.png'"
+          [alt]="poder()?.name ?? 'Sin poder seleccionado'"
         />
       </div>
     </div>
 
-    <!-- Próximas piezas jugador 1 -->
+    <!-- Próximas piezas -->
     <div class="next-panel">
       <h3>Next</h3>
-      <img
-        src="/elements/next-pieces.png"
-        alt="Próximas piezas del jugador 1"
-      />
+      @if (showBoard()) {
+        <app-next-pieces [pieces]="nextPieces()" />
+      } @else {
+        <p class="panel-hint">Inicia una partida</p>
+      }
     </div>
 
   </section>
 
-  <!-- Tablero jugador 1 -->
-  <section class="board-column" aria-label="Tablero del jugador 1">
+  <!-- Tablero del jugador local -->
+  <section class="board-column" aria-label="Tu tablero">
 
     <div class="game-board">
 
-      @if (ambosListos) {
-        <img
-          class="tetris-board-image"
-          src="/elements/tetris-game.png"
-          alt="Tablero de Tetris del jugador 1"
+      @if (showBoard()) {
+        <phaser-game
+          mode="versus"
+          [running]="store.isPlaying() && !store.me()?.finished"
+          [initialStats]="store.resumeStats()"
+          (statsChange)="store.reportStats($event)"
+          (nextChange)="nextPieces.set($event)"
+          (gameOver)="store.reportGameOver($event)"
         />
-      } @else if (jugador1Listo) {
+
+        @if (store.countdown(); as seconds) {
+          <div class="board-overlay">
+            <span class="countdown">{{ seconds }}</span>
+          </div>
+        }
+
+        @if (store.result(); as result) {
+          <div class="board-overlay" role="status">
+            <p class="result result--{{ result.outcome }}">
+              @switch (result.outcome) {
+                @case ('won') { ¡Ganaste! }
+                @case ('lost') { Perdiste }
+                @default { Partida cancelada }
+              }
+            </p>
+            <p class="result-detail">
+              Motivo: {{ reasonLabels[result.reason] }}<br />
+              Tú {{ myStats().score }} — {{ opponentStats().score }} {{ store.opponent()?.username }}
+            </p>
+            <button class="action-button" type="button" (click)="store.leaveMatch()">
+              Volver
+            </button>
+          </div>
+        } @else if (store.me()?.finished) {
+          <div class="board-overlay">
+            <p class="result">Tablero lleno</p>
+          </div>
+        }
+
+      } @else if (store.view() === 'queued') {
         <div class="waiting-state">
           <span class="waiting-loader"></span>
-          <p>Waiting for player...</p>
+          <p>Buscando rival…</p>
+          <button
+            class="action-button"
+            type="button"
+            (click)="store.cancelSearch()"
+            [disabled]="store.busy() || !store.isConnected()"
+          >
+            Cancelar
+          </button>
         </div>
+
+      } @else if (store.view() === 'match' && store.me()?.ready) {
+        <div class="waiting-state">
+          <span class="waiting-loader"></span>
+          <p>Esperando a que {{ store.opponent()?.username }} esté listo…</p>
+        </div>
+
+      } @else if (store.view() === 'match') {
+        <div class="waiting-state">
+          <p>Rival encontrado: <strong>{{ store.opponent()?.username }}</strong></p>
+          <button
+            class="ready-button"
+            type="button"
+            (click)="store.markReady()"
+            [disabled]="store.busy() || !store.isConnected()"
+          >
+            <span class="play-icon">▶</span>
+            <span>Listo</span>
+          </button>
+        </div>
+
       } @else {
+        <div class="waiting-state">
+          <button
+            class="ready-button"
+            type="button"
+            (click)="store.findOpponent()"
+            [disabled]="store.busy() || !store.isConnected() || store.syncing()"
+          >
+            <span class="play-icon">▶</span>
+            <span>Play</span>
+          </button>
+        </div>
+      }
+
+      @if (store.view() === 'match' && store.phase() !== 'finished') {
         <button
-          class="ready-button"
+          class="leave-button"
           type="button"
-          (click)="prepararJugador(1)"
+          (click)="store.leaveMatch()"
+          [disabled]="store.busy() || !store.isConnected()"
         >
-          <span class="play-icon">▶</span>
-          <span>Play</span>
+          Abandonar
         </button>
+      }
+
+      <!-- Acciones que dependen de la conexión -->
+      @if (!store.isConnected()) {
+        <p class="offline-message" role="alert">{{ offlineMessage }}</p>
       }
 
     </div>
 
   </section>
 
-  <!-- Tablero jugador 2 -->
-  <section class="board-column" aria-label="Tablero del jugador 2">
+  <!-- Tablero del rival -->
+  <section class="board-column" aria-label="Estado del rival">
 
     <div class="game-board">
+      @if (store.opponent(); as rival) {
+        <div class="rival-state" aria-live="polite">
+          <p class="rival-name">{{ rival.username }}</p>
+          <div class="rival-chips">
+            @if (!store.isConnected()) {
+              <!-- Sin conexión propia no se conoce el estado del rival -->
+              <span class="chip">Sin datos</span>
+            } @else {
+              <span class="chip" [class.chip--ok]="rival.connected" [class.chip--bad]="!rival.connected">
+                {{ rival.connected ? 'Conectado' : 'Desconectado' }}
+              </span>
+            }
+            @if (store.phase() === 'waiting') {
+              <span class="chip" [class.chip--ok]="rival.ready">
+                {{ rival.ready ? 'Listo' : 'No listo' }}
+              </span>
+            } @else if (store.phase() === 'finished') {
+              <span class="chip">Terminó</span>
+            } @else if (rival.finished) {
+              <span class="chip chip--bad">Tablero lleno</span>
+            } @else {
+              <span class="chip chip--ok">Jugando</span>
+            }
+          </div>
 
-      @if (ambosListos) {
-        <img
-          class="tetris-board-image"
-          src="/elements/tetris-game.png"
-          alt="Tablero de Tetris del jugador 2"
-        />
-      } @else if (jugador2Listo) {
+          <p class="rival-score-label">Puntaje del rival</p>
+          <p class="rival-score">{{ rival.stats.score }}</p>
+          <p class="rival-detail">Nivel {{ rival.stats.level }} · {{ rival.stats.lines }} líneas</p>
+
+          @if (!rival.connected && store.phase() !== 'finished') {
+            <p class="rival-warning">Esperando a que se reconecte…</p>
+          }
+        </div>
+      } @else if (store.view() === 'queued') {
         <div class="waiting-state">
           <span class="waiting-loader"></span>
           <p>Waiting for player...</p>
         </div>
       } @else {
-        <button
-          class="ready-button"
-          type="button"
-          (click)="prepararJugador(2)"
-        >
-          <span class="play-icon">▶</span>
-          <span>Play</span>
-        </button>
+        <div class="waiting-state">
+          <p class="panel-hint">Sin rival todavía</p>
+        </div>
       }
-
     </div>
-
   </section>
 
-  <!-- Panel del jugador 2 -->
-  <section class="player-side player-two" aria-label="Estadísticas del jugador 2">
+  <!-- Panel del rival -->
+  <section class="player-side player-two" aria-label="Estadísticas del rival">
 
     <div class="score-panel">
       <h3>Score</h3>
-      <div class="score-value">{{ scoreJugador2 }}</div>
+      <div class="score-value">{{ opponentStats().score }}</div>
 
       <div class="score-stat">
         <span>Level:</span>
-        <strong>{{ nivelJugador2 }}</strong>
+        <strong>{{ opponentStats().level }}</strong>
       </div>
 
       <div class="score-stat">
         <span>Lines:</span>
-        <strong>{{ lineasJugador2 }}</strong>
+        <strong>{{ opponentStats().lines }}</strong>
       </div>
 
       <div class="score-stat">
         <span>High:</span>
-        <strong>{{ recordJugador2 }}</strong>
+        <strong>{{ opponentHigh() }}</strong>
       </div>
 
       <div class="next-power-label">Points for next power:</div>
       <div class="next-power-value">
-        {{ puntosSiguientePoder(scoreJugador2) }}
+        {{ puntosSiguientePoder(opponentStats().score) }}
       </div>
 
-      <!-- Dado jugador 2 -->
       <div class="dice">
-        <img
-          [src]="imagenDado(2)"
-          [class.rolling]="animandoDadoJugador2"
-          alt="Resultado del dado del jugador 2"
-        />
+        <img src="/dice/1.png" alt="Dado del rival" />
       </div>
 
-      <button
-        class="dice-button"
-        type="button"
-        (click)="lanzarDado(2)"
-        [disabled]="animandoDadoJugador2"
-      >
-        {{ animandoDadoJugador2 ? 'Lanzando...' : 'Lanzar dado' }}
-      </button>
-
-      <!-- Poder seleccionado -->
       <div class="random-power">
-        <img
-          [src]="poderJugador2?.image ?? '/power/none.png'"
-          [alt]="poderJugador2?.name ?? 'Sin poder seleccionado'"
-        />
+        <img src="/power/none.png" alt="Poder del rival" />
       </div>
     </div>
 
-    <!-- Próximas piezas jugador 2 -->
     <div class="next-panel">
-      <h3>Next</h3>
-      <img
-        src="/elements/next-pieces.png"
-        alt="Próximas piezas del jugador 2"
-      />
+      <h3>Rival</h3>
+      <p class="panel-hint">{{ store.opponent()?.username ?? '—' }}</p>
     </div>
 
   </section>

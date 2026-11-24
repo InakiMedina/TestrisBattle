@@ -2,8 +2,6 @@
 import { Routes } from '@angular/router';
 import { Login } from './features/player/pages/login/login';
 import { Signin } from './features/player/pages/signin/signin';
-import { Practice } from './features/player/pages/practice/practice'
-import { Versus } from './features/player/pages/versus/versus'
 import { PerfilPage } from './features/player/pages/profile/perfil-page';
 import { History } from './features/player/pages/history/history';
 import { Forbidden } from './features/errors/pages/forbidden/forbidden/forbidden';
@@ -27,7 +25,9 @@ export const routes: Routes = [
 		children: [
 			{
 				path: 'practice',
-				component: Practice,
+				// Carga diferida: Phaser solo se descarga al entrar a esta vista.
+				loadComponent: () =>
+					import('./features/player/pages/practice/practice').then((m) => m.Practice),
 				canActivate: [roleGuard],
 				data: { roles: ['usuario'] },
 			},
@@ -45,7 +45,9 @@ export const routes: Routes = [
 			},
 			{
 				path: 'versus',
-				component: Versus,
+				// Carga diferida: Phaser solo se descarga al entrar a esta vista.
+				loadComponent: () =>
+					import('./features/player/pages/versus/versus').then((m) => m.Versus),
 				canActivate: [roleGuard],
 				data: { roles: ['usuario'] },
 			},
