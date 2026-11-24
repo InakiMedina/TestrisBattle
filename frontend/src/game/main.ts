@@ -8,7 +8,7 @@ import { REGISTRY, SQUARE_SIZE, type GameMode } from './constants';
 import type { PlayerStats } from '@shared/types/realtime.types';
 
 
-// Find out more information about the Game Config at:
+// Documentación de phaser y su configuración:
 // https://docs.phaser.io/api-documentation/typedef/types-core#gameconfig
 const config: Phaser.Types.Core.GameConfig = {
     type: AUTO,
