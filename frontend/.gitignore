@@ -45,3 +45,9 @@ Thumbs.db
 
 # AI md files
 /src/app/core/layout/adminNavbar.md
+
+# Generado desde .env por scripts/set-env.mjs
+/src/environments/environment.ts
+
+#Env
+.env

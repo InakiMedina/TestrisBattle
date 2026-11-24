@@ -468,3 +468,153 @@
     transform: rotate(360deg);
   }
 }
+/* --- Tiempo real (1 vs 1) --- */
+.game-board {
+  position: relative;
+}
+
+.board-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 12px;
+  background: rgba(10, 9, 25, 0.72);
+  border-radius: 10px;
+  text-align: center;
+}
+
+.countdown {
+  color: #52e6a5;
+  font-size: clamp(48px, 7vw, 96px);
+  font-weight: 700;
+}
+
+.result {
+  margin: 0;
+  font-size: clamp(20px, 2.2vw, 34px);
+  font-weight: 700;
+}
+
+.result--won {
+  color: #52e6a5;
+}
+
+.result--lost {
+  color: #ff4545;
+}
+
+.result-detail,
+.panel-hint,
+.rival-detail {
+  margin: 0;
+  color: #d7d5e8;
+  font-size: clamp(10px, 0.9vw, 14px);
+  line-height: 1.5;
+}
+
+.action-button,
+.leave-button {
+  padding: 8px 16px;
+  color: #fff;
+  background: #191820;
+  border: 1px solid #24d5d8;
+  border-radius: 6px;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.action-button:hover:not(:disabled) {
+  color: #191820;
+  background: #24d5d8;
+}
+
+.leave-button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 2;
+  padding: 4px 10px;
+  border-color: #ff4545;
+  font-size: 11px;
+}
+
+.rival-name {
+  margin: 0;
+  font-size: clamp(16px, 1.6vw, 24px);
+}
+
+.action-button:disabled,
+.leave-button:disabled,
+.ready-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.offline-message {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  right: 10px;
+  margin: 0;
+  padding: 6px 8px;
+  color: #fff;
+  background: rgba(179, 38, 30, 0.9);
+  border-radius: 6px;
+  font-size: 12px;
+  text-align: center;
+}
+
+.rival-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.rival-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+}
+
+.chip {
+  padding: 3px 10px;
+  border: 1px solid #aaa7c2;
+  border-radius: 999px;
+  font-size: 11px;
+}
+
+.chip--ok {
+  color: #52e6a5;
+  border-color: #52e6a5;
+}
+
+.chip--bad {
+  color: #ff4545;
+  border-color: #ff4545;
+}
+
+.rival-score-label {
+  margin: 12px 0 0;
+  font-size: 12px;
+}
+
+.rival-score {
+  margin: 0;
+  color: #ff4545;
+  font-family: monospace;
+  font-size: clamp(32px, 4vw, 60px);
+}
+
+.rival-warning {
+  margin: 0;
+  color: #e8ad00;
+  font-size: 12px;
+}

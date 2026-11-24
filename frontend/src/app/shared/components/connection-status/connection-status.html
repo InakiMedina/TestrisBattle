@@ -1,0 +1,12 @@
+<div
+  [class]="'connection connection--' + status()"
+  role="status"
+  aria-live="polite"
+  [attr.aria-label]="'Estado de la conexión en tiempo real: ' + label()"
+>
+  <span class="connection__dot" aria-hidden="true"></span>
+  <span class="connection__label">{{ label() }}</span>
+  @if (status() === 'disconnected') {
+    <button type="button" class="connection__retry" (click)="retry()">Reintentar</button>
+  }
+</div>

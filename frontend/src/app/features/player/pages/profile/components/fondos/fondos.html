@@ -2,29 +2,77 @@
 <section class="fondos-container">
   <h2>Fondos</h2>
 
-  <div class="acciones-fondo">
-    <label class="seleccionar-fondo-personalizado">
-      <input
-        type="file"
-        accept="image/png,image/jpeg,image/webp,image/gif,image/avif,image/bmp"
-        (change)="seleccionarImagen($event)"
-      >
-      Elegir imagen
-    </label>
-    @if (subiendoImagen) {
-      <div class="progreso-container">
-        <div class="progreso-barra">
-          <div
-            class="progreso-barra-valor"
-            [style.width.%]="progresoSubida"
-          ></div>
+  <!-- Zona de subida: elegir archivo o arrastrar y soltar -->
+  <div
+    class="zona-subida"
+    [class.arrastrando]="arrastrando"
+    [class.deshabilitada]="subiendoImagen"
+    (dragover)="alArrastrarEncima($event)"
+    (dragleave)="alSalirArrastre($event)"
+    (drop)="alSoltar($event)"
+  >
+    @if (vistaPreviaSubida && archivoPendiente) {
+      <!-- Vista previa antes de subir -->
+      <div class="vista-previa">
+        <img [src]="vistaPreviaSubida" alt="Vista previa del fondo a subir">
+
+        <div class="vista-previa-info">
+          <span class="vista-previa-nombre">{{ archivoPendiente.name }}</span>
+          <span>{{ archivoPendiente.type }} · {{ formatearTamano(archivoPendiente.size) }}</span>
+
+          @if (subiendoImagen) {
+            <div class="progreso-container">
+              <div
+                class="progreso-barra"
+                role="progressbar"
+                aria-label="Progreso de la subida"
+                [attr.aria-valuenow]="progresoSubida"
+                aria-valuemin="0"
+                aria-valuemax="100"
+              >
+                <div
+                  class="progreso-barra-valor"
+                  [style.width.%]="progresoSubida"
+                ></div>
+              </div>
+              <span class="progreso-texto">{{ progresoSubida }}%</span>
+            </div>
+          }
+
+          <div class="acciones-fondo">
+            @if (!subiendoImagen) {
+              <button type="button" class="guardar-fondo" (click)="confirmarSubida()">
+                Subir
+              </button>
+            }
+            <button type="button" class="cancelar-fondo" (click)="cancelarSubida()">
+              Cancelar
+            </button>
+          </div>
         </div>
       </div>
+    } @else {
+      <p class="zona-subida-texto">
+        Arrastra una imagen aquí o
+      </p>
+      <label class="seleccionar-fondo-personalizado">
+        <input
+          type="file"
+          accept="image/png,image/jpeg,image/webp,image/gif,image/avif,image/bmp"
+          (change)="seleccionarImagen($event)"
+        >
+        Elegir imagen
+      </label>
+      <p class="zona-subida-ayuda">PNG, JPG, WEBP, GIF, AVIF o BMP · máx. 8 MB</p>
     }
   </div>
 
   @if (mensajeImagen) {
-    <p class="mensaje-fondo" role="status">
+    <p
+      class="mensaje-fondo"
+      [class.mensaje-error]="mensajeEsError"
+      [attr.role]="mensajeEsError ? 'alert' : 'status'"
+    >
       {{ mensajeImagen }}
     </p>
   }

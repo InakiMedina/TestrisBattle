@@ -17,6 +17,69 @@
 				"h": 136
 			},
 			"trimmed": false
+		},
+		"cell-i": {
+			"frame": {
+				"x": 0,
+				"y": 68,
+				"w": 68,
+				"h": 68
+			},
+			"trimmed": false
+		},
+		"cell-j": {
+			"frame": {
+				"x": 340,
+				"y": 0,
+				"w": 68,
+				"h": 68
+			},
+			"trimmed": false
+		},
+		"cell-l": {
+			"frame": {
+				"x": 750,
+				"y": 0,
+				"w": 68,
+				"h": 68
+			},
+			"trimmed": false
+		},
+		"cell-o": {
+			"frame": {
+				"x": 887,
+				"y": 0,
+				"w": 68,
+				"h": 68
+			},
+			"trimmed": false
+		},
+		"cell-s": {
+			"frame": {
+				"x": 204,
+				"y": 204,
+				"w": 68,
+				"h": 68
+			},
+			"trimmed": false
+		},
+		"cell-t": {
+			"frame": {
+				"x": 477,
+				"y": 204,
+				"w": 68,
+				"h": 68
+			},
+			"trimmed": false
+		},
+		"cell-z": {
+			"frame": {
+				"x": 682,
+				"y": 204,
+				"w": 68,
+				"h": 68
+			},
+			"trimmed": false
 		}
 	}
 }

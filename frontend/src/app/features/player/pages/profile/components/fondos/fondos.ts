@@ -40,8 +40,17 @@ export class Fondos implements OnInit, OnDestroy {
   subiendoImagen = false;
   progresoSubida = 0;
   mensajeImagen = '';
+  mensajeEsError = false;
 
-  private vistaPreviaSubida: string | null = null;
+  // Arrastrar y soltar
+  arrastrando = false;
+
+  // Vista previa antes de subir
+  archivoPendiente: File | null = null;
+  vistaPreviaSubida: string | null = null;
+
+  // Permite cancelar la subida en curso
+  private subidaActual: AbortController | null = null;
 
   ngOnInit(): void {
     this.fondoSeleccionado =
@@ -111,40 +120,115 @@ export class Fondos implements OnInit, OnDestroy {
   }
 
   
-   // Sube y guarda una imagen personalizada.
-  async seleccionarImagen(event: Event): Promise<void> {
+  // ---------------------------------------------------------------------------
+  // Subida: selección (input o arrastrar y soltar) → validación → vista previa
+  // → confirmar → progreso (cancelable) → mensaje de éxito o error.
+  // ---------------------------------------------------------------------------
+
+  // Selección con el input type="file".
+  seleccionarImagen(event: Event): void {
     const input = event.target as HTMLInputElement;
     const archivo = input.files?.[0];
 
-    if (!archivo) return;
+    // Limpiar el input para poder elegir de nuevo el mismo archivo.
+    input.value = '';
+
+    if (archivo) this.prepararArchivo(archivo);
+  }
+
+  // Arrastrar y soltar.
+  alArrastrarEncima(event: DragEvent): void {
+    event.preventDefault();
+    if (event.dataTransfer) event.dataTransfer.dropEffect = this.subiendoImagen ? 'none' : 'copy';
+    this.arrastrando = !this.subiendoImagen;
+  }
+
+  alSalirArrastre(event: DragEvent): void {
+    // Ignorar cuando el puntero pasa sobre un elemento hijo de la zona.
+    const destino = event.relatedTarget as Node | null;
+    if (destino && (event.currentTarget as HTMLElement).contains(destino)) return;
+    this.arrastrando = false;
+  }
+
+  alSoltar(event: DragEvent): void {
+    event.preventDefault();
+    this.arrastrando = false;
+    if (this.subiendoImagen) return;
+
+    const archivos = event.dataTransfer?.files;
+    if (!archivos || archivos.length === 0) return;
+
+    if (archivos.length > 1) {
+      this.mostrarMensaje('Arrastra solo una imagen a la vez.', true);
+      return;
+    }
+
+    this.prepararArchivo(archivos[0]!);
+  }
+
+  // Valida el archivo y muestra la vista previa antes de subirlo.
+  private prepararArchivo(archivo: File): void {
+    if (this.subiendoImagen) return;
+
+    if (!this.esImagenPermitida(archivo)) {
+      this.descartarPendiente();
+      this.mostrarMensaje(
+        `"${archivo.name}" no es un formato permitido. Usa PNG, JPG, WEBP, GIF, AVIF o BMP.`,
+        true,
+      );
+      return;
+    }
+
+    if (archivo.size > this.MAX_IMAGE_SIZE) {
+      this.descartarPendiente();
+      this.mostrarMensaje(
+        `"${archivo.name}" pesa ${this.formatearTamano(archivo.size)}. El máximo es ${this.formatearTamano(this.MAX_IMAGE_SIZE)}.`,
+        true,
+      );
+      return;
+    }
+
+    this.descartarPendiente();
+    this.archivoPendiente = archivo;
+    this.vistaPreviaSubida = URL.createObjectURL(archivo);
+    this.mostrarMensaje('');
+  }
+
+  // Botón "Subir" de la vista previa.
+  async confirmarSubida(): Promise<void> {
+    const archivo = this.archivoPendiente;
+    if (!archivo || this.subiendoImagen) return;
 
     const id = crypto.randomUUID();
     const clave = `custom-background:${id}`;
+    const control = new AbortController();
+    this.subidaActual = control;
 
     this.subiendoImagen = true;
     this.progresoSubida = 0;
-    this.mensajeImagen = 'Cargando imagen...';
+    this.mostrarMensaje('Subiendo imagen...');
 
     try {
-      // 1. Mostrar y completar la barra
-      this.progresoSubida = 30;
-      this.cdr.detectChanges();
-
-      await new Promise(resolve => setTimeout(resolve, 300));
-
-      this.progresoSubida = 70;
-      this.cdr.detectChanges();
+      // 1. Avance de la barra (cancelable en cualquier momento).
+      for (let progreso = 10; progreso <= 90; progreso += 10) {
+        await this.esperar(120, control.signal);
+        this.progresoSubida = progreso;
+        this.cdr.detectChanges();
+      }
 
       // 2. Guardar la imagen
       await this.imageStorage.save(clave, archivo);
 
+      // Si se canceló justo mientras se guardaba, se deshace.
+      if (control.signal.aborted) {
+        await this.imageStorage.remove(clave);
+        throw new DOMException('Subida cancelada', 'AbortError');
+      }
+
       this.progresoSubida = 100;
       this.cdr.detectChanges();
 
-      // 3. Esperar un momento para que se vea completa
-      await new Promise(resolve => setTimeout(resolve, 800));
-
-      // 4. Crear la miniatura cuando la barra esté completa
+      // 3. Crear la miniatura
       const url = URL.createObjectURL(archivo);
 
       this.imageStorage.setBackgroundUrl(id, url);
@@ -160,7 +244,7 @@ export class Fondos implements OnInit, OnDestroy {
         ...this.fondosPersonalizados,
       ];
 
-       // Marcar el fondo personalizado como seleccionado
+      // Marcar el fondo personalizado como seleccionado
       this.fondoSeleccionado = `custom:${id}`;
 
       // Guardar la selección
@@ -169,22 +253,73 @@ export class Fondos implements OnInit, OnDestroy {
         this.fondoSeleccionado
       );
 
-      // 5. Actualizar el fondo del juego
+      // 4. Actualizar el fondo del juego
       await this.backgroundHandler.changeBackground(`custom:${id}`);
 
-      this.mensajeImagen = 'Imagen cargada correctamente.';
+      this.descartarPendiente();
+      this.mostrarMensaje('Imagen cargada correctamente.');
     } catch (error) {
-      console.error('Error al cargar la imagen:', error);
-      this.mensajeImagen = 'No se pudo cargar la imagen.';
+      if (error instanceof DOMException && error.name === 'AbortError') {
+        this.mostrarMensaje('Subida cancelada.');
+      } else {
+        console.error('Error al cargar la imagen:', error);
+        this.mostrarMensaje('No se pudo cargar la imagen.', true);
+      }
     } finally {
-      await new Promise(resolve => setTimeout(resolve, 800));
-
+      this.subidaActual = null;
       this.subiendoImagen = false;
+      this.progresoSubida = 0;
       this.cdr.detectChanges();
-
-      input.value = '';
     }
   }
+
+  // Botón "Cancelar": descarta la vista previa o detiene la subida en curso.
+  cancelarSubida(): void {
+    if (this.subidaActual) {
+      this.subidaActual.abort();
+      return;
+    }
+    this.descartarPendiente();
+    this.mostrarMensaje('');
+  }
+
+  formatearTamano(bytes: number): string {
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  }
+
+  private descartarPendiente(): void {
+    if (this.vistaPreviaSubida) URL.revokeObjectURL(this.vistaPreviaSubida);
+    this.vistaPreviaSubida = null;
+    this.archivoPendiente = null;
+  }
+
+  private mostrarMensaje(mensaje: string, esError = false): void {
+    this.mensajeImagen = mensaje;
+    this.mensajeEsError = esError;
+    this.cdr.detectChanges();
+  }
+
+  // Espera `ms` milisegundos; se interrumpe si se cancela la subida.
+  private esperar(ms: number, signal: AbortSignal): Promise<void> {
+    return new Promise((resolve, reject) => {
+      if (signal.aborted) {
+        reject(new DOMException('Subida cancelada', 'AbortError'));
+        return;
+      }
+      const timer = setTimeout(resolve, ms);
+      signal.addEventListener(
+        'abort',
+        () => {
+          clearTimeout(timer);
+          reject(new DOMException('Subida cancelada', 'AbortError'));
+        },
+        { once: true },
+      );
+    });
+  }
+
   
    // Valida los formatos de imagen.
    
@@ -264,6 +399,8 @@ export class Fondos implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.subidaActual?.abort();
+
     if (this.vistaPreviaSubida) {
       URL.revokeObjectURL(
         this.vistaPreviaSubida

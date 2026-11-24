@@ -4,12 +4,18 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter } from 'rxjs';
 import { Navbar } from './core/layout/navbar/navbar';
 import { NotificationBanner } from './shared/components/notification-banner/notification-banner';
+import { ConnectionStatus } from './shared/components/connection-status/connection-status';
+import { AuthService } from './core/auth/auth.service';
+import { RealtimeService } from './core/realtime/realtime.service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Navbar, NotificationBanner],
+  imports: [RouterOutlet, Navbar, NotificationBanner, ConnectionStatus],
   template: `
     <app-notification-banner />
+    @if (auth.isAuthenticated()) {
+      <app-connection-status />
+    }
     <div class="app-shell">
       @if (showNavbar()) {
         <app-navbar />
@@ -44,6 +50,10 @@ import { NotificationBanner } from './shared/components/notification-banner/noti
 export class App {
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
+  protected readonly auth = inject(AuthService);
+  // Se inyecta aquí para crear el servicio al arrancar: abre la conexión
+  // en tiempo real en cuanto hay sesión y la cierra al cerrarla.
+  private readonly realtime = inject(RealtimeService);
 
   protected readonly showNavbar = signal(!this.isAuthPage(this.router.url));
 

@@ -1,27 +1,47 @@
-import { Component, Input, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnDestroy, computed, inject, signal } from '@angular/core';
+import type { PlayerStats } from '@shared/types/realtime.types';
+import { OFFLINE_MESSAGE } from '../../../../core/realtime/realtime.service';
 import { Power } from '../../../../shared/interfaces/power-interface';
-import { VersusPlayerData } from '../../../../shared/interfaces/versus-player-data';
+import { PhaserGame } from '../../../../phaser-game.component';
+import type { PieceType } from '../../../../../game/logic/TetrisEngine';
+import { NextPieces } from './components/next-pieces';
+import { VersusStore } from './versus.store';
+
+const REASON_LABELS = {
+  'topped-out': 'tablero lleno',
+  forfeit: 'abandono',
+  disconnected: 'desconexión',
+} as const;
 
 @Component({
   selector: 'app-versus',
   standalone: true,
-  imports: [],
+  imports: [PhaserGame, NextPieces],
+  // El store vive y muere con la vista: sus listeners se limpian al salir.
+  providers: [VersusStore],
   templateUrl: './versus.html',
   styleUrl: './versus.scss',
 })
 export class Versus implements OnDestroy {
+  protected readonly store = inject(VersusStore);
+  protected readonly offlineMessage = OFFLINE_MESSAGE;
+  protected readonly reasonLabels = REASON_LABELS;
 
-  constructor(private cdr: ChangeDetectorRef) {}
+  protected readonly nextPieces = signal<PieceType[]>([]);
 
-  @Input() player1Data: Partial<VersusPlayerData> | null = null;
-  @Input() player2Data: Partial<VersusPlayerData> | null = null;
+  // Datos mostrados en cada panel
+  protected readonly myStats = this.store.myStats;
+  protected readonly opponentStats = computed<PlayerStats>(
+    () => this.store.opponent()?.stats ?? { score: 0, level: 0, lines: 0 },
+  );
+  protected readonly myHigh = computed(() => this.store.me()?.high ?? 0);
+  protected readonly opponentHigh = computed(() => this.store.opponent()?.high ?? 0);
 
-  readonly initialPlayerData: VersusPlayerData = {
-    score: 0,
-    level: 0,
-    lines: 0,
-    high: 0,
-  };
+  /** El tablero se muestra desde la cuenta regresiva hasta el resultado. */
+  protected readonly showBoard = computed(() => {
+    const phase = this.store.phase();
+    return phase === 'countdown' || phase === 'playing' || phase === 'finished';
+  });
 
   // Poderes disponibles
   readonly poderesIzquierda: Power[] = [
@@ -66,66 +86,13 @@ export class Versus implements OnDestroy {
     },
   ];
 
-  readonly todosLosPoderes: Power[] = [
-    ...this.poderesIzquierda,
-    ...this.poderesDerecha,
-  ];
+  readonly todosLosPoderes: Power[] = [...this.poderesIzquierda, ...this.poderesDerecha];
 
-  // Estado de los dados
-  caraDadoJugador1 = 0;
-  caraDadoJugador2 = 0;
-
-  poderJugador1: Power | null = null;
-  poderJugador2: Power | null = null;
-
-  // Estado de las animaciones
-  animandoDadoJugador1 = false;
-  animandoDadoJugador2 = false;
-
-  private timerDadoJugador1: ReturnType<typeof setTimeout> | null = null;
-  private timerDadoJugador2: ReturnType<typeof setTimeout> | null = null;
-
-  // Estado de los jugadores
-  jugador1Listo = false;
-  jugador2Listo = false;
-
-  get ambosListos(): boolean {
-    return this.jugador1Listo && this.jugador2Listo;
-  }
-
-  // Datos jugador 1
-  get scoreJugador1(): number {
-    return this.player1Data?.score ?? this.initialPlayerData.score;
-  }
-
-  get nivelJugador1(): number {
-    return this.player1Data?.level ?? this.initialPlayerData.level;
-  }
-
-  get lineasJugador1(): number {
-    return this.player1Data?.lines ?? this.initialPlayerData.lines;
-  }
-
-  get recordJugador1(): number {
-    return this.player1Data?.high ?? this.initialPlayerData.high;
-  }
-
-  // Datos jugador 2
-  get scoreJugador2(): number {
-    return this.player2Data?.score ?? this.initialPlayerData.score;
-  }
-
-  get nivelJugador2(): number {
-    return this.player2Data?.level ?? this.initialPlayerData.level;
-  }
-
-  get lineasJugador2(): number {
-    return this.player2Data?.lines ?? this.initialPlayerData.lines;
-  }
-
-  get recordJugador2(): number {
-    return this.player2Data?.high ?? this.initialPlayerData.high;
-  }
+  // Dado del jugador local (los poderes se conectarán al rival en la siguiente entrega)
+  protected readonly caraDado = signal(0);
+  protected readonly poder = signal<Power | null>(null);
+  protected readonly animandoDado = signal(false);
+  private timerDado: ReturnType<typeof setTimeout> | null = null;
 
   /** Calcula los puntos que faltan para el siguiente poder. */
   puntosSiguientePoder(score: number): number {
@@ -133,119 +100,44 @@ export class Versus implements OnDestroy {
     return remainder === 0 ? 1000 : 1000 - remainder;
   }
 
-  /** Marca a cada jugador como listo. */
-  prepararJugador(jugador: 1 | 2): void {
-    if (jugador === 1) {
-      this.jugador1Listo = true;
-    } else {
-      this.jugador2Listo = true;
-    }
-  }
-
-  /** Obtiene una cara aleatoria diferente a la anterior. */
-  private obtenerCaraAleatoria(caraActual: number): number {
-    let nuevaCara: number;
-
-    do {
-      nuevaCara = Math.floor(Math.random() * 6) + 1;
-    } while (nuevaCara === caraActual);
-
-    return nuevaCara;
-  }
-
-  lanzarDado(jugador: 1 | 2): void {
-    if (jugador === 1 && this.animandoDadoJugador1) return;
-    if (jugador === 2 && this.animandoDadoJugador2) return;
+  lanzarDado(): void {
+    if (this.animandoDado()) return;
 
     const caraFinal = Math.floor(Math.random() * 6) + 1;
-
-    const velocidades = [
-      35, 35, 40, 40, 45, 50,
-      60, 70, 85, 105, 130, 160
-    ];
-
+    const velocidades = [35, 35, 40, 40, 45, 50, 60, 70, 85, 105, 130, 160];
     let paso = 0;
 
-    if (jugador === 1) {
-      if (this.timerDadoJugador1) {
-        clearTimeout(this.timerDadoJugador1);
-      }
-
-      this.animandoDadoJugador1 = true;
-    } else {
-      if (this.timerDadoJugador2) {
-        clearTimeout(this.timerDadoJugador2);
-      }
-
-      this.animandoDadoJugador2 = true;
-    }
-
-    this.cdr.detectChanges();
+    if (this.timerDado) clearTimeout(this.timerDado);
+    this.animandoDado.set(true);
 
     const animar = () => {
       if (paso >= velocidades.length) {
         // Mostrar resultado final.
-        if (jugador === 1) {
-          this.caraDadoJugador1 = caraFinal;
-          this.poderJugador1 = this.todosLosPoderes[caraFinal - 1];
-
-          this.animandoDadoJugador1 = false;
-          this.timerDadoJugador1 = null;
-        } else {
-          this.caraDadoJugador2 = caraFinal;
-          this.poderJugador2 = this.todosLosPoderes[caraFinal - 1];
-
-          this.animandoDadoJugador2 = false;
-          this.timerDadoJugador2 = null;
-        }
-
-        this.cdr.detectChanges();
+        this.caraDado.set(caraFinal);
+        this.poder.set(this.todosLosPoderes[caraFinal - 1] ?? null);
+        this.animandoDado.set(false);
+        this.timerDado = null;
         return;
       }
 
       // Recorrer las caras 1, 2, 3, 4, 5 y 6.
-      const nuevaCara = (paso % 6) + 1;
-
-      if (jugador === 1) {
-        this.caraDadoJugador1 = nuevaCara;
-      } else {
-        this.caraDadoJugador2 = nuevaCara;
-      }
-
-      this.cdr.detectChanges();
-
-      const velocidad = velocidades[paso];
+      this.caraDado.set((paso % 6) + 1);
+      const velocidad = velocidades[paso]!;
       paso++;
-
-      const timer = setTimeout(animar, velocidad);
-
-      if (jugador === 1) {
-        this.timerDadoJugador1 = timer;
-      } else {
-        this.timerDadoJugador2 = timer;
-      }
+      this.timerDado = setTimeout(animar, velocidad);
     };
 
     animar();
   }
 
   /** Devuelve la imagen correspondiente a la cara actual. */
-  imagenDado(jugador: 1 | 2): string {
-    const cara = jugador === 1
-      ? this.caraDadoJugador1
-      : this.caraDadoJugador2;
-
+  imagenDado(): string {
+    const cara = this.caraDado();
     return cara === 0 ? '/dice/1.png' : `/dice/${cara}.png`;
   }
 
   /** Limpia los temporizadores al destruir el componente. */
   ngOnDestroy(): void {
-    if (this.timerDadoJugador1) {
-      clearTimeout(this.timerDadoJugador1);
-    }
-
-    if (this.timerDadoJugador2) {
-      clearTimeout(this.timerDadoJugador2);
-    }
+    if (this.timerDado) clearTimeout(this.timerDado);
   }
 }

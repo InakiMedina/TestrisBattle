@@ -1,69 +1,59 @@
-import { Scene, GameObjects, Game } from 'phaser';
-import { SQUARE_SIZE } from '../constants';
+import { Scene, GameObjects } from 'phaser';
+import { HEADER_ROWS, SQUARE_SIZE } from '../constants';
+import type { ActivePiece, PieceType } from '../logic/TetrisEngine';
 
-const piecesData = [ {
-		name: 'l-shape',
-		angle: 90
-	}, 
-	{
-		name: 'j-shape',
-		angle: 270
-	}]
+/** Frame de un solo cuadro (68 px) de cada pieza en el atlas 'pieces'. */
+export const CELL_FRAMES: Record<PieceType, string> = {
+	I: 'cell-i',
+	J: 'cell-j',
+	L: 'cell-l',
+	O: 'cell-o',
+	S: 'cell-s',
+	T: 'cell-t',
+	Z: 'cell-z',
+};
 
+/** Crea un cuadro del tablero con el arte del atlas. */
+export function createCell(scene: Scene, frame: string): GameObjects.Image {
+	return scene.add.image(0, 0, 'pieces', frame)
+		.setOrigin(0)
+		.setDisplaySize(SQUARE_SIZE, SQUARE_SIZE);
+}
 
-const gravity = 100;
-
+/**
+ * Pieza que está cayendo, dibujada cuadro por cuadro (4 imágenes del atlas).
+ * La posición y la forma las decide TetrisEngine; aquí solo se dibujan.
+ * También se usa, semitransparente, para la "sombra" que indica dónde caerá.
+ */
 export class RandomPiece extends GameObjects.Container {
-	piece: GameObjects.Image
-	pieceNumber: number
+	private readonly cells: GameObjects.Image[];
 
-	constructor (scene: Scene, 
-				pieceNumber: number,
-				x: number, 
-				y: number) {
-
-		super(scene, SQUARE_SIZE*x, SQUARE_SIZE*y);
-		this.pieceNumber = pieceNumber;
-		this.piece = scene.add.image(SQUARE_SIZE*x, SQUARE_SIZE*y, 'pieces', piecesData[pieceNumber].name).setScale(0.5);
-		this.rotate(piecesData[pieceNumber].angle)
+	constructor (scene: Scene, alpha = 1) {
+		super(scene, 0, HEADER_ROWS * SQUARE_SIZE);
+		this.cells = Array.from({ length: 4 }, () => createCell(scene, CELL_FRAMES.I));
+		this.add(this.cells);
+		this.setAlpha(alpha);
+		scene.add.existing(this);
 	}
 
-	rotate (angle: number) {
-		let obsAngle = this.piece.angle + angle;
-		obsAngle = obsAngle % 360;
-		if (obsAngle < 0)
-			obsAngle += 360;
-		
-		switch (obsAngle) {
-			case 0:
-				this.piece.setOrigin(0.5).setAngle(0).setOrigin(0);
-				break;
-
-			case 90:
-				this.piece.setOrigin(0.5).setAngle(90).setOrigin(0, 1);
-				break;
-
-			case 180:
-				this.piece.setOrigin(0.5).setAngle(180).setOrigin(1);
-				break;
-
-			case 270:
-				this.piece.setOrigin(0.5).setAngle(270).setOrigin(1, 0);
-				break;
-		}
+	/** Dibuja la pieza en la posición indicada (en celdas del tablero). */
+	show (piece: ActivePiece, row: number = piece.y) {
+		let index = 0;
+		piece.matrix.forEach((matrixRow, r) =>
+			matrixRow.forEach((filled, c) => {
+				if (!filled) return;
+				const cell = this.cells[index++];
+				// Las celdas por encima del tablero (spawn) no se dibujan.
+				cell.setVisible(row + r >= 0)
+					.setFrame(CELL_FRAMES[piece.type])
+					.setDisplaySize(SQUARE_SIZE, SQUARE_SIZE)
+					.setPosition((piece.x + c) * SQUARE_SIZE, (row + r) * SQUARE_SIZE);
+			}),
+		);
+		this.setVisible(true);
 	}
 
-	onTheGround () {
-		if (this.piece.y / SQUARE_SIZE >= 20)
-			return true
-		return false
+	hide () {
+		this.setVisible(false);
 	}
-
-	override update ( delta: number)
-    {
-		const dt = delta / 1000;
-		this.piece.y += gravity * dt;
-
-    }
-
 }
