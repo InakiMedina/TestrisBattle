@@ -4,16 +4,14 @@
   <section class="player-side player-one" aria-label="Tus estadísticas">
 
     <app-game-data
-      [stats]="myStats()"
-      [high]="myHigh()"
-      [diceImage]="imagenDado()"
-      [animatingDice]="animandoDado()"
-      [power]="poder()"
-      (rollDice)="lanzarDado()"
+      mode="player"
+      [stats]="store.myStats()"
+      [high]="store.myHigh()"
+      [powers]="powers"
     />
 
     <!-- Próximas piezas -->
-    <app-next-pieces [pieces]="nextPieces()" [showPieces]="showBoard()" />
+    <app-next-pieces [pieces]="store.nextPieces()" [showPieces]="store.showBoard()" />
 
   </section>
 
@@ -22,13 +20,13 @@
 
     <div class="game-board">
 
-      @if (showBoard()) {
+      @if (store.showBoard()) {
         <phaser-game
           mode="versus"
           [running]="store.isPlaying() && !store.me()?.finished"
           [initialStats]="store.resumeStats()"
           (statsChange)="store.reportStats($event)"
-          (nextChange)="nextPieces.set($event)"
+          (nextChange)="store.reportNextPieces($event)"
           (gameOver)="store.reportGameOver($event)"
         />
 
@@ -49,7 +47,7 @@
             </p>
             <p class="result-detail">
               Motivo: {{ reasonLabels[result.reason] }}<br />
-              Tú {{ myStats().score }} — {{ opponentStats().score }} {{ store.opponent()?.username }}
+              Tú {{ store.myStats().score }} — {{ store.opponentStats().score }} {{ store.opponent()?.username }}
             </p>
             <button class="action-button" type="button" (click)="store.leaveMatch()">
               Volver
@@ -182,7 +180,11 @@
   <!-- Panel del rival -->
   <section class="player-side player-two" aria-label="Estadísticas del rival">
 
-    <app-game-data [opponent]="true" [stats]="opponentStats()" [high]="opponentHigh()" />
+    <app-game-data
+      mode="opponent"
+      [stats]="store.opponentStats()"
+      [high]="store.opponentHigh()"
+    />
     <app-next-pieces [opponent]="true" [opponentName]="store.opponent()?.username ?? null" />
 
   </section>

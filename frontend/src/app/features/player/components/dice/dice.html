@@ -1,0 +1,33 @@
+@if (opponent()) {
+  <div class="opponent-content">
+    <div class="dice">
+      <img src="/dice/1.png" alt="Dado del rival" />
+    </div>
+    <div class="random-power">
+      <img src="/power/none.png" alt="Poder del rival" />
+    </div>
+  </div>
+} @else {
+  <div class="dice">
+    <img
+      [src]="image()"
+      [class.rolling]="animating()"
+      alt="Resultado de tu dado"
+    />
+  </div>
+  <button
+    class="dice-button"
+    type="button"
+    (click)="roll()"
+    [disabled]="animating()"
+  >
+    {{ animating() ? 'Lanzando...' : 'Lanzar dado' }}
+  </button>
+
+  <div class="random-power">
+    <img
+      [src]="selectedPower()?.image ?? '/power/none.png'"
+      [alt]="selectedPower()?.name ?? 'Sin poder seleccionado'"
+    />
+  </div>
+}

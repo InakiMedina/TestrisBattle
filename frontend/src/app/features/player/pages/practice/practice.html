@@ -4,58 +4,19 @@
   <!-- Columna izquierda: estadísticas y próximas piezas -->
   <section class="left-column">
 
-    <div class="score-panel">
-      <h3>Score</h3>
-
-      <div class="score-value">{{ score }}</div>
-
-      <div class="score-stat">
-        <span>Level:</span>
-        <strong>{{ nivel }}</strong>
-      </div>
-
-      <div class="score-stat">
-        <span>Lines:</span>
-        <strong>{{ lineas }}</strong>
-      </div>
-
-      <div class="score-stat">
-        <span>High:</span>
-        <strong>{{ record }}</strong>
-      </div>
-
-      <div class="next-power-label">
-        Points for next power:
-      </div>
-
-      <div class="next-power-value">
-        {{ puntosSiguientePoder }}
-      </div>
-
-      <div class="dice">
-        <img [src]="imagenDado" alt="Resultado del dado" />
-      </div>
-	  <button class="dice-button" type="button" (click)="lanzarDado()">
-		Lanzar dado
-	  </button>
-
-	  <div class="random-power">
-		<img
-			[src]="poderSeleccionado?.image ?? '/power/none.png'"
-			[alt]="poderSeleccionado?.name ?? 'Sin poder seleccionado'"
-		/>
-	  </div>
-    </div>
+    <app-game-data
+      mode="practice"
+      [stats]="stats"
+      [high]="record"
+      [pointsToNextPower]="pointsToNextPower"
+      [powers]="todosLosPoderes"
+    />
 
     <!-- Próximas piezas -->
-    <div class="next-panel">
-      <h3>Next</h3>
-
-      <img
-        src="/elements/next-pieces.png"
-        alt="Próximas piezas"
-      />
-    </div>
+    <app-next-pieces
+      [pieces]="nextPieces()"
+      [showPieces]="nextPieces().length > 0"
+    />
 
   </section>
 
@@ -64,7 +25,7 @@
   <section class="board-column">
 
     <div class="game-board">
-      <phaser-game/>
+      <phaser-game (nextChange)="nextPieces.set($event)" />
       <!--<img
         src="/elements/tetris-game.png"
         alt="Tablero de Tetris"

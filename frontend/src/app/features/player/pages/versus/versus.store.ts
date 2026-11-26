@@ -7,6 +7,7 @@ import type {
   PlayerStats,
   SyncResponse,
 } from '@shared/types/realtime.types';
+import type { PieceType } from '../../../../../game/logic/piece-data';
 import { NotificationService } from '../../../../core/notifications/notification.service';
 import { OFFLINE_MESSAGE, OfflineError, RealtimeService } from '../../../../core/realtime/realtime.service';
 
@@ -34,6 +35,7 @@ export class VersusStore {
   private readonly syncingState = signal(false);
   private readonly countdownState = signal<number | null>(null);
   private readonly myStatsState = signal<PlayerStats>({ score: 0, level: 0, lines: 0 });
+  private readonly nextPiecesState = signal<PieceType[]>([]);
 
   /** Estadísticas con las que se debe crear el tablero (retomar tras recargar). */
   private readonly resumeStatsState = signal<PlayerStats | null>(null);
@@ -44,12 +46,22 @@ export class VersusStore {
   readonly syncing = this.syncingState.asReadonly();
   readonly countdown = this.countdownState.asReadonly();
   readonly myStats = this.myStatsState.asReadonly();
+  readonly nextPieces = this.nextPiecesState.asReadonly();
   readonly resumeStats = this.resumeStatsState.asReadonly();
 
   readonly isConnected = this.realtime.isConnected;
   readonly phase = computed(() => this.matchState()?.phase ?? null);
   readonly opponent = computed<MatchPlayer | null>(() => this.matchState()?.opponent ?? null);
   readonly me = computed<MatchPlayer | null>(() => this.matchState()?.you ?? null);
+  readonly opponentStats = computed<PlayerStats>(
+    () => this.opponent()?.stats ?? { score: 0, level: 0, lines: 0 },
+  );
+  readonly myHigh = computed(() => this.me()?.high ?? 0);
+  readonly opponentHigh = computed(() => this.opponent()?.high ?? 0);
+  readonly showBoard = computed(() => {
+    const phase = this.phase();
+    return phase === 'countdown' || phase === 'playing' || phase === 'finished';
+  });
   readonly isPlaying = computed(() => this.phase() === 'playing' && this.countdownState() === null);
   readonly result = computed(() => {
     const match = this.matchState();
@@ -123,6 +135,10 @@ export class VersusStore {
       this.statsTimer = null;
       if (this.pendingStats) this.flushStats();
     }, STATS_THROTTLE_MS);
+  }
+
+  reportNextPieces(pieces: PieceType[]): void {
+    this.nextPiecesState.set(pieces);
   }
 
   /** El tablero local se llenó. Se envía aunque no haya conexión (se entrega al reconectar). */
