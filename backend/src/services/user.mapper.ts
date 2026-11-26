@@ -11,6 +11,10 @@ export function toPublicUser(doc: IUser & { _id: unknown }): IAuthUser {
     role: doc.role,
     profilePicture: doc.profilePicture,
     background: doc.background,
+    customBackgrounds: (doc.customBackgrounds ?? []).map((item) => ({
+      id: String(item.id),
+      createdAt: new Date(item.createdAt).toISOString(),
+    })),
     elo: doc.elo,
     league: doc.league,
     stats: {

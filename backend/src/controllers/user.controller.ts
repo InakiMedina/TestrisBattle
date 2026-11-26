@@ -22,12 +22,12 @@ export async function getUserById(req: Request, res: Response, next: NextFunctio
 
 export async function updateUser(req: Request, res: Response, next: NextFunction) {
   try {
-    // Lista blanca: elo, league, stats y hashPass nunca se aceptan desde el cliente
-    const { username, email, profilePicture, background } = req.body;
+    // Lista blanca: elo, league, stats y hashPass nunca se aceptan desde el cliente.
+    // profilePicture y customBackgrounds se gestionan con las rutas de archivos (S3).
+    const { username, email, background } = req.body;
     const data: UpdateUserInput = {};
     if (username !== undefined) data.username = username.trim();
     if (email !== undefined) data.email = email.trim();
-    if (profilePicture !== undefined) data.profilePicture = profilePicture;
     if (background !== undefined) data.background = background;
 
     res.json(await userService.updateUser(String(req.params.id), data));

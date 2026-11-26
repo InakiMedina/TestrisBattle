@@ -1,0 +1,798 @@
+{
+  "paths": {
+    "/api/users/{id}/profile-picture": {
+      "get": {
+        "tags": [
+          "Archivos de usuario"
+        ],
+        "summary": "Obtener la foto de perfil",
+        "description": "Devuelve la foto de perfil del usuario desde S3. Permitido para el propio usuario o un admin.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID del usuario (ObjectId).",
+            "schema": {
+              "type": "string",
+              "example": "6650f1c2a1b2c3d4e5f60718"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Contenido binario de la imagen, leído de S3 por el backend.",
+            "content": {
+              "image/png": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "image/jpeg": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "image/webp": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "image/gif": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "image/avif": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "image/bmp": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "ID inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilesErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No hay sesión o el token no es válido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilesErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "No tienes permiso sobre este usuario.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilesErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El usuario no existe o no tiene foto de perfil (se debe usar la imagen por defecto).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilesErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "S3 no está configurado o no responde (credenciales faltantes, vencidas o sin permisos). La aplicación debe usar las imágenes por defecto.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilesErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Archivos de usuario"
+        ],
+        "summary": "Subir o reemplazar la foto de perfil",
+        "description": "Solo existe una foto por usuario: al subir una nueva se elimina la anterior de S3. Solo el propio usuario.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID del usuario (ObjectId).",
+            "schema": {
+              "type": "string",
+              "example": "6650f1c2a1b2c3d4e5f60718"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "image"
+                ],
+                "properties": {
+                  "image": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "PNG, JPG, WEBP, GIF, AVIF o BMP. Máximo 2 MB."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Foto guardada. Devuelve el usuario actualizado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicUser"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Falta la imagen o el formato no está permitido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilesErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No hay sesión o el token no es válido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilesErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "No tienes permiso sobre este usuario.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilesErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "La imagen supera 2 MB.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilesErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "S3 no está configurado o no responde (credenciales faltantes, vencidas o sin permisos). La aplicación debe usar las imágenes por defecto.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilesErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Archivos de usuario"
+        ],
+        "summary": "Eliminar la foto de perfil",
+        "description": "Elimina la foto de S3; el usuario vuelve a la imagen por defecto. Solo el propio usuario.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID del usuario (ObjectId).",
+            "schema": {
+              "type": "string",
+              "example": "6650f1c2a1b2c3d4e5f60718"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Foto eliminada. Devuelve el usuario actualizado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicUser"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No hay sesión o el token no es válido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilesErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "No tienes permiso sobre este usuario.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilesErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "S3 no está configurado o no responde (credenciales faltantes, vencidas o sin permisos). La aplicación debe usar las imágenes por defecto.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilesErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/{id}/backgrounds": {
+      "get": {
+        "tags": [
+          "Archivos de usuario"
+        ],
+        "summary": "Listar los fondos personalizados",
+        "description": "Lista los fondos subidos por el usuario y el fondo seleccionado. Permitido para el propio usuario o un admin.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID del usuario (ObjectId).",
+            "schema": {
+              "type": "string",
+              "example": "6650f1c2a1b2c3d4e5f60718"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fondos del usuario.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BackgroundList"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No hay sesión o el token no es válido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilesErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "No tienes permiso sobre este usuario.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilesErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Usuario no encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilesErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "S3 no está configurado o no responde (credenciales faltantes, vencidas o sin permisos). La aplicación debe usar las imágenes por defecto.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilesErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Archivos de usuario"
+        ],
+        "summary": "Subir un fondo personalizado",
+        "description": "Sube un fondo a S3 y lo deja seleccionado. Máximo 6 fondos por usuario. Solo el propio usuario.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID del usuario (ObjectId).",
+            "schema": {
+              "type": "string",
+              "example": "6650f1c2a1b2c3d4e5f60718"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "image"
+                ],
+                "properties": {
+                  "image": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "PNG, JPG, WEBP, GIF, AVIF o BMP. Máximo 8 MB."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Fondo guardado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "backgroundId": {
+                      "type": "string"
+                    },
+                    "user": {
+                      "$ref": "#/components/schemas/PublicUser"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Falta la imagen, el formato no está permitido o ya tiene 6 fondos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilesErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No hay sesión o el token no es válido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilesErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "No tienes permiso sobre este usuario.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilesErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "La imagen supera 8 MB.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilesErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "S3 no está configurado o no responde (credenciales faltantes, vencidas o sin permisos). La aplicación debe usar las imágenes por defecto.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilesErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/{id}/backgrounds/{backgroundId}": {
+      "get": {
+        "tags": [
+          "Archivos de usuario"
+        ],
+        "summary": "Obtener un fondo personalizado",
+        "description": "Devuelve la imagen del fondo desde S3. Permitido para el propio usuario o un admin.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID del usuario (ObjectId).",
+            "schema": {
+              "type": "string",
+              "example": "6650f1c2a1b2c3d4e5f60718"
+            }
+          },
+          {
+            "name": "backgroundId",
+            "in": "path",
+            "required": true,
+            "description": "ID del fondo personalizado (ObjectId).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Contenido binario de la imagen, leído de S3 por el backend.",
+            "content": {
+              "image/png": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "image/jpeg": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "image/webp": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "image/gif": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "image/avif": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "image/bmp": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "ID inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilesErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No hay sesión o el token no es válido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilesErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "No tienes permiso sobre este usuario.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilesErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Fondo no encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilesErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "S3 no está configurado o no responde (credenciales faltantes, vencidas o sin permisos). La aplicación debe usar las imágenes por defecto.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilesErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Archivos de usuario"
+        ],
+        "summary": "Eliminar un fondo personalizado",
+        "description": "Elimina el fondo de S3. Si estaba seleccionado, el usuario vuelve al fondo por defecto. Solo el propio usuario.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID del usuario (ObjectId).",
+            "schema": {
+              "type": "string",
+              "example": "6650f1c2a1b2c3d4e5f60718"
+            }
+          },
+          {
+            "name": "backgroundId",
+            "in": "path",
+            "required": true,
+            "description": "ID del fondo personalizado (ObjectId).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fondo eliminado. Devuelve el usuario actualizado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicUser"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "ID inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilesErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No hay sesión o el token no es válido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilesErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "No tienes permiso sobre este usuario.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilesErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Fondo no encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilesErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "S3 no está configurado o no responde (credenciales faltantes, vencidas o sin permisos). La aplicación debe usar las imágenes por defecto.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilesErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "PublicBackground": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "BackgroundList": {
+        "type": "object",
+        "properties": {
+          "backgrounds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PublicBackground"
+            }
+          },
+          "selected": {
+            "type": "string",
+            "description": "'' (por defecto), '/backgrounds/<archivo>' o 'custom:<id>'.",
+            "example": "custom:6650f1c2a1b2c3d4e5f60719"
+          },
+          "max": {
+            "type": "integer",
+            "example": 6
+          }
+        }
+      },
+      "PublicUser": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "admin",
+              "usuario"
+            ]
+          },
+          "profilePicture": {
+            "type": "string",
+            "description": "Clave del archivo en S3, o '' si usa la imagen por defecto."
+          },
+          "background": {
+            "type": "string"
+          },
+          "customBackgrounds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PublicBackground"
+            }
+          },
+          "elo": {
+            "type": "number"
+          },
+          "league": {
+            "type": "string"
+          },
+          "stats": {
+            "type": "object"
+          }
+        }
+      },
+      "FilesErrorResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Fondo no encontrado"
+          }
+        }
+      }
+    }
+  }
+}

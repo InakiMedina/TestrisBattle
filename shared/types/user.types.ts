@@ -8,6 +8,14 @@ export interface IUserStats {
 	powers_used: number;
 }
 
+// Fondo personalizado subido por el usuario. El archivo vive en S3 (key);
+// en MongoDB solo se guarda la referencia.
+export interface IUserBackground {
+	id?: string;
+	key: string;
+	createdAt: Date;
+}
+
 export interface IUser {
 	id?: string;
 	username: string;
@@ -17,6 +25,7 @@ export interface IUser {
 	profilePicture: string;
 	elo: number;
 	background: string;
+	customBackgrounds: IUserBackground[];
 	league: string;
 	stats: IUserStats;
 }

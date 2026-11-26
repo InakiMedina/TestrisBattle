@@ -2,6 +2,7 @@ import type { Options } from 'swagger-jsdoc';
 import authSwagger from './authSwagger.json';
 import rootSwagger from './rootSwagger.json';
 import testAuthSwagger from './testAuthSwagger.json';
+import userFilesSwagger from './userFilesSwagger.json';
 
 export function createSwaggerOptions(port: number): Options {
   return {
@@ -21,9 +22,13 @@ export function createSwaggerOptions(port: number): Options {
         ...rootSwagger.paths,
         ...authSwagger.paths,
         ...testAuthSwagger.paths,
+        ...userFilesSwagger.paths,
       },
       components: {
-        ...authSwagger.components,
+        schemas: {
+          ...authSwagger.components.schemas,
+          ...userFilesSwagger.components.schemas,
+        },
         securitySchemes: {
           bearerAuth: {
             type: 'http',

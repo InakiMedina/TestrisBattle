@@ -16,6 +16,19 @@ export function validateObjectId(req: Request, _res: Response, next: NextFunctio
   next();
 }
 
+export function validateBackgroundId(req: Request, _res: Response, next: NextFunction) {
+  if (!Types.ObjectId.isValid(String(req.params.backgroundId))) {
+    return next(new HttpError(400, 'ID de fondo inválido'));
+  }
+  next();
+}
+
+// Valores aceptados para `background`:
+//   ''                      → fondo por defecto de la aplicación
+//   '/backgrounds/<archivo>' → uno de los fondos predeterminados del frontend
+//   'custom:<id>'           → uno de los fondos personalizados del usuario
+const BACKGROUND_REGEX = /^(|\/backgrounds\/[\w.-]+|custom:[a-f\d]{24})$/i;
+
 export function validateCreateUser(req: Request, _res: Response, next: NextFunction) {
   const { username, email, password } = req.body ?? {};
 
@@ -32,9 +45,10 @@ export function validateCreateUser(req: Request, _res: Response, next: NextFunct
 }
 
 export function validateUpdateUser(req: Request, _res: Response, next: NextFunction) {
-  const { username, email, profilePicture, background } = req.body ?? {};
+  // profilePicture ya no se acepta aquí: se gestiona con /users/:id/profile-picture (S3).
+  const { username, email, background } = req.body ?? {};
 
-  if (username === undefined && email === undefined && profilePicture === undefined && background === undefined) {
+  if (username === undefined && email === undefined && background === undefined) {
     return next(new HttpError(400, 'No se envió ningún campo modificable'));
   }
   if (username !== undefined && (!isString(username) || username.trim().length < 2)) {
@@ -43,11 +57,8 @@ export function validateUpdateUser(req: Request, _res: Response, next: NextFunct
   if (email !== undefined && (!isString(email) || !EMAIL_REGEX.test(email.trim()))) {
     return next(new HttpError(400, 'Correo electrónico inválido'));
   }
-  if (profilePicture !== undefined && !isString(profilePicture)) {
-    return next(new HttpError(400, 'profilePicture debe ser texto'));
-  }
-  if (background !== undefined && !isString(background)) {
-    return next(new HttpError(400, 'background debe ser texto'));
+  if (background !== undefined && (!isString(background) || !BACKGROUND_REGEX.test(background))) {
+    return next(new HttpError(400, 'background no es un fondo válido'));
   }
   next();
 }
