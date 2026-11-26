@@ -43,10 +43,10 @@ export class Navbar {
       activeIcon: '/navbar/profile-active.png',
     },
     {
-      label: 'Historial',
-      route: '/history',
-      defaultIcon: '/navbar/history.png',
-      activeIcon: '/navbar/history-active.png',
+      label: 'Ranking',
+      route: '/ranking',
+      defaultIcon: '/navbar/ranking.png',
+      activeIcon: '/navbar/ranking-active.png',
     },
   ];
 
@@ -66,8 +66,8 @@ export class Navbar {
     {
       label: 'Stats',
       route: '/admin/stats',
-      defaultIcon: '/navbar/history.png',
-      activeIcon: '/navbar/history-active.png',
+      defaultIcon: '/navbar/ranking.png',
+      activeIcon: '/navbar/rankig-active.png',
     },
   ];
 

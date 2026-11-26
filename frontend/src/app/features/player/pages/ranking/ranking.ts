@@ -2,11 +2,11 @@ import { Component } from '@angular/core';
 import { MatchHistoryRow, ResultType } from '../../../../shared/components/match-history-row/match-history-row';
 
 @Component({
-  selector: 'app-history',
+  selector: 'app-ranking',
   imports: [MatchHistoryRow],
-  templateUrl: './history.html',
-  styleUrl: './history.scss'
+  templateUrl: './ranking.html',
+  styleUrl: './ranking.scss'
 })
-export class History {
+export class Ranking {
   readonly ResultType = ResultType;
 }
