@@ -1,5 +1,11 @@
 import { model, Schema } from 'mongoose';
-import type { IUser } from '@shared/types/user.types';
+import type { IUser, IUserBackground } from '@shared/types/user.types';
+
+// Referencia a un fondo personalizado almacenado en S3.
+const userBackgroundSchema = new Schema<IUserBackground>({
+  key: { type: String, required: true },
+  createdAt: { type: Date, required: true, default: Date.now },
+});
 
 const userSchema = new Schema<IUser>(
   {
@@ -10,6 +16,8 @@ const userSchema = new Schema<IUser>(
     profilePicture: { type: String, required: false, default: '' },
     elo: { type: Number, required: true, default: 1000, min: 0 },
     background: { type: String, required: false, default: '' },
+    // Los documentos existentes sin este campo se leen como lista vacía.
+    customBackgrounds: { type: [userBackgroundSchema], default: [] },
     league: { type: String, required: true, default: 'Unranked' },
     stats: {
       games_played: { type: Number, default: 0, min: 0 },
