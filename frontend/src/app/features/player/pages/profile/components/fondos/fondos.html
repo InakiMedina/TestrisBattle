@@ -6,7 +6,7 @@
   <div
     class="zona-subida"
     [class.arrastrando]="arrastrando"
-    [class.deshabilitada]="subiendoImagen"
+    [class.deshabilitada]="subiendoImagen || (limiteAlcanzado && !archivoPendiente)"
     (dragover)="alArrastrarEncima($event)"
     (dragleave)="alSalirArrastre($event)"
     (drop)="alSoltar($event)"
@@ -51,6 +51,11 @@
           </div>
         </div>
       </div>
+    } @else if (limiteAlcanzado) {
+      <p class="zona-subida-texto">
+        Ya tienes {{ MAX_FONDOS_PERSONALIZADOS }} fondos personalizados.
+      </p>
+      <p class="zona-subida-ayuda">Elimina uno para subir otro.</p>
     } @else {
       <p class="zona-subida-texto">
         Arrastra una imagen aquí o
@@ -58,12 +63,15 @@
       <label class="seleccionar-fondo-personalizado">
         <input
           type="file"
-          accept="image/png,image/jpeg,image/webp,image/gif,image/avif,image/bmp"
+          [accept]="formatosPermitidos"
           (change)="seleccionarImagen($event)"
         >
         Elegir imagen
       </label>
-      <p class="zona-subida-ayuda">PNG, JPG, WEBP, GIF, AVIF o BMP · máx. 8 MB</p>
+      <p class="zona-subida-ayuda">
+        PNG, JPG, WEBP, GIF, AVIF o BMP · máx. {{ formatearTamano(MAX_IMAGE_SIZE) }}
+        · {{ fondosPersonalizados.length }}/{{ MAX_FONDOS_PERSONALIZADOS }} fondos
+      </p>
     }
   </div>
 
@@ -86,18 +94,18 @@
         <button
           type="button"
           class="fondo-card"
-          [class.seleccionado]="
-            fondoSeleccionado === 'custom:' + fondo.id
-          "
-          [attr.aria-pressed]="
-            fondoSeleccionado === 'custom:' + fondo.id
-          "
-          (click)="seleccionarFondo('custom:' + fondo.id)"
+          [class.seleccionado]="fondoSeleccionado === fondo.ruta"
+          [attr.aria-pressed]="fondoSeleccionado === fondo.ruta"
+          [attr.aria-label]="'Seleccionar ' + fondo.nombre"
+          [disabled]="!fondo.url"
+          (click)="seleccionarFondo(fondo.ruta)"
         >
-          <img
-            [src]="fondo.url"
-            alt="Fondo personalizado"
-          >
+          @if (fondo.url) {
+            <img
+              [src]="fondo.url"
+              [alt]="fondo.nombre"
+            >
+          }
 
           <span class="fondo-personalizado-label">
             Personalizado

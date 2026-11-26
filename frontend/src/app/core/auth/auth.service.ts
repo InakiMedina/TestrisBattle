@@ -103,6 +103,13 @@ export class AuthService {
       );
   }
 
+  // Reemplaza el usuario en memoria con la versión que devolvió el backend
+  // (por ejemplo, después de cambiar la foto de perfil o el fondo).
+  updateCurrentUser(user: IAuthUser): void {
+    if (!this.userState()) return;
+    this.userState.set(user);
+  }
+
   logout(): void {
     this.clearSession();
     void this.router.navigate(['/login']);

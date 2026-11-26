@@ -1,8 +1,21 @@
 
+import { HttpEventType } from '@angular/common/http';
 import { ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Subscription } from 'rxjs';
 
-import { BackgroundHandler } from '../../../../../../services/background-handler';
-import { ImageStorageService } from '../../../../../../services/image-storage.service';
+import { AuthService } from '../../../../../../core/auth/auth.service';
+import { getFormErrorMessage } from '../../../../../../core/http/http-error.util';
+import { BackgroundHandler, DEFAULT_BACKGROUND } from '../../../../../../services/background-handler';
+import {
+  ALLOWED_IMAGE_TYPES,
+  MAX_BACKGROUND_BYTES,
+  MAX_CUSTOM_BACKGROUNDS,
+  UserFilesService,
+  getFileErrorMessage,
+  isStorageUnavailable,
+  toBackgroundRoute,
+  uploadProgress,
+} from '../../../../../../services/user-files.service';
 import { Fondo } from '../../../../../../shared/interfaces/fondo';
 import { FondoPersonalizado } from '../../../../../../shared/interfaces/fondo-personalizado';
 
@@ -16,24 +29,28 @@ import { FondoPersonalizado } from '../../../../../../shared/interfaces/fondo-pe
 })
 export class Fondos implements OnInit, OnDestroy {
 
+  private readonly auth = inject(AuthService);
   private readonly backgroundHandler = inject(BackgroundHandler);
-  private readonly imageStorage = inject(ImageStorageService);
+  private readonly userFiles = inject(UserFilesService);
   private readonly cdr = inject(ChangeDetectorRef);
 
-  private readonly CUSTOM_PREFIX = 'custom:';
-  private readonly MAX_IMAGE_SIZE = 8 * 1024 * 1024;
+  readonly MAX_IMAGE_SIZE = MAX_BACKGROUND_BYTES;
+  readonly MAX_FONDOS_PERSONALIZADOS = MAX_CUSTOM_BACKGROUNDS;
+  readonly formatosPermitidos = ALLOWED_IMAGE_TYPES.join(',');
 
   fondoSeleccionado = '';
 
+  // Fondos predeterminados del proyecto (viven en /public/backgrounds, nunca en S3).
   fondos: Fondo[] = [
+    { nombre: 'Ciudad', ruta: DEFAULT_BACKGROUND },
     { nombre: 'Galaxia azul', ruta: '/backgrounds/bg_1.jpg' },
     { nombre: 'Nebulosa morada', ruta: '/backgrounds/bg_2.avif' },
-    { nombre: 'Galaxia rosa', ruta: '/backgrounds/bg_3.webp' },
     { nombre: 'Espacio oscuro', ruta: '/backgrounds/bg_4.jpg' },
     { nombre: 'Nebulosa verde', ruta: '/backgrounds/bg_5.jpg' },
     { nombre: 'Galaxia roja', ruta: '/backgrounds/bg_6.jpg' }
   ];
 
+  // Fondos que el usuario subió a S3.
   fondosPersonalizados: FondoPersonalizado[] = [];
 
   // Barra de progreso
@@ -50,76 +67,87 @@ export class Fondos implements OnInit, OnDestroy {
   vistaPreviaSubida: string | null = null;
 
   // Permite cancelar la subida en curso
-  private subidaActual: AbortController | null = null;
+  private subidaActual: Subscription | null = null;
 
-  ngOnInit(): void {
-    this.fondoSeleccionado =
-      localStorage.getItem('fondoSeleccionado') ||
-      this.fondos[0].ruta;
-
-    this.backgroundHandler.restoreSavedBackground();
-
-    this.cargarFondosPersonalizados();
+  get limiteAlcanzado(): boolean {
+    return this.fondosPersonalizados.length >= this.MAX_FONDOS_PERSONALIZADOS;
   }
 
-  
-   // Carga los fondos personalizados guardados.
-   
+  ngOnInit(): void {
+    this.fondoSeleccionado = this.auth.currentUser()?.background || DEFAULT_BACKGROUND;
+    void this.cargarFondosPersonalizados();
+  }
+
+
+   // Carga los fondos personalizados del usuario desde S3 (a través del backend).
+
   async cargarFondosPersonalizados(): Promise<void> {
-    try {
-      const imagenes =
-        await this.imageStorage.listCustomBackgrounds();
+    const ids = this.userFiles.currentBackgroundIds();
 
-      this.fondosPersonalizados = imagenes.map(imagen => {
-        let url = this.imageStorage.getBackgroundUrl(
-          imagen.id
-        );
+    // Mientras se descargan se muestran las tarjetas vacías.
+    this.fondosPersonalizados = ids.map((id) => this.crearFondoPersonalizado(id, null));
+    this.cdr.detectChanges();
 
-        if (!url) {
-          url = URL.createObjectURL(imagen.image);
-
-          this.imageStorage.setBackgroundUrl(
-            imagen.id,
-            url
-          );
+    let almacenamientoNoDisponible = false;
+    const cargados = await Promise.all(
+      ids.map(async (id) => {
+        try {
+          return this.crearFondoPersonalizado(id, await this.userFiles.getBackgroundUrl(id));
+        } catch (error) {
+          if (isStorageUnavailable(error)) almacenamientoNoDisponible = true;
+          else console.error('Error al cargar el fondo personalizado:', error);
+          return this.crearFondoPersonalizado(id, null);
         }
+      }),
+    );
 
-        return {
-          id: imagen.id,
-          nombre: `Fondo personalizado ${imagen.id}`,
-          ruta: url,
-          url,
-          imagen: imagen.image
-        };
-      });
+    // Se conservan los fondos subidos mientras se cargaba la lista;
+    // los que ya no existen en S3 no se muestran.
+    const nuevos = this.fondosPersonalizados.filter((fondo) => !ids.includes(fondo.id));
+    this.fondosPersonalizados = [...nuevos, ...cargados.filter((fondo) => fondo.url !== null)];
+    this.cdr.detectChanges();
 
-      this.cdr.detectChanges();
-
-    } catch (error) {
-      console.error(
-        'Error al cargar fondos personalizados:',
-        error
+    // Sin S3 solo se muestran los fondos predeterminados.
+    if (almacenamientoNoDisponible) {
+      this.mostrarMensaje(
+        'Tus fondos personalizados no están disponibles en este momento. Puedes usar los predeterminados.',
+        true,
       );
     }
   }
 
-  
-   // Selecciona un fondo predeterminado o personalizado.
-   
-  seleccionarFondo(ruta: string): void {
-    this.fondoSeleccionado = ruta;
-
-    localStorage.setItem(
-      'fondoSeleccionado',
-      ruta
-    );
-
-    this.backgroundHandler.changeBackground(ruta);
-
-    this.cdr.detectChanges();
+  private crearFondoPersonalizado(id: string, url: string | null): FondoPersonalizado {
+    return { id, nombre: 'Fondo personalizado', ruta: toBackgroundRoute(id), url };
   }
 
-  
+
+   // Selecciona un fondo predeterminado o personalizado y lo guarda en el perfil.
+
+  seleccionarFondo(ruta: string): void {
+    const anterior = this.fondoSeleccionado;
+    if (ruta === anterior) return;
+
+    this.fondoSeleccionado = ruta;
+    void this.backgroundHandler.changeBackground(ruta);
+    this.cdr.detectChanges();
+
+    this.userFiles.saveSelectedBackground(ruta).subscribe({
+      error: (error: unknown) => {
+        console.error('Error al guardar el fondo seleccionado:', error);
+        // Si no se pudo guardar, se regresa al fondo anterior.
+        if (this.fondoSeleccionado === ruta) {
+          this.fondoSeleccionado = anterior;
+          void this.backgroundHandler.changeBackground(anterior);
+        }
+        this.mostrarMensaje(
+          getFormErrorMessage(error) ?? 'No se pudo guardar el fondo seleccionado.',
+          true,
+        );
+      },
+    });
+  }
+
+
   // ---------------------------------------------------------------------------
   // Subida: selección (input o arrastrar y soltar) → validación → vista previa
   // → confirmar → progreso (cancelable) → mensaje de éxito o error.
@@ -139,8 +167,9 @@ export class Fondos implements OnInit, OnDestroy {
   // Arrastrar y soltar.
   alArrastrarEncima(event: DragEvent): void {
     event.preventDefault();
-    if (event.dataTransfer) event.dataTransfer.dropEffect = this.subiendoImagen ? 'none' : 'copy';
-    this.arrastrando = !this.subiendoImagen;
+    const bloqueada = this.subiendoImagen || this.limiteAlcanzado;
+    if (event.dataTransfer) event.dataTransfer.dropEffect = bloqueada ? 'none' : 'copy';
+    this.arrastrando = !bloqueada;
   }
 
   alSalirArrastre(event: DragEvent): void {
@@ -170,6 +199,15 @@ export class Fondos implements OnInit, OnDestroy {
   private prepararArchivo(archivo: File): void {
     if (this.subiendoImagen) return;
 
+    if (this.limiteAlcanzado) {
+      this.descartarPendiente();
+      this.mostrarMensaje(
+        `Solo puedes tener ${this.MAX_FONDOS_PERSONALIZADOS} fondos personalizados. Elimina uno para subir otro.`,
+        true,
+      );
+      return;
+    }
+
     if (!this.esImagenPermitida(archivo)) {
       this.descartarPendiente();
       this.mostrarMensaje(
@@ -194,89 +232,58 @@ export class Fondos implements OnInit, OnDestroy {
     this.mostrarMensaje('');
   }
 
-  // Botón "Subir" de la vista previa.
-  async confirmarSubida(): Promise<void> {
+  // Botón "Subir" de la vista previa: envía la imagen al backend, que la guarda en S3.
+  confirmarSubida(): void {
     const archivo = this.archivoPendiente;
     if (!archivo || this.subiendoImagen) return;
-
-    const id = crypto.randomUUID();
-    const clave = `custom-background:${id}`;
-    const control = new AbortController();
-    this.subidaActual = control;
 
     this.subiendoImagen = true;
     this.progresoSubida = 0;
     this.mostrarMensaje('Subiendo imagen...');
 
-    try {
-      // 1. Avance de la barra (cancelable en cualquier momento).
-      for (let progreso = 10; progreso <= 90; progreso += 10) {
-        await this.esperar(120, control.signal);
-        this.progresoSubida = progreso;
-        this.cdr.detectChanges();
-      }
+    this.subidaActual = this.userFiles.uploadBackground(archivo).subscribe({
+      next: (event) => {
+        const progreso = uploadProgress(event);
+        if (progreso !== null) {
+          this.progresoSubida = progreso;
+          this.cdr.detectChanges();
+          return;
+        }
 
-      // 2. Guardar la imagen
-      await this.imageStorage.save(clave, archivo);
+        if (event.type !== HttpEventType.Response || !event.body) return;
 
-      // Si se canceló justo mientras se guardaba, se deshace.
-      if (control.signal.aborted) {
-        await this.imageStorage.remove(clave);
-        throw new DOMException('Subida cancelada', 'AbortError');
-      }
+        // El backend deja seleccionado el fondo recién subido.
+        const { backgroundId } = event.body;
+        const ruta = toBackgroundRoute(backgroundId);
 
-      this.progresoSubida = 100;
-      this.cdr.detectChanges();
+        const url = this.userFiles.cacheBackground(backgroundId, archivo);
 
-      // 3. Crear la miniatura
-      const url = URL.createObjectURL(archivo);
+        this.fondosPersonalizados = [
+          this.crearFondoPersonalizado(backgroundId, url),
+          ...this.fondosPersonalizados,
+        ];
+        this.fondoSeleccionado = ruta;
+        void this.backgroundHandler.changeBackground(ruta);
 
-      this.imageStorage.setBackgroundUrl(id, url);
-
-      this.fondosPersonalizados = [
-        {
-          id,
-          nombre: 'Personalizado',
-          ruta: `custom:${id}`,
-          url,
-          imagen: archivo,
-        },
-        ...this.fondosPersonalizados,
-      ];
-
-      // Marcar el fondo personalizado como seleccionado
-      this.fondoSeleccionado = `custom:${id}`;
-
-      // Guardar la selección
-      localStorage.setItem(
-        'fondoSeleccionado',
-        this.fondoSeleccionado
-      );
-
-      // 4. Actualizar el fondo del juego
-      await this.backgroundHandler.changeBackground(`custom:${id}`);
-
-      this.descartarPendiente();
-      this.mostrarMensaje('Imagen cargada correctamente.');
-    } catch (error) {
-      if (error instanceof DOMException && error.name === 'AbortError') {
-        this.mostrarMensaje('Subida cancelada.');
-      } else {
+        this.descartarPendiente();
+        this.terminarSubida();
+        this.mostrarMensaje('Imagen cargada correctamente.');
+      },
+      error: (error: unknown) => {
         console.error('Error al cargar la imagen:', error);
-        this.mostrarMensaje('No se pudo cargar la imagen.', true);
-      }
-    } finally {
-      this.subidaActual = null;
-      this.subiendoImagen = false;
-      this.progresoSubida = 0;
-      this.cdr.detectChanges();
-    }
+        this.terminarSubida();
+        this.mostrarMensaje(getFileErrorMessage(error, 'No se pudo cargar la imagen.'), true);
+      },
+    });
   }
 
   // Botón "Cancelar": descarta la vista previa o detiene la subida en curso.
   cancelarSubida(): void {
     if (this.subidaActual) {
-      this.subidaActual.abort();
+      // Cancelar la suscripción aborta la petición HTTP.
+      this.subidaActual.unsubscribe();
+      this.terminarSubida();
+      this.mostrarMensaje('Subida cancelada.');
       return;
     }
     this.descartarPendiente();
@@ -287,6 +294,13 @@ export class Fondos implements OnInit, OnDestroy {
     if (bytes < 1024) return `${bytes} B`;
     if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  }
+
+  private terminarSubida(): void {
+    this.subidaActual = null;
+    this.subiendoImagen = false;
+    this.progresoSubida = 0;
+    this.cdr.detectChanges();
   }
 
   private descartarPendiente(): void {
@@ -301,48 +315,16 @@ export class Fondos implements OnInit, OnDestroy {
     this.cdr.detectChanges();
   }
 
-  // Espera `ms` milisegundos; se interrumpe si se cancela la subida.
-  private esperar(ms: number, signal: AbortSignal): Promise<void> {
-    return new Promise((resolve, reject) => {
-      if (signal.aborted) {
-        reject(new DOMException('Subida cancelada', 'AbortError'));
-        return;
-      }
-      const timer = setTimeout(resolve, ms);
-      signal.addEventListener(
-        'abort',
-        () => {
-          clearTimeout(timer);
-          reject(new DOMException('Subida cancelada', 'AbortError'));
-        },
-        { once: true },
-      );
-    });
-  }
 
-  
    // Valida los formatos de imagen.
-   
-  private esImagenPermitida(archivo: File): boolean {
-    const formatosPermitidos = [
-      'image/png',
-      'image/jpeg',
-      'image/webp',
-      'image/gif',
-      'image/avif',
-      'image/bmp'
-    ];
 
-    return formatosPermitidos.includes(
-      archivo.type
-    );
+  private esImagenPermitida(archivo: File): boolean {
+    return ALLOWED_IMAGE_TYPES.includes(archivo.type);
   }
-  
-   // Elimina un fondo personalizado usando su ID.
-   
-  async eliminarFondoPersonalizado(
-    id: string
-  ): Promise<void> {
+
+   // Elimina un fondo personalizado de S3 usando su ID.
+
+  eliminarFondoPersonalizado(id: string): void {
     const fondo = this.fondosPersonalizados.find(
       item => item.id === id
     );
@@ -352,54 +334,36 @@ export class Fondos implements OnInit, OnDestroy {
     }
 
     const confirmar = window.confirm(
-      `¿Deseas eliminar el fondo "${fondo.nombre}"?`
+      '¿Deseas eliminar este fondo personalizado?'
     );
 
     if (!confirmar) {
       return;
     }
 
-    try {
-      const clave = `custom-background:${id}`;
-
-      await this.imageStorage.remove(clave);
-
-      this.imageStorage.removeBackgroundUrl(id);
-
-      this.fondosPersonalizados =
-        this.fondosPersonalizados.filter(
+    this.userFiles.deleteBackground(id).subscribe({
+      next: (user) => {
+        this.fondosPersonalizados = this.fondosPersonalizados.filter(
           item => item.id !== id
         );
 
-      // Si se elimina el fondo seleccionado,
-      // regresar al primer fondo predeterminado.
-      if (
-        this.fondoSeleccionado ===
-        `${this.CUSTOM_PREFIX}${id}`
-      ) {
-        this.seleccionarFondo(
-          this.fondos[0].ruta
-        );
-      }
+        // Si era el seleccionado, el backend regresa al fondo por defecto.
+        if (this.fondoSeleccionado === fondo.ruta) {
+          this.fondoSeleccionado = user.background || DEFAULT_BACKGROUND;
+          void this.backgroundHandler.changeBackground(this.fondoSeleccionado);
+        }
 
-      this.mensajeImagen =
-        'Fondo eliminado correctamente.';
-
-      this.cdr.detectChanges();
-
-    } catch (error) {
-      console.error(
-        'Error al eliminar el fondo:',
-        error
-      );
-
-      this.mensajeImagen =
-        'No se pudo eliminar el fondo.';
-    }
+        this.mostrarMensaje('Fondo eliminado correctamente.');
+      },
+      error: (error: unknown) => {
+        console.error('Error al eliminar el fondo:', error);
+        this.mostrarMensaje(getFileErrorMessage(error, 'No se pudo eliminar el fondo.'), true);
+      },
+    });
   }
 
   ngOnDestroy(): void {
-    this.subidaActual?.abort();
+    this.subidaActual?.unsubscribe();
 
     if (this.vistaPreviaSubida) {
       URL.revokeObjectURL(

@@ -1,25 +1,24 @@
-
 import { Injectable, inject } from '@angular/core';
-import { ImageStorageService } from './image-storage.service';
+import { AuthService } from '../core/auth/auth.service';
+import { CUSTOM_BACKGROUND_PREFIX, UserFilesService } from './user-files.service';
 
-const DEFAULT_BACKGROUND = '/backgrounds/city_image.jpg';
-const CUSTOM_PREFIX = 'custom:';
+// Fondo que se usa cuando el usuario no ha elegido ninguno.
+export const DEFAULT_BACKGROUND = '/backgrounds/city_image.jpg';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BackgroundHandler {
-  private readonly imageStorage = inject(ImageStorageService);
+  private readonly auth = inject(AuthService);
+  private readonly userFiles = inject(UserFilesService);
 
-  private currentObjectUrl: string | null = null;
   private currentBackground: string | null = null;
+  // Evita que una carga lenta reemplace a un fondo elegido después.
+  private requestId = 0;
 
+  // Aplica el fondo que el usuario dejó seleccionado (guardado en MongoDB).
   async restoreSavedBackground(): Promise<void> {
-    const selected =
-      localStorage.getItem('fondoSeleccionado') ||
-      DEFAULT_BACKGROUND;
-
-    await this.changeBackground(selected);
+    await this.changeBackground(this.auth.currentUser()?.background || DEFAULT_BACKGROUND);
   }
 
   private preloadImage(url: string): Promise<void> {
@@ -33,72 +32,62 @@ export class BackgroundHandler {
     });
   }
 
+  // Acepta una ruta de fondo predeterminado ('/backgrounds/...') o 'custom:<id>'.
   async changeBackground(route: string): Promise<void> {
+    const background = route || DEFAULT_BACKGROUND;
+
     // Evitar volver a aplicar el mismo fondo.
-    if (this.currentBackground === route) {
+    if (this.currentBackground === background) {
       return;
     }
 
-    if (route.startsWith(CUSTOM_PREFIX)) {
-      const id = route.substring(CUSTOM_PREFIX.length);
+    const request = ++this.requestId;
 
-      try {
-        const image = await this.imageStorage.get(
-          `custom-background:${id}`
-        );
+    if (!background.startsWith(CUSTOM_BACKGROUND_PREFIX)) {
+      this.apply(background, background);
+      return;
+    }
 
-        if (!image) {
-          this.apply(DEFAULT_BACKGROUND);
-          return;
-        }
+    try {
+      const url = await this.userFiles.getBackgroundUrl(
+        background.substring(CUSTOM_BACKGROUND_PREFIX.length),
+      );
+      if (request !== this.requestId) return;
 
-        const imageUrl = URL.createObjectURL(image);
-
-        try {
-          // Esperar a que la imagen esté cargada.
-          await this.preloadImage(imageUrl);
-
-          // Aplicar el fondo cuando ya esté listo.
-          this.apply(imageUrl, true, route);
-        } catch {
-          URL.revokeObjectURL(imageUrl);
-          this.apply(DEFAULT_BACKGROUND);
-        }
-      } catch {
-        this.apply(DEFAULT_BACKGROUND);
+      if (!url) {
+        this.apply(DEFAULT_BACKGROUND, DEFAULT_BACKGROUND);
+        return;
       }
 
-      return;
-    }
+      // Esperar a que la imagen esté cargada para aplicarla sin parpadeo.
+      await this.preloadImage(url);
+      if (request !== this.requestId) return;
 
-    this.apply(route);
+      this.apply(url, background);
+    } catch {
+      if (request === this.requestId) this.apply(DEFAULT_BACKGROUND, DEFAULT_BACKGROUND);
+    }
   }
 
-  private apply(
-    route: string,
-    isObjectUrl = false,
-    backgroundKey = route
-  ): void {
-    const previousObjectUrl = this.currentObjectUrl;
+  // Quita el fondo aplicado (al cerrar sesión).
+  reset(): void {
+    this.requestId++;
+    this.currentBackground = null;
+    document.body.style.removeProperty('background-image');
+    document.body.style.removeProperty('background-size');
+    document.body.style.removeProperty('background-position');
+    document.body.style.removeProperty('background-attachment');
+    document.body.style.removeProperty('background-repeat');
+  }
 
-    // Cambiar el fondo sin limpiarlo previamente.
-    document.body.style.backgroundImage =
-      `url("${route}")`;
-
+  // Las URLs blob: pertenecen a la caché de UserFilesService; aquí no se liberan.
+  private apply(url: string, backgroundKey: string): void {
+    document.body.style.backgroundImage = `url("${url}")`;
     document.body.style.backgroundSize = 'cover';
     document.body.style.backgroundPosition = 'center';
     document.body.style.backgroundAttachment = 'fixed';
     document.body.style.backgroundRepeat = 'no-repeat';
 
     this.currentBackground = backgroundKey;
-    this.currentObjectUrl = isObjectUrl ? route : null;
-
-    // Liberar la URL anterior después de aplicar la nueva.
-    if (
-      previousObjectUrl &&
-      previousObjectUrl !== this.currentObjectUrl
-    ) {
-      URL.revokeObjectURL(previousObjectUrl);
-    }
   }
 }

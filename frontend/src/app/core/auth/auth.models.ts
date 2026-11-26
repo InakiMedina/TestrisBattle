@@ -1,6 +1,6 @@
-import type { IAuthUser, Role } from '@shared/types/auth.types';
+import type { IAuthUser, IPublicBackground, Role } from '@shared/types/auth.types';
 
-export type { IAuthUser, Role };
+export type { IAuthUser, IPublicBackground, Role };
 
 export interface LoginCredentials {
   email: string;

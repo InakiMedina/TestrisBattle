@@ -1,7 +1,7 @@
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { catchError, throwError } from 'rxjs';
-import { SKIP_UNAUTHORIZED_HANDLING } from '../http/http-context';
+import { SKIP_SERVER_ERROR_NOTIFICATION, SKIP_UNAUTHORIZED_HANDLING } from '../http/http-context';
 import { NotificationService } from '../notifications/notification.service';
 import { AuthService } from './auth.service';
 
@@ -25,7 +25,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
           notifications.error('No tienes permiso para realizar esta acción.');
         } else if (error.status === 0) {
           notifications.error('No se pudo conectar con el servidor. Revisa tu conexión e inténtalo de nuevo.');
-        } else if (error.status >= 500) {
+        } else if (error.status >= 500 && !req.context.get(SKIP_SERVER_ERROR_NOTIFICATION)) {
           notifications.error('Ocurrió un error en el servidor. Inténtalo más tarde.');
         }
       }
