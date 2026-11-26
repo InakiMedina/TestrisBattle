@@ -1,99 +1,25 @@
 
-import { Component, OnInit, viewChild } from '@angular/core';
-import { Power } from '../../../../shared/interfaces/power-interface';
+import { Component, signal } from '@angular/core';
+import type { PlayerStats } from '@shared/types/realtime.types';
 import { PhaserGame } from '../../../../../app/phaser-game.component';
-import { EventBus } from '../../../../../game/EventBus';
+import type { PieceType } from '../../../../../game/logic/piece-data';
+import { ALL_POWERS, LEFT_POWERS, RIGHT_POWERS } from '../../data/player-powers';
+import { GameData } from '../../components/game-data/game-data';
+import { NextPieces } from '../../components/next-pieces/next-pieces';
 
 @Component({
   selector: 'app-practice',
   standalone: true,
-  imports: [ PhaserGame ],
+  imports: [PhaserGame, GameData, NextPieces],
   templateUrl: './practice.html',
   styleUrl: './practice.scss',
 })
-export class Practice implements OnInit {
-
-  phaserRef = viewChild.required(PhaserGame);
-
-  score = 100;
-  nivel = 0;
-  lineas = 100;
-  record = 0;
-  puntosSiguientePoder = 1000;
-
-  caraDado = 0;
-  poderSeleccionado: Power | null = null;
-
-  poderesIzquierda: Power[] = [
-    {
-      id: 'push',
-      name: 'Push',
-      image: '/power/push.png',
-      description: 'Permite alterar la posición de las piezas del oponente.',
-    },
-    {
-      id: 'shuffle',
-      name: 'Shuffle',
-      image: '/power/shuffle.png',
-      description: 'Modifica aleatoriamente la pila de piezas que recibirá el oponente.',
-    },
-    {
-      id: 'block',
-      name: 'Block',
-      image: '/power/block.png',
-      description: 'Genera un obstáculo que dificulta el juego del oponente.',
-    },
-  ];
-
-  poderesDerecha: Power[] = [
-    {
-      id: 'gravity-minus',
-      name: 'Gravity -',
-      image: '/power/gravity-.png',
-      description: 'Disminuye temporalmente la velocidad con la que caen las piezas del oponente.',
-    },
-    {
-      id: 'gravity-plus',
-      name: 'Gravity +',
-      image: '/power/gravity+.png',
-      description: 'Aumenta temporalmente la velocidad con la que caen las piezas del oponente.',
-    },
-    {
-      id: 'chaos',
-      name: 'Chaos',
-      image: '/power/chaos.png',
-      description: 'Provoca una alteración especial en el tablero del oponente.',
-    },
-  ];
-
-  todosLosPoderes: Power[] = [
-    ...this.poderesIzquierda,
-    ...this.poderesDerecha,
-  ];
-
-  ngOnInit(): void {
-    // Al iniciar no se selecciona ningún poder.
-    this.caraDado = 0;
-    this.poderSeleccionado = null;
-
-    
-    // const game = this.phaserRef().game;
-    // const scene = this.phaserRef().scene;
-
-    // EventBus.on('current-scene-ready', (scene: Phaser.Scene) => {
-    //     // Handle the ready scene
-    // });
-  }
-
-  lanzarDado(): void {
-    this.caraDado = Math.floor(Math.random() * 6) + 1;
-
-    this.poderSeleccionado = this.todosLosPoderes[this.caraDado - 1];
-  }
-
-  get imagenDado(): string {
-    return this.caraDado === 0
-      ? '/dice/1.png'
-      : `/dice/${this.caraDado}.png`;
-  }
+export class Practice {
+  readonly stats: PlayerStats = { score: 100, level: 0, lines: 100 };
+  readonly record = 0;
+  readonly pointsToNextPower = 1000;
+  readonly nextPieces = signal<PieceType[]>([]);
+  readonly poderesIzquierda = LEFT_POWERS;
+  readonly poderesDerecha = RIGHT_POWERS;
+  readonly todosLosPoderes = ALL_POWERS;
 }

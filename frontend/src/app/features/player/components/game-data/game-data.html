@@ -1,0 +1,34 @@
+<section class="score-panel">
+  <h3>Score</h3>
+  <div class="score-value">{{ stats().score }}</div>
+
+  <div class="score-stat">
+    <span>Level:</span>
+    <strong>{{ stats().level }}</strong>
+  </div>
+
+  <div class="score-stat">
+    <span>Lines:</span>
+    <strong>{{ stats().lines }}</strong>
+  </div>
+
+  <div class="score-stat">
+    <span>High:</span>
+    <strong>{{ high() }}</strong>
+  </div>
+
+  <div class="next-power-label">Points for next power:</div>
+  <div class="next-power-value">
+    {{ pointsToNextPower() ?? puntosSiguientePoder() }}
+  </div>
+
+  @if (mode() !== 'practice') {
+    <app-dice
+      [opponent]="mode() === 'opponent'"
+      [powers]="powers()"
+      [canRoll]="canRoll()"
+      [class.opponent]="mode() === 'opponent'"
+      (rollStarted)="spendPowerPoints()"
+    />
+  }
+</section>

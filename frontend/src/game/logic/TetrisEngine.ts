@@ -1,4 +1,6 @@
 import type { PlayerStats } from '@shared/types/realtime.types';
+import { PIECE_SHAPES, type PieceMatrix, type PieceType } from './piece-data';
+export type { PieceType } from './piece-data';
 
 // Reglas de Tetris (tablero, piezas, colisiones, líneas, niveles y puntaje),
 // independientes de Phaser y de Angular. La escena Game de Phaser las usa para
@@ -7,56 +9,16 @@ import type { PlayerStats } from '@shared/types/realtime.types';
 export const COLS = 10;
 export const ROWS = 20;
 
-export type PieceType = 'I' | 'O' | 'T' | 'S' | 'Z' | 'J' | 'L';
 export type Cell = PieceType | null;
-type Matrix = number[][];
 
 export interface ActivePiece {
   type: PieceType;
-  matrix: Matrix;
+  matrix: PieceMatrix;
   x: number;
   y: number;
 }
 
-const SHAPES: Record<PieceType, Matrix> = {
-  I: [
-    [0, 0, 0, 0],
-    [1, 1, 1, 1],
-    [0, 0, 0, 0],
-    [0, 0, 0, 0],
-  ],
-  O: [
-    [1, 1],
-    [1, 1],
-  ],
-  T: [
-    [0, 1, 0],
-    [1, 1, 1],
-    [0, 0, 0],
-  ],
-  S: [
-    [0, 1, 1],
-    [1, 1, 0],
-    [0, 0, 0],
-  ],
-  Z: [
-    [1, 1, 0],
-    [0, 1, 1],
-    [0, 0, 0],
-  ],
-  J: [
-    [1, 0, 0],
-    [1, 1, 1],
-    [0, 0, 0],
-  ],
-  L: [
-    [0, 0, 1],
-    [1, 1, 1],
-    [0, 0, 0],
-  ],
-};
-
-const PIECE_TYPES = Object.keys(SHAPES) as PieceType[];
+const PIECE_TYPES = Object.keys(PIECE_SHAPES) as PieceType[];
 
 /** Puntos por líneas eliminadas a la vez (se multiplican por nivel + 1). */
 const LINE_POINTS = [0, 100, 300, 500, 800];
@@ -69,12 +31,12 @@ export function gravityInterval(level: number): number {
   return Math.max(80, 800 - level * 70);
 }
 
-function rotateClockwise(matrix: Matrix): Matrix {
+function rotateClockwise(matrix: PieceMatrix): PieceMatrix {
   const size = matrix.length;
   return matrix.map((row, y) => row.map((_, x) => matrix[size - 1 - x]![y]!));
 }
 
-function rotateCounterClockwise(matrix: Matrix): Matrix {
+function rotateCounterClockwise(matrix: PieceMatrix): PieceMatrix {
   const size = matrix.length;
   return matrix.map((row, y) => row.map((_, x) => matrix[x]![size - 1 - y]!));
 }
@@ -192,7 +154,7 @@ export class TetrisEngine {
     return !!piece && !this.fits(piece.matrix, piece.x, piece.y + 1);
   }
 
-  private fits(matrix: Matrix, x: number, y: number): boolean {
+  private fits(matrix: PieceMatrix, x: number, y: number): boolean {
     for (let row = 0; row < matrix.length; row++) {
       for (let col = 0; col < matrix[row]!.length; col++) {
         if (!matrix[row]![col]) continue;
@@ -249,7 +211,7 @@ export class TetrisEngine {
   private spawn(): void {
     this.fillQueue();
     const type = this.queue.shift()!;
-    const matrix = SHAPES[type].map((row) => [...row]);
+    const matrix = PIECE_SHAPES[type].map((row) => [...row]);
     const piece: ActivePiece = {
       type,
       matrix,

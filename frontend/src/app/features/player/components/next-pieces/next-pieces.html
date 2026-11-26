@@ -1,0 +1,20 @@
+<section class="next-panel">
+  <h3>{{ opponent() ? 'Rival' : 'Next' }}</h3>
+  @if (opponent()) {
+    <p class="panel-hint">{{ opponentName() ?? '—' }}</p>
+  } @else if (showPieces()) {
+    @for (type of pieces().slice(0, 3); track $index) {
+      <div class="piece" [attr.aria-label]="'Pieza ' + type">
+        @for (row of shapes[type]; track $index) {
+          <div class="row">
+            @for (filled of row; track $index) {
+              <span class="cell" [style.background]="filled ? colors[type] : 'transparent'"></span>
+            }
+          </div>
+        }
+      </div>
+    }
+  } @else {
+    <p class="panel-hint">Inicia una partida</p>
+  }
+</section>

@@ -3,66 +3,15 @@
   <!-- Panel del jugador local -->
   <section class="player-side player-one" aria-label="Tus estadísticas">
 
-    <div class="score-panel">
-      <h3>Score</h3>
-      <div class="score-value">{{ myStats().score }}</div>
-
-      <div class="score-stat">
-        <span>Level:</span>
-        <strong>{{ myStats().level }}</strong>
-      </div>
-
-      <div class="score-stat">
-        <span>Lines:</span>
-        <strong>{{ myStats().lines }}</strong>
-      </div>
-
-      <div class="score-stat">
-        <span>High:</span>
-        <strong>{{ myHigh() }}</strong>
-      </div>
-
-      <div class="next-power-label">Points for next power:</div>
-      <div class="next-power-value">
-        {{ puntosSiguientePoder(myStats().score) }}
-      </div>
-
-      <!-- Dado -->
-      <div class="dice">
-        <img
-          [src]="imagenDado()"
-          [class.rolling]="animandoDado()"
-          alt="Resultado de tu dado"
-        />
-      </div>
-
-      <button
-        class="dice-button"
-        type="button"
-        (click)="lanzarDado()"
-        [disabled]="animandoDado()"
-      >
-        {{ animandoDado() ? 'Lanzando...' : 'Lanzar dado' }}
-      </button>
-
-      <!-- Poder seleccionado -->
-      <div class="random-power">
-        <img
-          [src]="poder()?.image ?? '/power/none.png'"
-          [alt]="poder()?.name ?? 'Sin poder seleccionado'"
-        />
-      </div>
-    </div>
+    <app-game-data
+      mode="player"
+      [stats]="store.myStats()"
+      [high]="store.myHigh()"
+      [powers]="powers"
+    />
 
     <!-- Próximas piezas -->
-    <div class="next-panel">
-      <h3>Next</h3>
-      @if (showBoard()) {
-        <app-next-pieces [pieces]="nextPieces()" />
-      } @else {
-        <p class="panel-hint">Inicia una partida</p>
-      }
-    </div>
+    <app-next-pieces [pieces]="store.nextPieces()" [showPieces]="store.showBoard()" />
 
   </section>
 
@@ -71,13 +20,13 @@
 
     <div class="game-board">
 
-      @if (showBoard()) {
+      @if (store.showBoard()) {
         <phaser-game
           mode="versus"
           [running]="store.isPlaying() && !store.me()?.finished"
           [initialStats]="store.resumeStats()"
           (statsChange)="store.reportStats($event)"
-          (nextChange)="nextPieces.set($event)"
+          (nextChange)="store.reportNextPieces($event)"
           (gameOver)="store.reportGameOver($event)"
         />
 
@@ -98,7 +47,7 @@
             </p>
             <p class="result-detail">
               Motivo: {{ reasonLabels[result.reason] }}<br />
-              Tú {{ myStats().score }} — {{ opponentStats().score }} {{ store.opponent()?.username }}
+              Tú {{ store.myStats().score }} — {{ store.opponentStats().score }} {{ store.opponent()?.username }}
             </p>
             <button class="action-button" type="button" (click)="store.leaveMatch()">
               Volver
@@ -231,43 +180,12 @@
   <!-- Panel del rival -->
   <section class="player-side player-two" aria-label="Estadísticas del rival">
 
-    <div class="score-panel">
-      <h3>Score</h3>
-      <div class="score-value">{{ opponentStats().score }}</div>
-
-      <div class="score-stat">
-        <span>Level:</span>
-        <strong>{{ opponentStats().level }}</strong>
-      </div>
-
-      <div class="score-stat">
-        <span>Lines:</span>
-        <strong>{{ opponentStats().lines }}</strong>
-      </div>
-
-      <div class="score-stat">
-        <span>High:</span>
-        <strong>{{ opponentHigh() }}</strong>
-      </div>
-
-      <div class="next-power-label">Points for next power:</div>
-      <div class="next-power-value">
-        {{ puntosSiguientePoder(opponentStats().score) }}
-      </div>
-
-      <div class="dice">
-        <img src="/dice/1.png" alt="Dado del rival" />
-      </div>
-
-      <div class="random-power">
-        <img src="/power/none.png" alt="Poder del rival" />
-      </div>
-    </div>
-
-    <div class="next-panel">
-      <h3>Rival</h3>
-      <p class="panel-hint">{{ store.opponent()?.username ?? '—' }}</p>
-    </div>
+    <app-game-data
+      mode="opponent"
+      [stats]="store.opponentStats()"
+      [high]="store.opponentHigh()"
+    />
+    <app-next-pieces [opponent]="true" [opponentName]="store.opponent()?.username ?? null" />
 
   </section>
 
