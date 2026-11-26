@@ -63,13 +63,18 @@
   stroke-linecap: round;
 }
 
-/* Lápiz para cambiar la foto */
+/* Botones de la foto (eliminar y cambiar) */
 
-.edit-image {
+.acciones-imagen {
   position: absolute;
   top: 5px;
   right: 7px;
 
+  display: flex;
+  gap: 4px;
+}
+
+.edit-image {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -85,6 +90,11 @@
   cursor: pointer;
 }
 
+.edit-image:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
 .edit-image svg {
   width: 17px;
   height: 17px;
@@ -95,7 +105,7 @@
   stroke-linejoin: round;
 }
 
-/* Nombre real debajo de la foto */
+/* Nombre de jugador debajo de la foto */
 
 .nombre-real {
   display: flex;
@@ -116,53 +126,9 @@
   overflow-wrap: anywhere;
 }
 
-.nombre-real-input {
-  width: 100%;
-  min-width: 0;
-  padding: 4px;
+/* Efecto de los botones de la foto */
 
-  color: #ffffff;
-  background: #1e1e21;
-  border: 1px solid #c8d72d;
-  border-radius: 4px;
-
-  font-family: inherit;
-  font-size: 12px;
-  outline: none;
-}
-
-/* Lápiz para editar el nombre real */
-
-.edit-real {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-
-  width: 20px;
-  height: 23px;
-  padding: 0;
-
-  color: #ffffff;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-}
-
-.edit-real svg {
-  width: 17px;
-  height: 17px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-/* Efectos de los lápices */
-
-.edit-real:hover,
-.edit-image:hover {
+.edit-image:hover:not(:disabled) {
   color: var(--app-accent-color);
 }
 
@@ -241,10 +207,6 @@
   }
 
   .nombre-real {
-    font-size: 11px;
-  }
-
-  .nombre-real-input {
     font-size: 11px;
   }
 }
