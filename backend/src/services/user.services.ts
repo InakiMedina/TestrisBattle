@@ -3,6 +3,7 @@ import type { IAuthUser } from '@shared/types/auth.types';
 import { User } from '../models/user.model';
 import { HttpError } from '../types/httpError';
 import { toPublicUser } from './user.mapper';
+import { CUSTOM_BACKGROUND_PREFIX } from './userFiles.service';
 
 export const SALT_ROUNDS = 10;
 
@@ -15,7 +16,6 @@ export interface CreateUserInput {
 export interface UpdateUserInput {
   username?: string;
   email?: string;
-  profilePicture?: string;
   background?: string;
 }
 
@@ -72,6 +72,13 @@ export async function getUserById(id: string): Promise<IAuthUser> {
 }
 
 export async function updateUser(id: string, data: UpdateUserInput): Promise<IAuthUser> {
+  // Un fondo personalizado solo puede seleccionarse si pertenece al usuario.
+  if (data.background?.startsWith(CUSTOM_BACKGROUND_PREFIX)) {
+    const backgroundId = data.background.slice(CUSTOM_BACKGROUND_PREFIX.length);
+    const owns = await User.exists({ _id: id, 'customBackgrounds._id': backgroundId });
+    if (!owns) throw new HttpError(400, 'El fondo seleccionado no existe');
+  }
+
   try {
     const user = await User.findByIdAndUpdate(
       id,
