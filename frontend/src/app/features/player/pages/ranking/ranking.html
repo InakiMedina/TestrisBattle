@@ -1,83 +1,150 @@
-<h1>Historial</h1> 
-	<div class="container">
-		<match-row-component
-		[opponent]="'T-Spin_Wizard'"
-		[result]="ResultType.WON"
-		[duration]="'06:21'"
-		[dateTime]="'2026-10-18 12:15'"
-		[score]="58400">
-	</match-row-component>
 
-	<match-row-component
-		[opponent]="'MatrixGlitcher'"
-		[result]="ResultType.LOST"
-		[duration]="'02:44'"
-		[dateTime]="'2026-10-17 21:05'"
-		[score]="19200">
-	</match-row-component>
+<section class="ranking-page">
 
-	<match-row-component
-		[opponent]="'BlockDropper99'"
-		[result]="ResultType.WON"
-		[duration]="'08:12'"
-		[dateTime]="'2026-10-17 19:40'"
-		[score]="74300">
-	</match-row-component>
+  <!-- COLUMNA IZQUIERDA -->
+  <div class="ranking-left">
 
-	<match-row-component
-		[opponent]="'line_clear_god'"
-		[result]="ResultType.LOST"
-		[duration]="'03:10'"
-		[dateTime]="'2026-10-17 16:22'"
-		[score]="24100">
-	</match-row-component>
+    <!-- COMPONENTE 1: TOP 5 MUNDIAL -->
+    <section class="ranking-card world-top">
 
-	<match-row-component
-		[opponent]="'TacoDeAsada'"
-		[result]="ResultType.WON"
-		[duration]="'05:50'"
-		[dateTime]="'2026-10-16 22:18'"
-		[score]="51200">
-	</match-row-component>
+      <h2>Top 5 de elo mundial:</h2>
 
-	<match-row-component
-		[opponent]="'NullPointer_'"
-		[result]="ResultType.LOST"
-		[duration]="'01:58'"
-		[dateTime]="'2026-10-16 18:03'"
-		[score]="12500">
-	</match-row-component>
+      <div class="world-podium">
 
-	<match-row-component
-		[opponent]="'SevenBagMaster'"
-		[result]="ResultType.WON"
-		[duration]="'09:05'"
-		[dateTime]="'2026-10-16 14:47'"
-		[score]="88900">
-	</match-row-component>
+        @for (jugador of topMundial; track jugador.username) {
+          <article
+            class="podium-player"
+            [class.first-place]="jugador.posicion === 1"
+            [class.second-place]="jugador.posicion === 2"
+            [class.third-place]="jugador.posicion === 3"
+            [class.fourth-place]="jugador.posicion === 4"
+            [class.fifth-place]="jugador.posicion === 5">
 
-	<match-row-component
-		[opponent]="'StackOverflowed'"
-		[result]="ResultType.LOST"
-		[duration]="'04:32'"
-		[dateTime]="'2026-10-15 20:11'"
-		[score]="36700">
-	</match-row-component>
+            <img
+              [src]="obtenerCopa()"
+              [alt]="'Trofeo top ' + jugador.posicion"
+              class="trophy"
+              [class.first-trophy]="jugador.posicion === 1">
 
-	<match-row-component
-		[opponent]="'GravityKills'"
-		[result]="ResultType.WON"
-		[duration]="'07:15'"
-		[dateTime]="'2026-10-15 17:55'"
-		[score]="63400">
-	</match-row-component>
+            <span class="podium-position">
+              top {{ jugador.posicion }}
+            </span>
 
-	<match-row-component
-		[opponent]="'S-PieceHater'"
-		[result]="ResultType.LOST"
-		[duration]="'03:45'"
-		[dateTime]="'2026-10-14 23:10'"
-		[score]="28900">
-	</match-row-component>
+            <span class="podium-username">
+              {{ jugador.username }}
+            </span>
 
-</div>
+          </article>
+        }
+
+      </div>
+
+    </section>
+
+
+    <!-- COMPONENTE 2: POSICIÓN DEL JUGADOR -->
+    <section class="ranking-card player-position">
+
+      <h2>Tu posición global:</h2>
+
+      <div class="position-podium">
+
+        @for (jugador of posicionJugador; track jugador.username) {
+          <article
+            class="position-player"
+            [class.current-player]="jugador.esJugadorActual">
+
+            <img
+              [src]="obtenerCopa()"
+              [alt]="'Trofeo top ' + jugador.posicion"
+              class="trophy"
+              [class.first-trophy]="jugador.esJugadorActual">
+
+            <span class="podium-position">
+              top {{ jugador.posicion }}
+            </span>
+
+            <span class="podium-username">
+              {{ jugador.username }}
+            </span>
+
+          </article>
+        }
+
+      </div>
+
+      <div class="player-position-divider"></div>
+
+    </section>
+
+  </div>
+
+
+  <!-- COLUMNA DERECHA -->
+  <!-- COMPONENTE 3: LEADERBOARD -->
+  <section class="ranking-card leaderboard">
+
+    <h2>Leaderboard:</h2>
+
+    <table class="leaderboard-table">
+
+      <thead>
+        <tr>
+          <th>Nombre usuario</th>
+          <th>Ranking</th>
+          <th>Elo</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        @for (jugador of leaderboard; track jugador.username) {
+          <tr>
+            <td>{{ jugador.username }}</td>
+            <td>{{ jugador.ranking }}</td>
+            <td>{{ jugador.elo | number }}</td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="3">
+              No hay jugadores registrados.
+            </td>
+          </tr>
+        }
+
+      </tbody>
+
+    </table>
+
+
+    <!-- PAGINACIÓN -->
+    <nav class="pagination" aria-label="Paginación del ranking">
+
+		<button
+			type="button"
+			[disabled]="paginaActual === 1"
+			(click)="cambiarPagina(paginaActual - 1)">
+			&lt;
+		</button>
+
+		@for (pagina of paginas; track pagina) {
+			<button
+			type="button"
+			[class.active-page]="pagina === paginaActual"
+			(click)="cambiarPagina(pagina)">
+			{{ pagina }}
+			</button>
+		}
+
+		<button
+			type="button"
+			[disabled]="paginaActual === totalPaginas"
+			(click)="cambiarPagina(paginaActual + 1)">
+			&gt;
+		</button>
+
+	</nav>
+
+  </section>
+
+</section>
