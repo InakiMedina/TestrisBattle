@@ -4,6 +4,7 @@ import { OFFLINE_MESSAGE } from '../../../../core/realtime/realtime.service';
 import { Power } from '../../../../shared/interfaces/power-interface';
 import { PhaserGame } from '../../../../phaser-game.component';
 import type { PieceType } from '../../../../../game/logic/TetrisEngine';
+import { GameData } from './components/game-data';
 import { NextPieces } from './components/next-pieces';
 import { VersusStore } from './versus.store';
 
@@ -16,7 +17,7 @@ const REASON_LABELS = {
 @Component({
   selector: 'app-versus',
   standalone: true,
-  imports: [PhaserGame, NextPieces],
+  imports: [PhaserGame, GameData, NextPieces],
   // El store vive y muere con la vista: sus listeners se limpian al salir.
   providers: [VersusStore],
   templateUrl: './versus.html',
@@ -93,12 +94,6 @@ export class Versus implements OnDestroy {
   protected readonly poder = signal<Power | null>(null);
   protected readonly animandoDado = signal(false);
   private timerDado: ReturnType<typeof setTimeout> | null = null;
-
-  /** Calcula los puntos que faltan para el siguiente poder. */
-  puntosSiguientePoder(score: number): number {
-    const remainder = score % 1000;
-    return remainder === 0 ? 1000 : 1000 - remainder;
-  }
 
   lanzarDado(): void {
     if (this.animandoDado()) return;
