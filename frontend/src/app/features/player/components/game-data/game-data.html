@@ -19,14 +19,16 @@
 
   <div class="next-power-label">Points for next power:</div>
   <div class="next-power-value">
-    {{ pointsToNextPower() ?? puntosSiguientePoder(stats().score) }}
+    {{ pointsToNextPower() ?? puntosSiguientePoder() }}
   </div>
 
   @if (mode() !== 'practice') {
     <app-dice
       [opponent]="mode() === 'opponent'"
       [powers]="powers()"
+      [canRoll]="canRoll()"
       [class.opponent]="mode() === 'opponent'"
+      (rollStarted)="spendPowerPoints()"
     />
   }
 </section>

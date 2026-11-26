@@ -9,25 +9,32 @@
   </div>
 } @else {
   <div class="dice">
-    <img
-      [src]="image()"
+    <div
+      class="dice-face"
+      [class.ready]="canRoll()"
       [class.rolling]="animating()"
-      alt="Resultado de tu dado"
-    />
+      role="img"
+      aria-label="Resultado de tu dado"
+    >
+      @for (position of pipPositions; track position) {
+        <span class="pip" [class.active]="hasPip(position)"></span>
+      }
+    </div>
   </div>
   <button
     class="dice-button"
     type="button"
     (click)="roll()"
-    [disabled]="animating()"
+    [disabled]="animating() || !canRoll()"
   >
     {{ animating() ? 'Lanzando...' : 'Lanzar dado' }}
   </button>
 
   <div class="random-power">
-    <img
-      [src]="selectedPower()?.image ?? '/power/none.png'"
-      [alt]="selectedPower()?.name ?? 'Sin poder seleccionado'"
-    />
+    @if (selectedPower(); as power) {
+      <img [src]="power.image" [alt]="power.name" />
+    } @else {
+      <span class="unknown-power" aria-label="Poder por descubrir">?</span>
+    }
   </div>
 }

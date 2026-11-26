@@ -48,6 +48,46 @@
   animation: dice-shake 0.12s ease-in-out infinite alternate;
 }
 
+.dice-face {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  align-items: center;
+  justify-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 3px;
+  box-sizing: border-box;
+  border: 1px solid #fff;
+  border-radius: 7px;
+  background: #191633;
+}
+
+.dice-face.ready {
+  background: #d6a400;
+  animation: ready-dice-border 1.2s ease-in-out infinite;
+}
+
+.dice-face.rolling {
+  animation: dice-shake 0.12s ease-in-out infinite alternate;
+}
+
+.pip {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #fff;
+  opacity: 0;
+}
+
+.pip.active {
+  opacity: 1;
+}
+
+.dice-face.ready .pip {
+  animation: ready-dice-pip 1.2s ease-in-out infinite;
+}
+
 .dice-button {
   display: block;
   width: 65%;
@@ -72,7 +112,9 @@
 }
 
 .dice-button:disabled {
-  opacity: 0.65;
+  background: #808080;
+  border-color: transparent;
+  opacity: 1;
   cursor: not-allowed;
 }
 
@@ -96,6 +138,13 @@
   object-fit: contain;
 }
 
+.unknown-power {
+  color: #fff;
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1;
+}
+
 @keyframes dice-shake {
   0% {
     transform: scale(0.88) rotate(-8deg);
@@ -103,6 +152,30 @@
 
   100% {
     transform: scale(1.12) rotate(8deg);
+  }
+}
+
+@keyframes ready-dice-border {
+  0%,
+  100% {
+    border-color: #fff;
+    box-shadow: 0 0 2px #fff;
+  }
+
+  50% {
+    border-color: #ffd34d;
+    box-shadow: 0 0 8px #ffd34d;
+  }
+}
+
+@keyframes ready-dice-pip {
+  0%,
+  100% {
+    background: #fff;
+  }
+
+  50% {
+    background: #ffd34d;
   }
 }
 
