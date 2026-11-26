@@ -3,7 +3,7 @@ import type { IAuthUser } from '@shared/types/auth.types';
 import { User } from '../models/user.model';
 import { HttpError } from '../types/httpError';
 import { toPublicUser } from './user.mapper';
-import { CUSTOM_BACKGROUND_PREFIX } from './userFiles.service';
+import { CUSTOM_BACKGROUND_PREFIX, deleteAllUserFiles } from './userFiles.service';
 
 export const SALT_ROUNDS = 10;
 
@@ -111,4 +111,7 @@ export async function deleteUser(id: string, requesterId: string): Promise<void>
   }
   const user = await User.findByIdAndDelete(id);
   if (!user) throw new HttpError(404, 'Usuario no encontrado');
+
+  // También se eliminan sus archivos de S3 (foto de perfil y fondos personalizados).
+  await deleteAllUserFiles(user);
 }
