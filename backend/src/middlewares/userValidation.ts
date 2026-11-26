@@ -16,6 +16,13 @@ export function validateObjectId(req: Request, _res: Response, next: NextFunctio
   next();
 }
 
+export function validateBackgroundId(req: Request, _res: Response, next: NextFunction) {
+  if (!Types.ObjectId.isValid(String(req.params.backgroundId))) {
+    return next(new HttpError(400, 'ID de fondo inválido'));
+  }
+  next();
+}
+
 export function validateCreateUser(req: Request, _res: Response, next: NextFunction) {
   const { username, email, password } = req.body ?? {};
 
