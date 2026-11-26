@@ -7,7 +7,7 @@
         <form class="signin-form" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
 
             <div class="form-name-field">
-                <label for="name">Nombre:</label>
+                <label for="name">Nombre de usuario:</label>
                 <input id="name" type="text" name="name" formControlName="name" autocomplete="username">
                 @if (showError('name')) {
                     <span class="error">{{ form.controls.name.hasError('required') ? 'Este campo es requerido' : 'El nombre debe tener una longitud mínimo de 2 caracteres' }}</span>
