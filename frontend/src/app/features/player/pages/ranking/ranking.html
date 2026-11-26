@@ -1,0 +1,150 @@
+
+<section class="ranking-page">
+
+  <!-- COLUMNA IZQUIERDA -->
+  <div class="ranking-left">
+
+    <!-- COMPONENTE 1: TOP 5 MUNDIAL -->
+    <section class="ranking-card world-top">
+
+      <h2>Top 5 de elo mundial:</h2>
+
+      <div class="world-podium">
+
+        @for (jugador of topMundial; track jugador.username) {
+          <article
+            class="podium-player"
+            [class.first-place]="jugador.posicion === 1"
+            [class.second-place]="jugador.posicion === 2"
+            [class.third-place]="jugador.posicion === 3"
+            [class.fourth-place]="jugador.posicion === 4"
+            [class.fifth-place]="jugador.posicion === 5">
+
+            <img
+              [src]="obtenerCopa()"
+              [alt]="'Trofeo top ' + jugador.posicion"
+              class="trophy"
+              [class.first-trophy]="jugador.posicion === 1">
+
+            <span class="podium-position">
+              top {{ jugador.posicion }}
+            </span>
+
+            <span class="podium-username">
+              {{ jugador.username }}
+            </span>
+
+          </article>
+        }
+
+      </div>
+
+    </section>
+
+
+    <!-- COMPONENTE 2: POSICIÓN DEL JUGADOR -->
+    <section class="ranking-card player-position">
+
+      <h2>Tu posición global:</h2>
+
+      <div class="position-podium">
+
+        @for (jugador of posicionJugador; track jugador.username) {
+          <article
+            class="position-player"
+            [class.current-player]="jugador.esJugadorActual">
+
+            <img
+              [src]="obtenerCopa()"
+              [alt]="'Trofeo top ' + jugador.posicion"
+              class="trophy"
+              [class.first-trophy]="jugador.esJugadorActual">
+
+            <span class="podium-position">
+              top {{ jugador.posicion }}
+            </span>
+
+            <span class="podium-username">
+              {{ jugador.username }}
+            </span>
+
+          </article>
+        }
+
+      </div>
+
+      <div class="player-position-divider"></div>
+
+    </section>
+
+  </div>
+
+
+  <!-- COLUMNA DERECHA -->
+  <!-- COMPONENTE 3: LEADERBOARD -->
+  <section class="ranking-card leaderboard">
+
+    <h2>Leaderboard:</h2>
+
+    <table class="leaderboard-table">
+
+      <thead>
+        <tr>
+          <th>Nombre usuario</th>
+          <th>Ranking</th>
+          <th>Elo</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        @for (jugador of leaderboard; track jugador.username) {
+          <tr>
+            <td>{{ jugador.username }}</td>
+            <td>{{ jugador.ranking }}</td>
+            <td>{{ jugador.elo | number }}</td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="3">
+              No hay jugadores registrados.
+            </td>
+          </tr>
+        }
+
+      </tbody>
+
+    </table>
+
+
+    <!-- PAGINACIÓN -->
+    <nav class="pagination" aria-label="Paginación del ranking">
+
+		<button
+			type="button"
+			[disabled]="paginaActual === 1"
+			(click)="cambiarPagina(paginaActual - 1)">
+			&lt;
+		</button>
+
+		@for (pagina of paginas; track pagina) {
+			<button
+			type="button"
+			[class.active-page]="pagina === paginaActual"
+			(click)="cambiarPagina(pagina)">
+			{{ pagina }}
+			</button>
+		}
+
+		<button
+			type="button"
+			[disabled]="paginaActual === totalPaginas"
+			(click)="cambiarPagina(paginaActual + 1)">
+			&gt;
+		</button>
+
+	</nav>
+
+  </section>
+
+</section>
