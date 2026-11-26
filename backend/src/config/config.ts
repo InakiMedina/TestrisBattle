@@ -17,6 +17,14 @@ interface Config {
   corsOrigin: string;
   seedAdminPassword: string;
   seedUserPassword: string;
+  aws: {
+    region: string;
+    accessKeyId: string;
+    secretAccessKey: string;
+    // Solo para credenciales temporales (por ejemplo, AWS Academy / Learner Lab).
+    sessionToken: string;
+    s3BucketName: string;
+  };
 }
 
 const config: Config = {
@@ -28,6 +36,15 @@ const config: Config = {
   corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:4200',
   seedAdminPassword: required('SEED_ADMIN_PASSWORD'),
   seedUserPassword: required('SEED_USER_PASSWORD'),
+  // Opcional: sin estas variables el servidor arranca igual y los archivos
+  // de usuario (fotos y fondos) quedan deshabilitados.
+  aws: {
+    region: process.env.AWS_REGION || 'us-east-1',
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
+    sessionToken: process.env.AWS_SESSION_TOKEN || '',
+    s3BucketName: process.env.AWS_S3_BUCKET_NAME || '',
+  },
 };
 
 export default config;
