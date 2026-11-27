@@ -10,6 +10,14 @@ import { authenticateToken } from '../services/token.service';
 import { HttpError } from '../types/httpError';
 import { MatchManager } from './match.manager';
 
+// Instancia única del gestor de partidas (null hasta que se monta Socket.IO).
+let matchManager: MatchManager | null = null;
+
+/** Indica si el usuario está en la cola de búsqueda o en una partida sin terminar. */
+export function isUserInMatchOrQueue(userId: string): boolean {
+  return matchManager?.isBusy(userId) ?? false;
+}
+
 /** Código que recibe el cliente en `connect_error` cuando el token no es válido. */
 export const UNAUTHORIZED_CODE = 'UNAUTHORIZED';
 
@@ -45,6 +53,7 @@ export function setupRealtime(httpServer: HttpServer) {
   });
 
   const matches = new MatchManager(io);
+  matchManager = matches;
   io.on('connection', (socket) => matches.register(socket));
 
   return io;

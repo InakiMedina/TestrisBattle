@@ -68,6 +68,11 @@ export class MatchManager {
 
   constructor(private readonly io: IoServer) {}
 
+  /** Indica si el usuario está buscando rival o tiene una partida sin terminar. */
+  isBusy(userId: string): boolean {
+    return this.queue.includes(userId) || this.activeMatchOf(userId) !== null;
+  }
+
   register(socket: IoSocket): void {
     const user = socket.data.user;
     void socket.join(userRoom(user.id));
