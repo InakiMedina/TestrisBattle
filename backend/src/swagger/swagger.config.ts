@@ -3,6 +3,7 @@ import authSwagger from './authSwagger.json';
 import rootSwagger from './rootSwagger.json';
 import testAuthSwagger from './testAuthSwagger.json';
 import userFilesSwagger from './userFilesSwagger.json';
+import userSwagger from './userSwagger.json';
 
 export function createSwaggerOptions(port: number): Options {
   return {
@@ -22,12 +23,14 @@ export function createSwaggerOptions(port: number): Options {
         ...rootSwagger.paths,
         ...authSwagger.paths,
         ...testAuthSwagger.paths,
+        ...userSwagger.paths,
         ...userFilesSwagger.paths,
       },
       components: {
         schemas: {
           ...authSwagger.components.schemas,
           ...userFilesSwagger.components.schemas,
+          ...userSwagger.components.schemas,
         },
         securitySchemes: {
           bearerAuth: {
