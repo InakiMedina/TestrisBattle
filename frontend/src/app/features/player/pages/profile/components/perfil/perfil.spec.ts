@@ -1,8 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
+import { of, throwError } from 'rxjs';
 
 import { AuthService } from '../../../../../../core/auth/auth.service';
 import { UserFilesService } from '../../../../../../services/user-files.service';
+import { UserProfileService } from '../../../../../../services/user-profile.service';
 import { createAuthServiceMock, createTestUser } from '../../../../../../../testing/auth-service.mock';
 import { Perfil } from './perfil';
 
@@ -15,6 +17,7 @@ describe('Perfil', () => {
     uploadProfilePicture: ReturnType<typeof vi.fn>;
     deleteProfilePicture: ReturnType<typeof vi.fn>;
   };
+  let userProfile: { updateUsername: ReturnType<typeof vi.fn> };
 
   async function crear(pictureUrl: string | null): Promise<HTMLElement> {
     userFiles.getProfilePictureUrl.mockResolvedValue(pictureUrl);
@@ -33,12 +36,14 @@ describe('Perfil', () => {
       uploadProfilePicture: vi.fn(),
       deleteProfilePicture: vi.fn(),
     };
+    userProfile = { updateUsername: vi.fn() };
 
     await TestBed.configureTestingModule({
       imports: [Perfil],
       providers: [
         { provide: AuthService, useValue: auth },
         { provide: UserFilesService, useValue: userFiles },
+        { provide: UserProfileService, useValue: userProfile },
       ],
     }).compileComponents();
   });
@@ -106,5 +111,108 @@ describe('Perfil', () => {
 
     expect(alert).toHaveBeenCalled();
     expect(userFiles.uploadProfilePicture).not.toHaveBeenCalled();
+  });
+
+  describe('edición del nombre de usuario', () => {
+    const lapiz = (element: HTMLElement) => element.querySelector('.edit-real') as HTMLButtonElement;
+    const campo = (element: HTMLElement) =>
+      element.querySelector('.nombre-real-input') as HTMLInputElement | null;
+
+    async function escribir(element: HTMLElement, valor: string): Promise<HTMLInputElement> {
+      lapiz(element).click();
+      fixture.detectChanges();
+      await fixture.whenStable();
+      const input = campo(element)!;
+      input.value = valor;
+      input.dispatchEvent(new Event('input'));
+      fixture.detectChanges();
+      return input;
+    }
+
+    const presionar = (input: HTMLInputElement, key: string) => {
+      input.dispatchEvent(new KeyboardEvent('keydown', { key }));
+      fixture.detectChanges();
+    };
+
+    it('muestra el lápiz junto al nombre y abre el campo con el nombre actual', async () => {
+      const element = await crear(null);
+      expect(lapiz(element)).not.toBeNull();
+
+      lapiz(element).click();
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      expect(campo(element)?.value).toBe('LiliaLag');
+    });
+
+    it('guarda el nombre nuevo con Enter y cierra la edición', async () => {
+      userProfile.updateUsername.mockReturnValue(of(createTestUser({ username: 'Lilia_2' })));
+      const element = await crear(null);
+
+      presionar(await escribir(element, 'Lilia_2'), 'Enter');
+
+      expect(userProfile.updateUsername).toHaveBeenCalledWith('Lilia_2');
+      expect(campo(element)).toBeNull();
+    });
+
+    it('cancela con Escape sin guardar', async () => {
+      const element = await crear(null);
+
+      presionar(await escribir(element, 'otro'), 'Escape');
+
+      expect(userProfile.updateUsername).not.toHaveBeenCalled();
+      expect(campo(element)).toBeNull();
+      expect(element.querySelector('.nombre-real span')?.textContent).toContain('LiliaLag');
+    });
+
+    it('no envía nada si el nombre no cambió', async () => {
+      const element = await crear(null);
+
+      presionar(await escribir(element, 'LiliaLag'), 'Enter');
+
+      expect(userProfile.updateUsername).not.toHaveBeenCalled();
+      expect(campo(element)).toBeNull();
+    });
+
+    it.each([
+      ['a', 'mínimo de 2'],
+      ['a'.repeat(21), 'máxima de 20'],
+      ['con espacio', 'sin espacios'],
+      ['hola!', 'sin espacios'],
+    ])('muestra en rojo el error de "%s" sin enviarlo', async (nombre, mensaje) => {
+      const element = await crear(null);
+
+      presionar(await escribir(element, nombre), 'Enter');
+
+      expect(userProfile.updateUsername).not.toHaveBeenCalled();
+      expect(element.querySelector('.nombre-error')?.textContent).toContain(mensaje);
+      expect(campo(element)).not.toBeNull();
+    });
+
+    it('muestra el error del backend (por ejemplo, durante una partida)', async () => {
+      const mensaje = 'No puedes cambiar tu nombre mientras estás en una partida.';
+      userProfile.updateUsername.mockReturnValue(
+        throwError(() => new HttpErrorResponse({ status: 409, error: { message: mensaje } })),
+      );
+      const element = await crear(null);
+
+      presionar(await escribir(element, 'Lilia_2'), 'Enter');
+
+      expect(element.querySelector('.nombre-error')?.textContent).toContain(mensaje);
+      expect(campo(element)).not.toBeNull();
+    });
+
+    it('borra el error al volver a escribir', async () => {
+      const element = await crear(null);
+      const input = await escribir(element, 'a');
+      presionar(input, 'Enter');
+      expect(element.querySelector('.nombre-error')).not.toBeNull();
+
+      input.value = 'ab';
+      input.dispatchEvent(new Event('input'));
+      fixture.detectChanges();
+
+      expect(element.querySelector('.nombre-error')).toBeNull();
+    });
   });
 });
