@@ -55,8 +55,43 @@
     </div>
 
     <div class="nombre-real">
-      <span>{{ nombreJugador() }}</span>
+      @if (editandoNombre) {
+        <input
+          #inputNombre
+          class="nombre-real-input"
+          type="text"
+          aria-label="Nombre de usuario"
+          autocomplete="username"
+          [(ngModel)]="nombreEditado"
+          (ngModelChange)="errorNombre = null"
+          [disabled]="guardandoNombre"
+          [attr.aria-invalid]="errorNombre ? true : null"
+          [attr.aria-describedby]="errorNombre ? 'error-nombre' : null"
+          (keydown.enter)="guardarNombre()"
+          (keydown.escape)="cancelarEdicionNombre()"
+        >
+      } @else {
+        <span>{{ nombreJugador() }}</span>
+      }
+
+      <button
+        class="edit-real"
+        type="button"
+        [attr.aria-label]="editandoNombre ? 'Guardar nombre de usuario' : 'Editar nombre de usuario'"
+        [title]="editandoNombre ? 'Guardar nombre' : 'Editar nombre'"
+        [disabled]="guardandoNombre"
+        (click)="editandoNombre ? guardarNombre() : iniciarEdicionNombre()"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 20h9" />
+          <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4Z" />
+        </svg>
+      </button>
     </div>
+
+    @if (errorNombre) {
+      <p id="error-nombre" class="nombre-error" role="alert">{{ errorNombre }}</p>
+    }
   </div>
 
   <div class="datos-perfil">

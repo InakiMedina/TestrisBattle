@@ -1,0 +1,144 @@
+{
+  "paths": {
+    "/api/users/{id}": {
+      "patch": {
+        "tags": [
+          "Usuarios"
+        ],
+        "summary": "Actualizar el nombre, el correo o el fondo seleccionado",
+        "description": "Permitido para el propio usuario o un admin. Se envía al menos uno de los campos. profilePicture no se acepta aquí: se gestiona con /api/users/{id}/profile-picture.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID del usuario (ObjectId).",
+            "schema": {
+              "type": "string",
+              "example": "6650f1c2a1b2c3d4e5f60718"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Usuario actualizado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicUser"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Ningún campo enviado, o algún campo no es válido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilesErrorResponse"
+                },
+                "example": {
+                  "message": "El nombre de usuario debe tener como máximo 20 caracteres"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No hay sesión o el token no es válido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilesErrorResponse"
+                },
+                "example": {
+                  "message": "Debes iniciar sesión"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "No tienes permiso sobre este usuario.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilesErrorResponse"
+                },
+                "example": {
+                  "message": "No tienes permiso para realizar esta acción"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Usuario no encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilesErrorResponse"
+                },
+                "example": {
+                  "message": "Usuario no encontrado"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "El nombre o el correo ya están en uso, o el usuario está buscando rival o jugando una partida (no puede cambiar su nombre).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilesErrorResponse"
+                },
+                "example": {
+                  "message": "No puedes cambiar tu nombre mientras estás en una partida."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "UpdateUserRequest": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 20,
+            "pattern": "^[\\p{L}\\p{N}_-]+$",
+            "description": "De 2 a 20 caracteres: letras (incluye acentos y ñ), números, guion medio y guion bajo; sin espacios.",
+            "example": "José_Ñandú"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "jugador@tetris.test"
+          },
+          "background": {
+            "type": "string",
+            "description": "'' (por defecto), '/backgrounds/<archivo>' o 'custom:<id>' de un fondo propio.",
+            "example": "/backgrounds/bg_1.jpg"
+          }
+        }
+      }
+    }
+  }
+}

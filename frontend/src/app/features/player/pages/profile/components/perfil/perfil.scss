@@ -126,8 +126,74 @@
   overflow-wrap: anywhere;
 }
 
-/* Efecto de los botones de la foto */
+/* Campo para editar el nombre de usuario */
 
+.nombre-real-input {
+  width: 100%;
+  min-width: 0;
+  padding: 4px;
+
+  color: #ffffff;
+  background: #1e1e21;
+  border: 1px solid #c8d72d;
+  border-radius: 4px;
+
+  font-family: inherit;
+  font-size: 12px;
+  outline: none;
+}
+
+.nombre-real-input[aria-invalid='true'] {
+  border-color: #ff6b6b;
+}
+
+/* Lápiz para editar el nombre de usuario */
+
+.edit-real {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  width: 20px;
+  height: 23px;
+  padding: 0;
+
+  color: #ffffff;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.edit-real:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
+.edit-real svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Error del nombre de usuario */
+
+.nombre-error {
+  width: 100%;
+  margin: 4px 0 0;
+
+  color: #ff6b6b;
+  font-size: 10px;
+  overflow-wrap: anywhere;
+}
+
+/* Efecto de los lápices */
+
+.edit-real:hover:not(:disabled),
 .edit-image:hover:not(:disabled) {
   color: var(--app-accent-color);
 }
@@ -206,7 +272,8 @@
     height: 95px;
   }
 
-  .nombre-real {
+  .nombre-real,
+  .nombre-real-input {
     font-size: 11px;
   }
 }

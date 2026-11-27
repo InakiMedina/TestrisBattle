@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs';
 import type { IAuthUser } from '@shared/types/auth.types';
 import { User } from '../models/user.model';
 import { HttpError } from '../types/httpError';
+import { isUserInMatchOrQueue } from '../realtime/socket';
 import { toPublicUser } from './user.mapper';
 import { CUSTOM_BACKGROUND_PREFIX, deleteAllUserFiles } from './userFiles.service';
 
@@ -72,6 +73,11 @@ export async function getUserById(id: string): Promise<IAuthUser> {
 }
 
 export async function updateUser(id: string, data: UpdateUserInput): Promise<IAuthUser> {
+  // El nombre no puede cambiar mientras el usuario busca rival o juega una partida.
+  if (data.username !== undefined && isUserInMatchOrQueue(id)) {
+    throw new HttpError(409, 'No puedes cambiar tu nombre mientras estás en una partida.');
+  }
+
   // Un fondo personalizado solo puede seleccionarse si pertenece al usuario.
   if (data.background?.startsWith(CUSTOM_BACKGROUND_PREFIX)) {
     const backgroundId = data.background.slice(CUSTOM_BACKGROUND_PREFIX.length);
