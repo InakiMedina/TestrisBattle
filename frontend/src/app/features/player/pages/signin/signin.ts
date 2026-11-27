@@ -10,6 +10,7 @@ import {
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { getFormErrorMessage } from '../../../../core/http/http-error.util';
+import { getUsernameErrorMessage, usernameValidators } from '../../../../shared/validators/username';
 
 type SigninField = 'name' | 'email' | 'password' | 'confirm' | 'accept';
 
@@ -32,7 +33,7 @@ export class Signin {
 
   protected readonly form = this.fb.group(
     {
-      name: ['', [Validators.required, Validators.minLength(2)]],
+      name: ['', usernameValidators],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]],
       confirm: ['', [Validators.required, Validators.minLength(8)]],
@@ -43,6 +44,11 @@ export class Signin {
 
   protected readonly loading = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
+
+  // Mensaje del primer error del nombre de usuario.
+  protected nameError(): string | null {
+    return getUsernameErrorMessage(this.form.controls.name.errors);
+  }
 
   protected showError(field: SigninField): boolean {
     const control = this.form.controls[field];
