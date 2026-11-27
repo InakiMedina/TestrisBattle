@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
 import { Types } from 'mongoose';
 import { HttpError } from '../types/httpError';
+import { getUsernameError } from '../utils/username';
 
 // Esta parte quizá haya que borrarla después porque de todas formas ya validamos en signin los datos ingresados del lado del cliente
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -32,8 +33,9 @@ const BACKGROUND_REGEX = /^(|\/backgrounds\/[\w.-]+|custom:[a-f\d]{24})$/i;
 export function validateCreateUser(req: Request, _res: Response, next: NextFunction) {
   const { username, email, password } = req.body ?? {};
 
-  if (!isString(username) || username.trim().length < 2) {
-    return next(new HttpError(400, 'El nombre de usuario debe tener al menos 2 caracteres'));
+  const usernameError = getUsernameError(username);
+  if (usernameError) {
+    return next(new HttpError(400, usernameError));
   }
   if (!isString(email) || !EMAIL_REGEX.test(email.trim())) {
     return next(new HttpError(400, 'Correo electrónico inválido'));
@@ -51,8 +53,9 @@ export function validateUpdateUser(req: Request, _res: Response, next: NextFunct
   if (username === undefined && email === undefined && background === undefined) {
     return next(new HttpError(400, 'No se envió ningún campo modificable'));
   }
-  if (username !== undefined && (!isString(username) || username.trim().length < 2)) {
-    return next(new HttpError(400, 'El nombre de usuario debe tener al menos 2 caracteres'));
+  if (username !== undefined) {
+    const usernameError = getUsernameError(username);
+    if (usernameError) return next(new HttpError(400, usernameError));
   }
   if (email !== undefined && (!isString(email) || !EMAIL_REGEX.test(email.trim()))) {
     return next(new HttpError(400, 'Correo electrónico inválido'));

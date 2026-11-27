@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
 import * as authService from '../services/auth.service';
 import { HttpError } from '../types/httpError';
+import { normalizeUsername } from '../utils/username';
 
 export async function login(req: Request, res: Response, next: NextFunction) {
   try {
@@ -18,7 +19,7 @@ export async function register(req: Request, res: Response, next: NextFunction) 
   try {
     const { username, email, password } = req.body;
     const result = await authService.register({
-      username: username.trim(),
+      username: normalizeUsername(username),
       email: email.trim(),
       password,
     });

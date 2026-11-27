@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
 import * as userService from '../services/user.services';
 import type { UpdateUserInput } from '../services/user.services';
+import { normalizeUsername } from '../utils/username';
 
 export async function getUsers(req: Request, res: Response, next: NextFunction) {
   try {
@@ -26,7 +27,7 @@ export async function updateUser(req: Request, res: Response, next: NextFunction
     // profilePicture y customBackgrounds se gestionan con las rutas de archivos (S3).
     const { username, email, background } = req.body;
     const data: UpdateUserInput = {};
-    if (username !== undefined) data.username = username.trim();
+    if (username !== undefined) data.username = normalizeUsername(username);
     if (email !== undefined) data.email = email.trim();
     if (background !== undefined) data.background = background;
 
