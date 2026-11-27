@@ -19,7 +19,7 @@ const PIPS_BY_FACE: Record<number, readonly number[]> = {
 export class Dice implements OnDestroy {
   readonly powers = input<Power[]>([]);
   readonly opponent = input(false);
-  readonly canRoll = input(false);
+  readonly canRoll = input(false); 
   readonly rollStarted = output<void>();
 
   protected readonly face = signal(0);

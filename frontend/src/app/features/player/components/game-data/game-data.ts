@@ -48,6 +48,6 @@ export class GameData {
   }
 
   protected readonly canRoll = computed(
-    () => this.currentPowerPoints() >= POINTS_REQUIRED_FOR_POWER,
+    () => this.currentPowerPoints() < POINTS_REQUIRED_FOR_POWER, //need changing
   );
 }

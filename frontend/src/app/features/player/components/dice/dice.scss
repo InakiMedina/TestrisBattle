@@ -64,7 +64,7 @@
 }
 
 .dice-face.ready {
-  background: #d6a400;
+  border: #d6a400;
   animation: ready-dice-border 1.2s ease-in-out infinite;
 }
 
@@ -73,8 +73,8 @@
 }
 
 .pip {
-  width: 5px;
-  height: 5px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background: #fff;
   opacity: 0;
@@ -98,7 +98,7 @@
   padding: 8px 5px;
   color: #fff;
   background: #191820;
-  border: 1px solid #24d5d8;
+  border: 1px solid #ffffff;
   border-radius: 6px;
   font-size: clamp(8px, 0.65vw, 11px);
   white-space: nowrap;
@@ -106,9 +106,20 @@
   transition: background 0.2s ease, color 0.2s ease;
 }
 
+.dice-button.ready {
+  animation: ready-button 1.2s ease-in-out infinite;
+}
+
+:host:has(.dice-button.ready:hover) .dice-face.ready,
+:host:has(.dice-button.ready:hover) .dice-face.ready .pip,
+:host:has(.dice-button.ready:hover) .dice-button.ready {
+  animation-play-state: paused;
+}
+
 .dice-button:hover:not(:disabled) {
-  background: #24d5d8;
-  color: #191820;
+  background: #ffd34d;
+  color: white;
+  border-color: white;
 }
 
 .dice-button:disabled {
@@ -159,12 +170,12 @@
   0%,
   100% {
     border-color: #fff;
-    box-shadow: 0 0 2px #fff;
+    box-shadow: 0 0 4px #fff;
   }
 
   50% {
     border-color: #ffd34d;
-    box-shadow: 0 0 8px #ffd34d;
+    box-shadow: 0 0 10px #ffd34d;
   }
 }
 
@@ -176,6 +187,21 @@
 
   50% {
     background: #ffd34d;
+  }
+}
+
+@keyframes ready-button {
+  0%,
+  100% {
+    color: #fff;
+    border-color: #fff;
+    box-shadow: 0 0 1px #fff;
+  }
+
+  50% {
+    color: #ffd34d;
+    border-color: #ffd34d;
+    box-shadow: 0 0 2px #ffd34d;
   }
 }
 
