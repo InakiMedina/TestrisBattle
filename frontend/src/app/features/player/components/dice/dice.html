@@ -25,6 +25,7 @@
     class="dice-button"
     type="button"
     (click)="roll()"
+    [class.ready]="canRoll()"
     [disabled]="animating() || !canRoll()"
   >
     {{ animating() ? 'Lanzando...' : 'Lanzar dado' }}
